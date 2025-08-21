@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  tongi-backend:
+    build: .
+    ports:
+      - "9080:9080"
+    environment:
+      - ENV=development
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    container_name: tongi_cpp_server
