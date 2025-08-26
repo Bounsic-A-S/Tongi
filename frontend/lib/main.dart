@@ -15,7 +15,14 @@ class MyApp extends StatelessWidget {
       title: 'Tongi Demo',
       home: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(backgroundColor: TongiColors.primary),
+        appBar: AppBar(
+          backgroundColor: TongiColors.primary,
+          title: Image.asset("assets/images/tongiWhite.png", height: 50),
+          actions: [
+            IconButton(onPressed: () {}, icon: Icon(Icons.settings), color: Colors.white,),
+          ],
+          // leading: Image.asset("assets/images/tongiWhite.png"),
+        ),
         body: DashboardScreen(),
       ),
     );
