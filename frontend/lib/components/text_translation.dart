@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
+import 'package:frontend/core/tongi_styles.dart';
 
 class TextTranslation extends StatefulWidget {
   const TextTranslation({super.key});
@@ -31,6 +32,7 @@ class _TextTranslationState extends State<TextTranslation> {
                 fontFamily: "NotoSans",
               ),
               decoration: InputDecoration(
+                // contentPadding: EdgeInsets.only(left: 10, top: 20, bottom: 10, right: 20),
                 hintText: "Ingrese un texto...",
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: TongiColors.border, width: 1),
@@ -69,28 +71,83 @@ class _TextTranslationState extends State<TextTranslation> {
               ),
           ],
         ),
-        SizedBox(height: 20),
-        TextField(
-          maxLines: 4,
-          readOnly: true,
-          controller: _outputController,
-          style: TextStyle(
-            fontSize: 24,
-            color: TongiColors.textFill,
-            fontFamily: "NotoSans",
-          ),
-          decoration: InputDecoration(
-            hintText: "Translation here...",
-            hintStyle: TextStyle(color: TongiColors.gray),
-            filled: true,
-            fillColor: TongiColors.bgGrayComponent,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: TongiColors.border, width: 1),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            TextButton.icon(
+              onPressed: () {},
+              icon: Icon(Icons.paste, color: TongiColors.darkGray),
+              label: Text(
+                "Pegar",
+                style: TongiStyles.textLabel,
+              ),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.all(0),
+                overlayColor: Colors.white,
+                // tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: TongiColors.border, width: 1),
+          ],
+        ),
+        SizedBox(height: 10),
+        Stack(
+          children: [
+            TextField(
+              maxLines: 4,
+              readOnly: true,
+              controller: _outputController,
+              style: TextStyle(
+                fontSize: 24,
+                color: TongiColors.textFill,
+                fontFamily: "NotoSans",
+              ),
+              decoration: InputDecoration(
+                hintText: "Translation here...",
+                hintStyle: TextStyle(color: TongiColors.gray),
+                filled: true,
+                fillColor: TongiColors.bgGrayComponent,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: TongiColors.border, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: TongiColors.border, width: 1),
+                ),
+              ),
             ),
-          ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(onPressed: () {}, icon: Icon(Icons.volume_up)),
+            ),
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.star_border_rounded),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton.icon(
+              onPressed: () {},
+              label: Text(
+                "Copiar",
+                style: TongiStyles.textLabel,
+              ),
+              style: TextButton.styleFrom(
+                iconAlignment: IconAlignment.end,
+                padding: EdgeInsets.all(0),
+                overlayColor: Colors.white,
+              ),
+              icon: Icon(Icons.copy, color: TongiColors.darkGray),
+            ),
+          ],
         ),
       ],
     );

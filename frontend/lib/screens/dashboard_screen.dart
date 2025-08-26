@@ -17,6 +17,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         children: [
           LanguageSelector(),
+          SizedBox(height: 20),
           TextTranslation(),
         ],
       ),
