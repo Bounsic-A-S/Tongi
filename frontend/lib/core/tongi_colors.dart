@@ -10,8 +10,9 @@ class TongiColors {
   static const darkGray = Color(0xFF6B7280);
   static const gray = Color(0xFFA39A9A);
   static const bgGrayComponent = Color(0xFFF9FAFB);
-  static const strokes = Color(0xFFE5E7EB);
+  static const border = Color(0xFFE5E7EB);
 
-  static const textFill = Color.fromARGB(255, 22, 22, 22);
+  static const onFocus = Color.fromARGB(255, 205, 207, 209);
 
+  static const textFill = Color(0xFF4D4B4B);
 }

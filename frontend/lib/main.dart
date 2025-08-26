@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tongi Demo',
       home: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(backgroundColor: TongiColors.primary),
         body: DashboardScreen(),
       ),
