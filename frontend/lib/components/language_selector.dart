@@ -12,8 +12,8 @@ class LanguageSelector extends StatefulWidget {
 
 class _LanguageSelectorState extends State<LanguageSelector> {
   final List<String> languages = ["Español", "Ingles", "Alemán", "Java", "C++"];
-  final TextEditingController inputController = TextEditingController();
-  final TextEditingController outputController = TextEditingController(
+  final TextEditingController inputMenuController = TextEditingController();
+  final TextEditingController outputMenuController = TextEditingController(
     text: "Ingles",
   );
 
@@ -21,18 +21,19 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Text("Entrada"),
         Column(
           children: [
-            Text("Entrada"),
+            SizedBox(height: 20, child: Text("Entrada")),
             DropdownMenu(
-              controller: inputController,
+              controller: inputMenuController,
               enableFilter: true,
               hintText: "Seleccione un idioma",
               inputDecorationTheme: InputDecorationTheme(
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: TongiColors.border),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
               ),
               menuStyle: MenuStyle(
@@ -40,12 +41,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   TongiColors.bgGrayComponent,
                 ),
               ),
-              // initialSelection: selectedLanguageIn,
-              textStyle: TextStyle(
-                fontSize: 16,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.w500,
-              ),
+              textStyle: TongiStyles.textLabel,
               dropdownMenuEntries: languages.map((lang) {
                 return DropdownMenuEntry(value: lang, label: lang);
               }).toList(),
@@ -54,19 +50,32 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         ),
         Column(
           children: [
-            Text("Salida"),
+            SizedBox(height: 20),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  String temp = inputMenuController.text;
+                  inputMenuController.text = outputMenuController.text;
+                  outputMenuController.text = temp;
+                });
+              },
+              icon: Icon(Icons.swap_horiz_outlined),
+              iconSize: 30,
+              color: TongiColors.accent,
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            SizedBox(height: 20, child: Text("Salida")),
             DropdownMenu(
-              controller: outputController,
+              controller: outputMenuController,
               enableFilter: true,
               keyboardType: TextInputType.text,
               inputDecorationTheme: InputDecorationTheme(
-                hintStyle: TextStyle(
-                  fontSize: 16,
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.w700,
-                ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: TongiColors.border),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
               ),
               menuStyle: MenuStyle(
@@ -75,11 +84,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 ),
               ),
               hintText: "Seleccione un idioma",
-              textStyle: TextStyle(
-                fontSize: 16,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.w500,
-              ),
+              textStyle: TongiStyles.textLabel,
               dropdownMenuEntries: languages.map((lang) {
                 return DropdownMenuEntry(value: lang, label: lang);
               }).toList(),

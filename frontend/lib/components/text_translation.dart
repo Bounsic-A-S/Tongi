@@ -32,13 +32,14 @@ class _TextTranslationState extends State<TextTranslation> {
                 fontFamily: "NotoSans",
               ),
               decoration: InputDecoration(
-                // contentPadding: EdgeInsets.only(left: 10, top: 20, bottom: 10, right: 20),
                 hintText: "Ingrese un texto...",
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: TongiColors.border, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(10))
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: TongiColors.onFocus, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(10))
                 ),
                 hintStyle: TextStyle(color: TongiColors.gray),
               ),
@@ -80,7 +81,7 @@ class _TextTranslationState extends State<TextTranslation> {
               icon: Icon(Icons.paste, color: TongiColors.darkGray),
               label: Text(
                 "Pegar",
-                style: TongiStyles.textLabel,
+                style: TongiStyles.textBody,
               ),
               style: TextButton.styleFrom(
                 padding: EdgeInsets.all(0),
@@ -90,7 +91,7 @@ class _TextTranslationState extends State<TextTranslation> {
             ),
           ],
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 5),
         Stack(
           children: [
             TextField(
@@ -109,9 +110,11 @@ class _TextTranslationState extends State<TextTranslation> {
                 fillColor: TongiColors.bgGrayComponent,
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: TongiColors.border, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(10))
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: TongiColors.border, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(10))
                 ),
               ),
             ),
@@ -138,7 +141,7 @@ class _TextTranslationState extends State<TextTranslation> {
               onPressed: () {},
               label: Text(
                 "Copiar",
-                style: TongiStyles.textLabel,
+                style: TongiStyles.textBody,
               ),
               style: TextButton.styleFrom(
                 iconAlignment: IconAlignment.end,
@@ -149,6 +152,7 @@ class _TextTranslationState extends State<TextTranslation> {
             ),
           ],
         ),
+        SizedBox(height: 5),
       ],
     );
   }
