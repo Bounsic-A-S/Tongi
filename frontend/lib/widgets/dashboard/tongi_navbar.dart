@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 
-class Navbar extends StatelessWidget {
+class TongiNavbar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const Navbar({super.key, required this.currentIndex, required this.onTap});
+  const TongiNavbar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
