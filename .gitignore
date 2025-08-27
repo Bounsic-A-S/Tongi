@@ -1,0 +1,39 @@
+# Entorno virtual
+venv/
+ENV/
+env/
+.venv/
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de logs
+*.log
+
+# Archivos de configuración local
+*.env
+*.ini
+*.cfg
+*.local
+
+# Archivos de compilación
+*.so
+*.dll
+*.dylib
+
+# Archivos de tests / cobertura
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Otros
+.DS_Store
+Thumbs.db
