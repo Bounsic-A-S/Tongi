@@ -1,0 +1,21 @@
+{
+  "server": {
+    "port": 9080,
+    "threads": 2,
+    "host": "0.0.0.0"
+  },
+  "cors": {
+    "enabled": true,
+    "allowed_origins": ["*"],
+    "allowed_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allowed_headers": ["Content-Type", "Authorization"]
+  },
+  "logging": {
+    "level": "info",
+    "file": "server.log"
+  },
+  "api": {
+    "version": "v1",
+    "prefix": "/api"
+  }
+}
