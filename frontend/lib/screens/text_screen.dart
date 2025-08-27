@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/components/language_selector.dart';
-import 'package:frontend/components/text_suggestions.dart';
-import 'package:frontend/components/text_translation.dart';
+import 'package:frontend/widgets/language_selector.dart';
+import 'package:frontend/widgets/text_suggestions.dart';
+import 'package:frontend/widgets/text_translation.dart';
 
 class TextScreen extends StatefulWidget {
   const TextScreen({super.key});

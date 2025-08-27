@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/components/dashboard/navbar.dart';
+import 'package:frontend/widgets/dashboard/navbar.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/screens/text_screen.dart';
 
