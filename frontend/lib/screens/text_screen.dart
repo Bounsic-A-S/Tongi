@@ -3,14 +3,14 @@ import 'package:frontend/components/language_selector.dart';
 import 'package:frontend/components/text_suggestions.dart';
 import 'package:frontend/components/text_translation.dart';
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class TextScreen extends StatefulWidget {
+  const TextScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<TextScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends State<TextScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
