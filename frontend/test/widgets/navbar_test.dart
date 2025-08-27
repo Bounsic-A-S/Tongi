@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/widgets/dashboard/navbar.dart';
+import 'package:frontend/widgets/dashboard/tongi_navbar.dart';
 import 'package:frontend/core/tongi_colors.dart';
 
 void main() {
-  testWidgets('Navbar muestra los items correctamente', (WidgetTester tester) async {
+  testWidgets('Navbar muestra los items correctamente', (
+    WidgetTester tester,
+  ) async {
     // Arrange
     int tappedIndex = -1;
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          bottomNavigationBar: Navbar(
+          bottomNavigationBar: TongiNavbar(
             currentIndex: 0,
             onTap: (index) {
               tappedIndex = index;
@@ -33,15 +35,14 @@ void main() {
     expect(tappedIndex, 1);
   });
 
-  testWidgets('Navbar resalta el item seleccionado', (WidgetTester tester) async {
+  testWidgets('Navbar resalta el item seleccionado', (
+    WidgetTester tester,
+  ) async {
     // Arrange: seleccionamos el índice 2 (Audio)
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          bottomNavigationBar: Navbar(
-            currentIndex: 2,
-            onTap: (_) {},
-          ),
+          bottomNavigationBar: TongiNavbar(currentIndex: 2, onTap: (_) {}),
         ),
       ),
     );

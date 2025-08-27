@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/widgets/dashboard/navbar.dart';
-import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/screens/text_screen.dart';
+import 'package:frontend/widgets/dashboard/tongi_appbar.dart';
+import 'package:frontend/widgets/dashboard/tongi_navbar.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -30,20 +30,9 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: TongiColors.primary,
-        title: Image.asset("assets/images/tongiWhite.png", height: 50),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.settings),
-            color: Colors.white,
-          ),
-        ],
-        // leading: Image.asset("assets/images/tongiWhite.png"),
-      ),
+      appBar: TongiAppbar(onSettingsPressed: () => {print("Settings Pressed")}),
       body: _pages[_selectedIndex],
-      bottomNavigationBar: Navbar(
+      bottomNavigationBar: TongiNavbar(
         currentIndex: _selectedIndex,
         onTap: _onNavbarTapped,
       ),
