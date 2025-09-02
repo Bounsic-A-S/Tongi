@@ -35,7 +35,7 @@ pip install -r ttt_server\requirements.txt
 
 REM Iniciar servidor
 cd ttt_server
-python -m uvicorn app:app --host 0.0.0.0 --port 8003
+python app.py
 
 popd
 endlocal

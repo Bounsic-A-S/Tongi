@@ -35,7 +35,7 @@ pip install -r stt_server\requirements.txt
 
 REM Iniciar servidor
 cd stt_server
-python -m uvicorn app:app --host 0.0.0.0 --port 8001
+python app.py
 
 popd
 endlocal

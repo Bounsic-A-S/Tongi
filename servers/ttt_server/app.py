@@ -1,81 +1,80 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-app = FastAPI(title="TTT Server", description="Text-to-Text API Server", version="1.0.0")
+app = Flask(__name__)
+CORS(app)
 
-class TextRequest(BaseModel):
-    text: str
-    source_language: str = "es"
-    target_language: str = "en"
-    task: str = "translate"  # translate, summarize, analyze
+@app.route("/", methods=["GET"])
+def root():
+    return jsonify({"message": "TTT Server - Text to Text API"})
 
-class TextResponse(BaseModel):
-    result: str
-    source_language: str
-    target_language: str
-    task: str
-    confidence: float
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "healthy", "service": "TTT"})
 
-@app.get("/")
-async def root():
-    return {"message": "TTT Server - Text to Text API"}
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "service": "TTT"}
-
-@app.post("/process", response_model=TextResponse)
-async def process_text(request: TextRequest):
+@app.route("/process", methods=["POST"])
+def process_text():
     """
     Endpoint para procesar texto (traducción, resumen, análisis)
     """
     try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        text = data.get("text")
+        source_language = data.get("source_language", "es")
+        target_language = data.get("target_language", "en")
+        task = data.get("task", "translate")
+        
+        if not text:
+            return jsonify({"error": "Text is required"}), 400
+        
         # Simulación de procesamiento de texto
         # En un caso real, aquí se integraría con servicios de IA
         
-        if request.task == "translate":
-            mock_result = f"Translated text: {request.text}"
-        elif request.task == "summarize":
-            mock_result = f"Summary: {request.text[:50]}..."
-        elif request.task == "analyze":
-            mock_result = f"Analysis: Text contains {len(request.text)} characters"
+        if task == "translate":
+            mock_result = f"Translated text: {text}"
+        elif task == "summarize":
+            mock_result = f"Summary: {text[:50]}..."
+        elif task == "analyze":
+            mock_result = f"Analysis: Text contains {len(text)} characters"
         else:
-            mock_result = f"Processed: {request.text}"
+            mock_result = f"Processed: {text}"
         
-        return TextResponse(
-            result=mock_result,
-            source_language=request.source_language,
-            target_language=request.target_language,
-            task=request.task,
-            confidence=0.92
-        )
+        return jsonify({
+            "result": mock_result,
+            "source_language": source_language,
+            "target_language": target_language,
+            "task": task,
+            "confidence": 0.92
+        })
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return jsonify({"error": str(e)}), 500
 
-@app.get("/tasks")
-async def get_available_tasks():
+@app.route("/tasks", methods=["GET"])
+def get_available_tasks():
     """
     Obtener tareas disponibles
     """
-    return {
+    return jsonify({
         "tasks": [
             {"id": "translate", "name": "Traducción", "description": "Traducir texto entre idiomas"},
             {"id": "summarize", "name": "Resumen", "description": "Generar resumen del texto"},
             {"id": "analyze", "name": "Análisis", "description": "Analizar contenido del texto"}
         ]
-    }
+    })
 
-@app.get("/languages")
-async def get_supported_languages():
+@app.route("/languages", methods=["GET"])
+def get_supported_languages():
     """
     Obtener idiomas soportados
     """
-    return {
+    return jsonify({
         "languages": ["es", "en", "fr", "de", "it", "pt"],
         "default_source": "es",
         "default_target": "en"
-    }
+    })
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8003)
+    app.run(host="0.0.0.0", port=8003, debug=True)
