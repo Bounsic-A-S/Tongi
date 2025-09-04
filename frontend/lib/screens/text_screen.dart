@@ -13,17 +13,14 @@ class TextScreen extends StatefulWidget {
 class _DashboardScreenState extends State<TextScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-      child: Column(
-        children: [
-          LanguageSelector(),
-          SizedBox(height: 10),
-          SizedBox(height: 10),
-          TextTranslation(),
-          TextSuggestions(),
-        ],
-      ),
+    return Column(
+      children: [
+        LanguageSelector(),
+        SizedBox(height: 10),
+        SizedBox(height: 10),
+        TextTranslation(),
+        TextSuggestions(),
+      ],
     );
   }
 }
