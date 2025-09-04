@@ -33,15 +33,14 @@ RUN git clone https://github.com/pistacheio/pistache.git /tmp/pistache && \
 # Set working directory
 WORKDIR /app
 
-# Copy source files
-COPY main.cpp .
-COPY CMakeLists.txt .
+# Copy all sources
+COPY . .
 
 # Build the application
-RUN mkdir build && cd build && \
+RUN mkdir -p build && cd build && \
     cmake .. && \
-    make && \
-    cp bin/tongi_server /app/
+    make -j && \
+    cp tongi_server /app/
 
 # Expose port
 EXPOSE 9080
