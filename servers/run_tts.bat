@@ -35,7 +35,7 @@ pip install -r tts_server\requirements.txt
 
 REM Iniciar servidor
 cd tts_server
-python -m uvicorn app:app --host 0.0.0.0 --port 8002
+python app.py
 
 popd
 endlocal
