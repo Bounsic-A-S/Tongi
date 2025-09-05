@@ -1,31 +1,23 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from controllers.ttt_controller import TTTController
 
-app = FastAPI(title="TTT Server", description="Text-to-Text API Server", version="1.0.0")
+app = Flask(__name__)
+CORS(app)
 
-class TextRequest(BaseModel):
-    text: str
-    source_language: str = "es"
-    target_language: str = "en"
-    task: str = "translate"  # translate, summarize, analyze
+# Instanciar el controlador
+ttt_controller = TTTController()
 
-class TextResponse(BaseModel):
-    result: str
-    source_language: str
-    target_language: str
-    task: str
-    confidence: float
-
-@app.get("/")
-async def root():
-    return {"message": "TTT Server - Text to Text API"}
+@app.route("/", methods=["GET"])
+def root():
+    return jsonify({"message": "TTT Server - Text to Text API"})
 
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "TTT"}
 
-@app.post("/process", response_model=TextResponse)
-async def process_text(request: TextRequest):
+@app.route("/process", methods=["POST"])
+async def process_text():
     """
     Endpoint para procesar texto (traducción, resumen, análisis)
     """
@@ -33,22 +25,25 @@ async def process_text(request: TextRequest):
         # Simulación de procesamiento de texto
         # En un caso real, aquí se integraría con servicios de IA
         
-        if request.task == "translate":
-            mock_result = f"Translated text: {request.text}"
-        elif request.task == "summarize":
-            mock_result = f"Summary: {request.text[:50]}..."
-        elif request.task == "analyze":
-            mock_result = f"Analysis: Text contains {len(request.text)} characters"
-        else:
-            mock_result = f"Processed: {request.text}"
-        
-        return TextResponse(
-            result=mock_result,
-            source_language=request.source_language,
-            target_language=request.target_language,
-            task=request.task,
-            confidence=0.92
+        # Crear objeto TextRequest
+        from models.ttt_models import TextRequest
+        text_request = TextRequest(
+            text=text,
+            source_language=source_language,
+            target_language=target_language,
+            task=task
         )
+        
+        # Procesar con el controlador
+        result =await ttt_controller.process_text(text_request)
+        
+        return jsonify({
+            "result": result.result,
+            "source_language": result.source_language,
+            "target_language": result.target_language,
+            "task": result.task,
+            "confidence": result.confidence
+        })
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -57,24 +52,22 @@ async def get_available_tasks():
     """
     Obtener tareas disponibles
     """
-    return {
-        "tasks": [
-            {"id": "translate", "name": "Traducción", "description": "Traducir texto entre idiomas"},
-            {"id": "summarize", "name": "Resumen", "description": "Generar resumen del texto"},
-            {"id": "analyze", "name": "Análisis", "description": "Analizar contenido del texto"}
-        ]
-    }
+    try:
+        tasks = ttt_controller.get_available_tasks()
+        return jsonify(tasks)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.get("/languages")
 async def get_supported_languages():
     """
     Obtener idiomas soportados
     """
-    return {
-        "languages": ["es", "en", "fr", "de", "it", "pt"],
-        "default_source": "es",
-        "default_target": "en"
-    }
+    try:
+        languages = ttt_controller.get_supported_languages()
+        return jsonify(languages)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     import uvicorn
