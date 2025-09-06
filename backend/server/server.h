@@ -10,6 +10,7 @@ public:
     explicit TongiServer(Pistache::Address addr);
     void init(size_t thr = 2);
     void start();
+    void stop();
 
 private:
     void setupRoutes();

@@ -20,6 +20,10 @@ void TongiServer::start() {
     httpEndpoint->serve();
 }
 
+void TongiServer::stop() {
+    httpEndpoint->shutdown();
+}
+
 void TongiServer::setupRoutes() {
     using namespace Pistache;
 
