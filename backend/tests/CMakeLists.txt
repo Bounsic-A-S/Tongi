@@ -21,8 +21,16 @@ find_package(GTest QUIET)
 if(GTest_FOUND OR GTEST_FOUND)
     message(STATUS "Google Test found, building unit tests")
     
-    # Build unit tests
-    add_executable(unit_tests test_tongi_server.cpp)
+# Build unit tests
+    add_executable(unit_tests test_main.cpp test_data_service.cpp ../services/data/data_service.cpp)
+    
+    # Add include directories for project sources
+    target_include_directories(unit_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+        ${CMAKE_CURRENT_SOURCE_DIR}/../services
+        ${CMAKE_CURRENT_SOURCE_DIR}/../models
+        ${CMAKE_CURRENT_SOURCE_DIR}/../utils
+    )
     
     # Link libraries for unit tests
     if(PISTACHE_FOUND)
@@ -64,7 +72,22 @@ else()
 endif()
 
 # Always build integration tests (they don't require GTest)
-add_executable(integration_tests integration_tests.cpp)
+add_executable(integration_tests test_integration.cpp
+    ../server/server.cpp
+    ../controllers/health/health_controller.cpp
+    ../controllers/data/data_controller.cpp
+    ../services/data/data_service.cpp
+)
+
+# Add include directories for integration tests
+target_include_directories(integration_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+    ${CMAKE_CURRENT_SOURCE_DIR}/../server
+    ${CMAKE_CURRENT_SOURCE_DIR}/../controllers
+    ${CMAKE_CURRENT_SOURCE_DIR}/../services
+    ${CMAKE_CURRENT_SOURCE_DIR}/../models
+    ${CMAKE_CURRENT_SOURCE_DIR}/../utils
+)
 
 # Link libraries for integration tests
 if(PISTACHE_FOUND)
