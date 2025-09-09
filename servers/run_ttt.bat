@@ -37,5 +37,6 @@ REM Iniciar servidor
 cd ttt_server
 python app.py
 
+
 popd
 endlocal

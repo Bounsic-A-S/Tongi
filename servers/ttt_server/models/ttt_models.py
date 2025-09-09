@@ -1,11 +1,26 @@
-from pydantic import BaseModel, Field
-from typing import List
+from pydantic import BaseModel, Field, validator
+from typing import List, Optional, Literal
+from enum import Enum
+
+class LanguageEnum(str, Enum):
+    en = "en"
+    it = "it"
+    fr = "fr"
+    de = "de"
 
 class TextRequest(BaseModel):
-    text: str = Field(..., min_length=1, max_length=5000)
-    source_language: str = Field(default="es", regex="^[a-z]{2}$")
-    target_language: str = Field(default="en", regex="^[a-z]{2}$")
-    task: str = Field(default="translate", regex="^(translate|summarize|analyze)$")
+    text: str
+    source_language: Optional[str] = None
+    target_language: LanguageEnum = Field(default="en")
+    task: Literal["translate", "summarize", "analyze"] = Field(default="translate")
+
+    @validator("source_language")
+    def validate_source_language(cls, v):
+        if v is None or v == "":
+            return None  # dejar vacío para detección automática
+        if not v.isalpha() or len(v) > 2:
+            raise ValueError("source_language must be 1 or 2 letters")
+        return v.lower()
     
     class Config:
         schema_extra = {
@@ -17,12 +32,13 @@ class TextRequest(BaseModel):
             }
         }
 
+
 class TextResponse(BaseModel):
     result: str
     source_language: str
     target_language: str
-    task: str
-    confidence: float
+    task: Optional[str] = None
+    confidence: Optional[float] = None
     
     class Config:
         schema_extra = {

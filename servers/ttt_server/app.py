@@ -1,8 +1,13 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
+from controllers.ttt_controller import TTTController
+from models.ttt_models import TextRequest
 
 app = Flask(__name__)
 CORS(app)
+
+# Instanciar el controlador
+ttt_controller = TTTController()
 
 @app.route("/", methods=["GET"])
 def root():
@@ -13,7 +18,7 @@ def health_check():
     return jsonify({"status": "healthy", "service": "TTT"})
 
 @app.route("/process", methods=["POST"])
-def process_text():
+async def process_text():
     """
     Endpoint para procesar texto (traducción, resumen, análisis)
     """
@@ -32,49 +37,59 @@ def process_text():
         
         # Simulación de procesamiento de texto
         # En un caso real, aquí se integraría con servicios de IA
+
+         # Obtener datos del request
+        data = request.get_json()
+
+        text = data.get("text")
+        source_language = data.get("source_language")
+        target_language = data.get("target_language")
+        task = data.get("task")
         
-        if task == "translate":
-            mock_result = f"Translated text: {text}"
-        elif task == "summarize":
-            mock_result = f"Summary: {text[:50]}..."
-        elif task == "analyze":
-            mock_result = f"Analysis: Text contains {len(text)} characters"
-        else:
-            mock_result = f"Processed: {text}"
+        # Crear objeto TextRequest
+        text_request = TextRequest(
+            text=text,
+            source_language=source_language,
+            target_language=target_language,
+            task=task
+        )
+        print(text_request)
+        
+        # Procesar con el controlador
+        result =await ttt_controller.process_text(text_request)
         
         return jsonify({
-            "result": mock_result,
-            "source_language": source_language,
-            "target_language": target_language,
-            "task": task,
-            "confidence": 0.92
+            "result": result.result,
+            "source_language": result.source_language,
+            "target_language": result.target_language,
+            "task": result.task,
+            "confidence": result.confidence
         })
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        abort(status_code=500, detail=str(e))
 
 @app.route("/tasks", methods=["GET"])
 def get_available_tasks():
     """
     Obtener tareas disponibles
     """
-    return jsonify({
-        "tasks": [
-            {"id": "translate", "name": "Traducción", "description": "Traducir texto entre idiomas"},
-            {"id": "summarize", "name": "Resumen", "description": "Generar resumen del texto"},
-            {"id": "analyze", "name": "Análisis", "description": "Analizar contenido del texto"}
-        ]
-    })
+    try:
+        tasks = ttt_controller.get_available_tasks()
+        return jsonify(tasks)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/languages", methods=["GET"])
 def get_supported_languages():
     """
     Obtener idiomas soportados
     """
-    return jsonify({
-        "languages": ["es", "en", "fr", "de", "it", "pt"],
-        "default_source": "es",
-        "default_target": "en"
-    })
+    try:
+        languages = ttt_controller.get_supported_languages()
+        return jsonify(languages)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8003, debug=True)
+
