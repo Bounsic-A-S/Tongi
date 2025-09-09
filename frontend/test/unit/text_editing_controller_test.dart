@@ -25,7 +25,7 @@ void main() {
     test('TextEditingController puede establecer texto', () {
       // Act
       inputController.text = "Hola mundo";
-      outputController.text = "Hello world";
+      outputController.text = "Hola mundo (translated xd)";
 
       // Assert
       expect(inputController.text, "Hola mundo");

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/widgets/text_translation.dart';
 import 'package:frontend/widgets/language_selector.dart';
-import 'package:frontend/core/tongi_colors.dart';
+
 
 void main() {
   group('TextTranslation Widget Tests', () {
@@ -17,7 +17,7 @@ void main() {
       );
 
       // Assert
-      expect(find.byType(TextField), findsNWidgets(1)); // 2 TextFields en TextTranslation
+      expect(find.byType(TextField), findsNWidgets(2)); // 2 TextFields en TextTranslation
       
       // Verificar que el primer TextField (entrada) tiene las propiedades correctas
       final inputTextField = tester.widget<TextField>(find.byType(TextField).first);
