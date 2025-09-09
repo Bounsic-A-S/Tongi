@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
+import 'package:frontend/core/tongi_styles.dart';
+import 'package:frontend/widgets/audio_translation.dart';
 import 'package:frontend/widgets/language_selector.dart';
 import 'package:frontend/widgets/record_button.dart';
 
@@ -31,13 +33,17 @@ class _AudioScreenState extends State<AudioScreen> {
                 children: [
                   RecordButton(),
                   SizedBox(height: 15),
-                  Text("Click para iniciar a grabar."),
-                  Text("Mantener."),
+                  Text(
+                    "Toca para iniciar a grabar.",
+                    style: TongiStyles.textBody,
+                  ),
                 ],
               ),
             ],
           ),
         ),
+        SizedBox(height: 20),
+        AudioTranslation(),
       ],
     );
   }

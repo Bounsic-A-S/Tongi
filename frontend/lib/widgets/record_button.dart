@@ -27,7 +27,7 @@ class _RecordButtonState extends State<RecordButton>
 
     _color1 = ColorTween(begin: TongiColors.primary, end: Colors.orange)
         .animate(_controller);
-    _color2 = ColorTween(begin: Colors.orange, end: Colors.purple)
+    _color2 = ColorTween(begin: const Color(0xFF8064E6), end: Colors.purple)
         .animate(_controller);
   }
 
