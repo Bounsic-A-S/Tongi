@@ -42,6 +42,47 @@ class _AudioScreenState extends State<AudioScreen> {
             ],
           ),
         ),
+        // Container(
+        //   decoration: BoxDecoration(
+        //     border: BoxBorder.all(color: TongiColors.border, width: 1),
+        //     borderRadius: BorderRadius.only(
+        //       topLeft: Radius.circular(0),
+        //       topRight: Radius.circular(0),
+        //       bottomLeft: Radius.circular(16),
+        //       bottomRight: Radius.circular(16),
+        //     ),
+        //     color: TongiColors.secondary,
+        //   ),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.center,
+        //     children: [
+        //       Column(
+        //         children: [
+        //           SizedBox(height: 10),
+        //           IconButton(
+        //             onPressed: () {},
+        //             icon: Icon(Icons.play_arrow_rounded),
+        //             padding: EdgeInsets.all(0),
+        //             style: ButtonStyle(
+        //               iconColor: WidgetStatePropertyAll(
+        //                 TongiColors.lightMainFill,
+        //               ),
+        //               iconSize: WidgetStatePropertyAll(60),
+        //             ),
+        //           ),
+        //           Text(
+        //             "Reproducir audio traducido",
+        //             style: TextStyle(
+        //               color: Colors.white,
+        //               fontFamily: "Poppins",
+        //             ),
+        //           ),
+        //           SizedBox(height: ),
+        //         ],
+        //       ),
+        //     ],
+        //   ),
+        // ),
         SizedBox(height: 20),
         AudioTranslation(),
       ],

@@ -25,7 +25,7 @@ class _RecordButtonState extends State<RecordButton>
         AnimationController(vsync: this, duration: const Duration(seconds: 2))
           ..repeat(reverse: true);
 
-    _color1 = ColorTween(begin: TongiColors.primary, end: Colors.orange)
+    _color1 = ColorTween(begin: TongiColors.primary, end: TongiColors.accent)
         .animate(_controller);
     _color2 = ColorTween(begin: const Color(0xFF8064E6), end: Colors.purple)
         .animate(_controller);
@@ -57,11 +57,11 @@ class _RecordButtonState extends State<RecordButton>
         animation: _controller,
         builder: (context, child) {
           return Container(
-            padding: const EdgeInsets.all(50),
+            padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
-                colors: [_color1.value ?? Colors.red, _color2.value ?? Colors.orange],
+                colors: [_color1.value ?? TongiColors.primary, _color2.value ?? TongiColors.accent],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -75,7 +75,7 @@ class _RecordButtonState extends State<RecordButton>
             ),
             child: Icon(
               isRecording ? Icons.stop : Icons.mic,
-              size: 60,
+              size: 40,
               color: Colors.white,
             ),
           );
