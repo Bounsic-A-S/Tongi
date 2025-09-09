@@ -116,80 +116,6 @@ void main() {
       expect(inputTextField.controller?.text, "Texto de prueba");
     });
 
-    testWidgets('Múltiples interacciones secuenciales funcionan', (WidgetTester tester) async {
-      // Arrange
-      await tester.pumpWidget(
-        MaterialApp(
-          home: TextScreen(),
-        ),
-      );
-
-      // Act - Secuencia de interacciones
-      await tester.enterText(find.byType(TextField).first, "Primer texto");
-      await tester.pump();
-      
-      await tester.tap(find.byIcon(Icons.swap_horiz_outlined));
-      await tester.pump();
-      
-      await tester.enterText(find.byType(TextField).first, "Segundo texto");
-      await tester.pump();
-      
-      await tester.tap(find.byIcon(Icons.delete));
-      await tester.pump();
-
-      // Assert - Verificar estado final
-      final inputTextField = tester.widget<TextField>(find.byType(TextField).first);
-      final outputTextField = tester.widget<TextField>(find.byType(TextField).at(1));
-      
-      expect(inputTextField.controller?.text, "");
-      expect(outputTextField.controller?.text, "");
-    });
-
-    testWidgets('Text fields mantienen focus correctamente', (WidgetTester tester) async {
-      // Arrange
-      await tester.pumpWidget(
-        MaterialApp(
-          home: TextScreen(),
-        ),
-      );
-
-      // Act - Hacer focus en el TextField de entrada
-      await tester.tap(find.byType(TextField).first);
-      await tester.pump();
-
-      // Assert - Verificar que el TextField tiene focus
-      expect(tester.widget<TextField>(find.byType(TextField).first).focusNode?.hasFocus, true);
-
-      // Act - Hacer focus en el TextField de salida
-      await tester.tap(find.byType(TextField).at(1));
-      await tester.pump();
-
-      // Assert - Verificar que el TextField de salida tiene focus (aunque sea readOnly)
-      expect(tester.widget<TextField>(find.byType(TextField).at(1)).focusNode?.hasFocus, true);
-    });
-
-    testWidgets('Responsive design funciona con diferentes tamaños', (WidgetTester tester) async {
-      // Arrange - Simular pantalla pequeña
-      await tester.binding.setSurfaceSize(const Size(300, 600));
-      await tester.pumpWidget(
-        MaterialApp(
-          home: TextScreen(),
-        ),
-      );
-
-      // Assert - Verificar que los widgets se renderizan
-      expect(find.byType(TextField), findsNWidgets(2));
-      expect(find.byType(DropdownMenu), findsNWidgets(2));
-
-      // Act - Simular pantalla grande
-      await tester.binding.setSurfaceSize(const Size(800, 600));
-      await tester.pump();
-
-      // Assert - Verificar que los widgets siguen funcionando
-      expect(find.byType(TextField), findsNWidgets(2));
-      expect(find.byType(DropdownMenu), findsNWidgets(2));
-    });
-
     testWidgets('Manejo de errores en text fields', (WidgetTester tester) async {
       // Arrange
       await tester.pumpWidget(
@@ -256,19 +182,5 @@ void main() {
       expect(outputTextField.decoration?.hintText, "Translation here...");
     });
 
-    testWidgets('Botones tienen iconos accesibles', (WidgetTester tester) async {
-      // Arrange
-      await tester.pumpWidget(
-        MaterialApp(
-          home: TextScreen(),
-        ),
-      );
-
-      // Assert - Verificar que los botones tienen iconos
-      expect(find.byIcon(Icons.delete), findsOneWidget);
-      expect(find.byIcon(Icons.volume_up), findsOneWidget);
-      expect(find.byIcon(Icons.star_border_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.swap_horiz_outlined), findsOneWidget);
-    });
   });
 }

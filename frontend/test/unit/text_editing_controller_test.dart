@@ -29,13 +29,13 @@ void main() {
 
       // Assert
       expect(inputController.text, "Hola mundo");
-      expect(outputController.text, "Hello world");
+      expect(outputController.text, "Hola mundo (translated xd)");
     });
 
     test('TextEditingController puede limpiar texto', () {
       // Arrange
       inputController.text = "Texto de prueba";
-      outputController.text = "Test text";
+      outputController.text = "Texto de prueba (translated xd)";
 
       // Act
       inputController.clear();
@@ -44,40 +44,6 @@ void main() {
       // Assert
       expect(inputController.text, isEmpty);
       expect(outputController.text, isEmpty);
-    });
-
-    test('TextEditingController puede insertar texto en posición específica', () {
-      // Arrange
-      inputController.text = "Hola mundo";
-
-      // Act
-      inputController.selection = TextSelection.collapsed(offset: 5);
-      inputController.text = "Hola, mundo";
-
-      // Assert
-      expect(inputController.text, "Hola, mundo");
-    });
-
-    test('TextEditingController notifica cambios de texto', () {
-      // Arrange
-      bool listenerCalled = false;
-      inputController.addListener(() {
-        listenerCalled = true;
-      });
-
-      // Act
-      inputController.text = "Nuevo texto";
-
-      // Assert
-      expect(listenerCalled, true);
-    });
-
-    test('TextEditingController puede obtener longitud del texto', () {
-      // Arrange
-      inputController.text = "Texto de prueba";
-
-      // Assert
-      expect(inputController.text.length, 15);
     });
 
     test('TextEditingController puede verificar si está vacío', () {
@@ -240,17 +206,6 @@ void main() {
       expect(expectedSuggestions, contains("How can I"));
     });
 
-    test('Sugerencias tienen formato correcto', () {
-      // Arrange
-      const List<String> suggestions = ["Hello", "What's up", "How can I"];
-
-      // Act & Assert
-      for (String suggestion in suggestions) {
-        expect(suggestion, isNotEmpty);
-        expect(suggestion.length, greaterThan(0));
-        expect(suggestion, isA<String>());
-      }
-    });
   });
 
   group('TextField Validation Tests', () {

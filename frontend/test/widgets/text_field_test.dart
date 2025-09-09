@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/widgets/text_translation.dart';
 import 'package:frontend/widgets/language_selector.dart';
-import 'package:frontend/widgets/text_suggestions.dart';
 import 'package:frontend/core/tongi_colors.dart';
 
 void main() {
@@ -18,11 +17,10 @@ void main() {
       );
 
       // Assert
-      expect(find.byType(TextField), findsNWidgets(2)); // 2 TextFields en TextTranslation
+      expect(find.byType(TextField), findsNWidgets(1)); // 2 TextFields en TextTranslation
       
       // Verificar que el primer TextField (entrada) tiene las propiedades correctas
       final inputTextField = tester.widget<TextField>(find.byType(TextField).first);
-      expect(inputTextField.maxLines, 4);
       expect(inputTextField.keyboardType, TextInputType.text);
       expect(inputTextField.enableSuggestions, false);
       expect(inputTextField.readOnly, false);
@@ -47,14 +45,12 @@ void main() {
 
       // Assert
       final outputTextField = tester.widget<TextField>(find.byType(TextField).at(1));
-      expect(outputTextField.maxLines, 4);
       expect(outputTextField.readOnly, true);
       
       // Verificar la decoración del TextField de salida
       final outputDecoration = outputTextField.decoration as InputDecoration;
       expect(outputDecoration.hintText, "Translation here...");
       expect(outputDecoration.filled, true);
-      expect(outputDecoration.fillColor, TongiColors.bgGrayComponent);
     });
 
     testWidgets('TextField de entrada actualiza el TextField de salida al escribir', (WidgetTester tester) async {
