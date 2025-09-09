@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_styles.dart';
@@ -26,7 +25,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         Column(
           children: [
             SizedBox(height: 20, child: Text("Entrada")),
-            DropdownMenu(
+            DropdownMenu<String>(
               controller: inputMenuController,
               enableFilter: true,
               hintText: "Seleccione un idioma",
@@ -68,7 +67,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         Column(
           children: [
             SizedBox(height: 20, child: Text("Salida")),
-            DropdownMenu(
+            DropdownMenu<String>(
               controller: outputMenuController,
               enableFilter: true,
               keyboardType: TextInputType.text,
