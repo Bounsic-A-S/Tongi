@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_styles.dart';
 import 'package:frontend/widgets/copy_button.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 class AudioTranslation extends StatefulWidget {
   const AudioTranslation({super.key});
@@ -18,6 +23,7 @@ class _AudioTranslationState extends State<AudioTranslation> {
   final TextEditingController _outputController = TextEditingController(
     text: "",
   );
+  final audioPlayer = AudioPlayer();
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +97,17 @@ class _AudioTranslationState extends State<AudioTranslation> {
                 children: [
                   Text("Traducción", style: TongiStyles.textFieldMainLabel),
                   TextButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final Directory documents =
+                          await getApplicationDocumentsDirectory();
+                      final String filePath = p.join(
+                        documents.path,
+                        "lastRecord.aacLc",
+                      );
+                      await audioPlayer.setFilePath(filePath);
+                      audioPlayer.setVolume(1.0);
+                      await audioPlayer.play();
+                    },
                     icon: Icon(Icons.volume_up, color: TongiColors.primary),
                     label: Text("          "),
                     style: TextButton.styleFrom(

@@ -1,85 +1,70 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'package:record/record.dart';
 
 class RecordButton extends StatefulWidget {
-  const RecordButton({Key? key}) : super(key: key);
+  const RecordButton({super.key});
 
   @override
   State<RecordButton> createState() => _RecordButtonState();
 }
 
-class _RecordButtonState extends State<RecordButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Color?> _color1;
-  late Animation<Color?> _color2;
-
+class _RecordButtonState extends State<RecordButton> {
+  final record = AudioRecorder();
+  final recordConfig = RecordConfig(
+    encoder: AudioEncoder.aacLc,
+    sampleRate: 44100,
+    numChannels: 1,
+    autoGain: true,
+    // echoCancel: true,
+    // noiseSuppress: true,
+  );
   bool isRecording = false;
 
   @override
-  void initState() {
-    super.initState();
-
-    // Animación cíclica de 2s
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2))
-          ..repeat(reverse: true);
-
-    _color1 = ColorTween(begin: TongiColors.primary, end: TongiColors.accent)
-        .animate(_controller);
-    _color2 = ColorTween(begin: const Color(0xFF8064E6), end: Colors.purple)
-        .animate(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void toggleRecording() {
-    setState(() {
-      isRecording = !isRecording;
-      if (isRecording) {
-        _controller.repeat(reverse: true);
-      } else {
-        _controller.stop();
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: toggleRecording,
-      borderRadius: BorderRadius.circular(100),
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Container(
-            padding: const EdgeInsets.all(30),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [_color1.value ?? TongiColors.primary, _color2.value ?? TongiColors.accent],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                  spreadRadius: 3,
-                ),
-              ],
-            ),
-            child: Icon(
-              isRecording ? Icons.stop : Icons.mic,
-              size: 40,
-              color: Colors.white,
-            ),
-          );
+    return Container(
+      padding: EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF8064E6), Color(0xFF4E99DF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        shape: BoxShape.circle,
+      ),
+      child: IconButton.filled(
+        onPressed: () async {
+          setState(() {
+            isRecording = !isRecording;
+          });
+          if (isRecording) {
+            if (await record.hasPermission()) {
+              final Directory documents =
+                  await getApplicationDocumentsDirectory();
+              final String filePath = p.join(
+                documents.path,
+                "lastRecord.aacLc",
+              );
+              await record.start(recordConfig, path: filePath);
+            }
+          } else {
+            await record.stop();
+          }
         },
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(Colors.transparent),
+          shadowColor: WidgetStateProperty.all(Colors.transparent),
+          overlayColor: WidgetStateProperty.all(Colors.transparent),
+        ),
+        icon: Icon(
+          isRecording ? Icons.stop : Icons.mic,
+          color: Colors.white,
+          size: 40,
+        ),
       ),
     );
   }
