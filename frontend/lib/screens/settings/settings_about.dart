@@ -9,7 +9,7 @@ class SettingsAboutScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text("Acerca de"),
         backgroundColor: TongiColors.primary,
         titleTextStyle: const TextStyle(
@@ -18,10 +18,43 @@ class SettingsAboutScreen extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      body: Center(
-        child: Text(
-          "Tongi es una aplicación movil diseñada para traducir de todas las maneras posibles, su nombre viene de las siglas Translation Optimized Naturally Guided IA",
-          style: TextStyle(fontSize: 20),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/images/tongiWhite.png",
+              height: 100,
+              color: Colors.black,
+            ),
+            const SizedBox(height: 10),
+            // Versión
+            const Text(
+              "Versión 1.0.0",
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 20),
+
+            // Descripción
+            const Text(
+              "Tongi es una aplicación móvil diseñada para traducir de todas las maneras posibles. "
+              "Su nombre viene de las siglas: Translation Optimized Naturally Guided IA.",
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 30),
+
+            // Equipo o contacto
+            const Divider(),
+            const SizedBox(height: 10),
+            const Text(
+              "Desarrollado por el equipo de Tongi\nContacto: induismo97@gmail.com",
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
