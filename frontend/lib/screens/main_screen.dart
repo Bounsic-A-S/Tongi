@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/settings_screen.dart';
 import 'package:frontend/screens/text_screen.dart';
 import 'package:frontend/widgets/dashboard/tongi_appbar.dart';
 import 'package:frontend/widgets/dashboard/tongi_navbar.dart';
@@ -13,7 +14,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // Aquí defines las páginas del body
+  // Body pages LIST (Carvajal aqui ponga las otras pantallas porfi :3)
   final List<Widget> _pages = [
     TextScreen(),
     Center(child: Text("Página de Buscar", style: TextStyle(fontSize: 24))),
@@ -30,7 +31,14 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: TongiAppbar(onSettingsPressed: () => {print("Settings Pressed")}),
+      appBar: TongiAppbar(
+        onSettingsPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SettingsScreen()),
+          );
+        },
+      ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: TongiNavbar(
         currentIndex: _selectedIndex,
