@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
 from controllers.ttt_controller import TTTController
+from models.ttt_models import TextRequest
 
 app = Flask(__name__)
 CORS(app)
@@ -24,15 +25,23 @@ async def process_text():
     try:
         # Simulación de procesamiento de texto
         # En un caso real, aquí se integraría con servicios de IA
+
+         # Obtener datos del request
+        data = request.get_json()
+
+        text = data.get("text")
+        source_language = data.get("source_language")
+        target_language = data.get("target_language")
+        task = data.get("task")
         
         # Crear objeto TextRequest
-        from models.ttt_models import TextRequest
         text_request = TextRequest(
             text=text,
             source_language=source_language,
             target_language=target_language,
             task=task
         )
+        print(text_request)
         
         # Procesar con el controlador
         result =await ttt_controller.process_text(text_request)
@@ -45,7 +54,7 @@ async def process_text():
             "confidence": result.confidence
         })
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        abort(status_code=500, detail=str(e))
 
 @app.get("/tasks")
 async def get_available_tasks():
@@ -70,5 +79,5 @@ async def get_supported_languages():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8003)
+    app.run(host="0.0.0.0", port=8003, debug=True)
+
