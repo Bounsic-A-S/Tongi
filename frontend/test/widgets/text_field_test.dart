@@ -169,7 +169,7 @@ void main() {
       );
 
       // Assert
-      expect(find.byType(DropdownMenu), findsNWidgets(2));
+      expect(find.byType(DropdownMenu<String>), findsNWidgets(2));
       expect(find.text("Entrada"), findsOneWidget);
       expect(find.text("Salida"), findsOneWidget);
       expect(find.byIcon(Icons.swap_horiz_outlined), findsOneWidget);
@@ -186,8 +186,8 @@ void main() {
       );
 
       // Assert
-      final dropdownMenus = find.byType(DropdownMenu);
-      final inputDropdown = tester.widget<DropdownMenu>(dropdownMenus.first);
+      final dropdownMenus = find.byType(DropdownMenu<String>);
+      final inputDropdown = tester.widget<DropdownMenu<String>>(dropdownMenus.first);
       
       expect(inputDropdown.enableFilter, true);
       expect(inputDropdown.hintText, "Seleccione un idioma");
@@ -205,8 +205,8 @@ void main() {
       );
 
       // Assert
-      final dropdownMenus = find.byType(DropdownMenu);
-      final outputDropdown = tester.widget<DropdownMenu>(dropdownMenus.at(1));
+      final dropdownMenus = find.byType(DropdownMenu<String>);
+      final outputDropdown = tester.widget<DropdownMenu<String>>(dropdownMenus.at(1));
       
       expect(outputDropdown.controller?.text, "Ingles");
       expect(outputDropdown.keyboardType, TextInputType.text);
@@ -227,9 +227,9 @@ void main() {
       await tester.pump();
 
       // Assert - Verificar que los valores se intercambian
-      final dropdownMenus = find.byType(DropdownMenu);
-      final inputDropdown = tester.widget<DropdownMenu>(dropdownMenus.first);
-      final outputDropdown = tester.widget<DropdownMenu>(dropdownMenus.at(1));
+      final dropdownMenus = find.byType(DropdownMenu<String>);
+      final inputDropdown = tester.widget<DropdownMenu<String>>(dropdownMenus.first);
+      final outputDropdown = tester.widget<DropdownMenu<String>>(dropdownMenus.at(1));
       
       expect(inputDropdown.controller?.text, "Ingles");
       expect(outputDropdown.controller?.text, "");
@@ -246,8 +246,8 @@ void main() {
       );
 
       // Assert
-      final dropdownMenus = find.byType(DropdownMenu);
-      final inputDropdown = tester.widget<DropdownMenu>(dropdownMenus.first);
+      final dropdownMenus = find.byType(DropdownMenu<String>);
+      final inputDropdown = tester.widget<DropdownMenu<String>>(dropdownMenus.first);
       
       final expectedLanguages = ["Español", "Ingles", "Alemán", "Java", "C++"];
       final actualLanguages = inputDropdown.dropdownMenuEntries
