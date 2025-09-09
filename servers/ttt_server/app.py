@@ -13,9 +13,9 @@ ttt_controller = TTTController()
 def root():
     return jsonify({"message": "TTT Server - Text to Text API"})
 
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "service": "TTT"}
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "healthy", "service": "TTT"})
 
 @app.route("/process", methods=["POST"])
 async def process_text():
@@ -23,6 +23,18 @@ async def process_text():
     Endpoint para procesar texto (traducción, resumen, análisis)
     """
     try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        text = data.get("text")
+        source_language = data.get("source_language", "es")
+        target_language = data.get("target_language", "en")
+        task = data.get("task", "translate")
+        
+        if not text:
+            return jsonify({"error": "Text is required"}), 400
+        
         # Simulación de procesamiento de texto
         # En un caso real, aquí se integraría con servicios de IA
 
@@ -56,8 +68,8 @@ async def process_text():
     except Exception as e:
         abort(status_code=500, detail=str(e))
 
-@app.get("/tasks")
-async def get_available_tasks():
+@app.route("/tasks", methods=["GET"])
+def get_available_tasks():
     """
     Obtener tareas disponibles
     """
@@ -67,8 +79,8 @@ async def get_available_tasks():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.get("/languages")
-async def get_supported_languages():
+@app.route("/languages", methods=["GET"])
+def get_supported_languages():
     """
     Obtener idiomas soportados
     """

@@ -1,53 +1,54 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-app = FastAPI(title="STT Server", description="Speech-to-Text API Server", version="1.0.0")
+app = Flask(__name__)
+CORS(app)
 
-class AudioRequest(BaseModel):
-    audio_data: str
-    language: str = "es"
+@app.route("/", methods=["GET"])
+def root():
+    return jsonify({"message": "STT Server - Speech to Text API"})
 
-class TranscriptionResponse(BaseModel):
-    text: str
-    confidence: float
-    language: str
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "healthy", "service": "STT"})
 
-@app.get("/")
-async def root():
-    return {"message": "STT Server - Speech to Text API"}
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "service": "STT"}
-
-@app.post("/transcribe", response_model=TranscriptionResponse)
-async def transcribe_audio(request: AudioRequest):
+@app.route("/transcribe", methods=["POST"])
+def transcribe_audio():
     """
     Endpoint para transcribir audio a texto
     """
     try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        audio_data = data.get("audio_data")
+        language = data.get("language", "es")
+        
+        if not audio_data:
+            return jsonify({"error": "Audio data is required"}), 400
+        
         # Simulación de transcripción
         # En un caso real, aquí se procesaría el audio
         mock_transcription = "Este es un texto de ejemplo transcrito del audio"
         
-        return TranscriptionResponse(
-            text=mock_transcription,
-            confidence=0.95,
-            language=request.language
-        )
+        return jsonify({
+            "text": mock_transcription,
+            "confidence": 0.95,
+            "language": language
+        })
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return jsonify({"error": str(e)}), 500
 
-@app.get("/languages")
-async def get_supported_languages():
+@app.route("/languages", methods=["GET"])
+def get_supported_languages():
     """
     Obtener idiomas soportados
     """
-    return {
+    return jsonify({
         "languages": ["es", "en", "fr", "de"],
         "default": "es"
-    }
+    })
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    app.run(host="0.0.0.0", port=8001, debug=True)

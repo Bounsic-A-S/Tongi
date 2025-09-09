@@ -33,14 +33,14 @@ python -m pip install --upgrade pip
 pip install -r stt_server\requirements.txt -r tts_server\requirements.txt -r ttt_server\requirements.txt
 
 REM Lanzar ventanas separadas
-start "STT 8001" cmd /k "cd /d %cd%\stt_server && call ..\venv\Scripts\activate.bat && python -m uvicorn app:app --host 0.0.0.0 --port 8001"
-start "TTS 8002" cmd /k "cd /d %cd%\tts_server && call ..\venv\Scripts\activate.bat && python -m uvicorn app:app --host 0.0.0.0 --port 8002"
-start "TTT 8003" cmd /k "cd /d %cd%\ttt_server && call ..\venv\Scripts\activate.bat && python -m uvicorn app:app --host 0.0.0.0 --port 8003"
+start "STT 8001" cmd /k "cd /d %cd%\stt_server && call ..\venv\Scripts\activate.bat && python app.py"
+start "TTS 8002" cmd /k "cd /d %cd%\tts_server && call ..\venv\Scripts\activate.bat && python app.py"
+start "TTT 8003" cmd /k "cd /d %cd%\ttt_server && call ..\venv\Scripts\activate.bat && python app.py"
 
 echo.
-echo STT: http://localhost:8001/docs
-echo TTS: http://localhost:8002/docs
-echo TTT: http://localhost:8003/docs
+echo STT: http://localhost:8001/
+echo TTS: http://localhost:8002/
+echo TTT: http://localhost:8003/
 
 popd
 endlocal
