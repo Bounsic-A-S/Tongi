@@ -1,26 +1,20 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:frontend/services/record_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
-import 'package:record/record.dart';
 
 class RecordButton extends StatefulWidget {
-  const RecordButton({super.key});
+  final RecordService service;
+
+  const RecordButton({super.key, required this.service});
 
   @override
   State<RecordButton> createState() => _RecordButtonState();
 }
 
 class _RecordButtonState extends State<RecordButton> {
-  final record = AudioRecorder();
-  final recordConfig = RecordConfig(
-    encoder: AudioEncoder.aacLc,
-    sampleRate: 44100,
-    numChannels: 1,
-    autoGain: true,
-    // echoCancel: true,
-    // noiseSuppress: true,
-  );
   bool isRecording = false;
 
   @override
@@ -41,17 +35,13 @@ class _RecordButtonState extends State<RecordButton> {
             isRecording = !isRecording;
           });
           if (isRecording) {
-            if (await record.hasPermission()) {
-              final Directory documents =
-                  await getApplicationDocumentsDirectory();
-              final String filePath = p.join(
-                documents.path,
-                "lastRecord.aacLc",
-              );
-              await record.start(recordConfig, path: filePath);
+            if (await widget.service.hasPermission()) {
+              final Directory dir = await getApplicationDocumentsDirectory();
+              final path = p.join(dir.path, "lastRecord.aacLc");
+              await widget.service.startRecording(path);
             }
           } else {
-            await record.stop();
+            await widget.service.stopRecording();
           }
         },
         style: ButtonStyle(
