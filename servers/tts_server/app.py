@@ -1,73 +1,60 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-app = FastAPI(title="TTS Server", description="Text-to-Speech API Server", version="1.0.0")
+app = Flask(__name__)
+CORS(app)
 
+@app.route("/", methods=["GET"])
+def root():
+    return jsonify({"message": "TTS Server - Text to Speech API"})
 
-class SynthesisRequest(BaseModel):
-    text: str
-    language: str = "es"
-    voice: str = "default"
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "healthy", "service": "TTS"})
 
-
-class SynthesisResponse(BaseModel):
-    audio_data: str  # base64
-    language: str
-    voice: str
-    sample_rate: int
-
-
-@app.get("/")
-async def root():
-    return {"message": "TTS Server - Text to Speech API"}
-
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "service": "TTS"}
-
-
-@app.post("/synthesize", response_model=SynthesisResponse)
-async def synthesize_speech(request: SynthesisRequest):
+@app.route("/synthesize", methods=["POST"])
+def synthesize_speech():
     """
     Endpoint para sintetizar voz desde texto
     """
     try:
-        if not request.text:
-            raise HTTPException(status_code=400, detail="Text is required")
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        text = data.get("text")
+        language = data.get("language", "es")
+        voice = data.get("voice", "default")
+        
+        if not text:
+            return jsonify({"error": "Text is required"}), 400
 
         # Simulación de síntesis: audio base64 ficticio
         mock_audio_b64 = "UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAA=="
 
-        return SynthesisResponse(
-            audio_data=mock_audio_b64,
-            language=request.language,
-            voice=request.voice,
-            sample_rate=22050,
-        )
-    except HTTPException:
-        raise
+        return jsonify({
+            "audio_data": mock_audio_b64,
+            "language": language,
+            "voice": voice,
+            "sample_rate": 22050,
+        })
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return jsonify({"error": str(e)}), 500
 
-
-@app.get("/voices")
-async def get_available_voices():
+@app.route("/voices", methods=["GET"])
+def get_available_voices():
     """
     Obtener voces disponibles por idioma
     """
-    return {
+    return jsonify({
         "languages": {
             "es": ["default", "female_1", "male_1"],
             "en": ["default", "female_1", "male_1"],
         },
         "default": {"es": "default", "en": "default"},
-    }
-
+    })
 
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8002)
+    app.run(host="0.0.0.0", port=8002, debug=True)
 
 

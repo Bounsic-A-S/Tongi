@@ -1,4 +1,7 @@
-from ..models.ttt_models import TextResponse, TaskInfo, LanguageInfo, LanguagesResponse
+from models.ttt_models import TextResponse, TaskInfo, LanguageInfo, LanguagesResponse, LanguageEnum
+import requests
+from typing import Optional
+import os
 
 class TTTService:
     def __init__(self):
@@ -16,6 +19,11 @@ class TTTService:
             {"id": "summarize", "name": "Resumen", "description": "Generar resumen del texto"},
             {"id": "analyze", "name": "Análisis", "description": "Analizar contenido del texto"}
         ]
+        api_key = os.getenv("AZURE_API_KEY")
+        endpoint = os.getenv("AZURE_ENDPOINT")
+        location = os.getenv("AZURE_LOCATION")
+        project_name = os.getenv("AZURE_PROJECT_NAME")
+        deployment_name = os.getenv("AZURE_DEPLOYMENT_NAME")
     
     async def process_text(self, text: str, source_language: str, target_language: str, task: str) -> TextResponse:
         """
@@ -96,3 +104,43 @@ class TTTService:
             default_source="es",
             default_target="en"
         )
+
+    async def translateAzure(self, text: str, source_language: Optional[str], target_language: str) -> TextResponse:
+        api_key = os.getenv("AZURE_API_KEY")
+        endpoint = os.getenv("AZURE_ENDPOINT")
+        location = os.getenv("AZURE_LOCATION")
+
+        path = "/translate?api-version=3.0"
+        params = f"&to={target_language.value}"  # <- usar .value
+
+        # Solo agregar 'from' si viene definido y no es 'auto'
+        if source_language and source_language != "auto":
+            params += f"&from={source_language}"
+
+        url = endpoint + path + params
+
+        headers = {
+            "Ocp-Apim-Subscription-Key": api_key,
+            "Ocp-Apim-Subscription-Region": location,
+            "Content-type": "application/json"
+        }
+
+        body = [{"text": text}]
+
+        try:
+            response = requests.post(url, headers=headers, json=body)
+            response.raise_for_status()
+            result = response.json()
+            print("result", result)
+            response = TextResponse(
+                result=result[0]["translations"][0]["text"],
+                source_language=result[0]["detectedLanguage"]["language"],
+                target_language=target_language,
+                task="translate",
+                confidence=result[0]["detectedLanguage"]["score"]
+            )
+            return response
+
+        except Exception as e:
+            return f"Error en traducción: {str(e)}"
+
