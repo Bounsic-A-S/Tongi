@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/audio_screen.dart';
 import 'package:frontend/screens/settings_screen.dart';
 import 'package:frontend/screens/text_screen.dart';
 import 'package:frontend/widgets/dashboard/tongi_appbar.dart';
@@ -17,8 +18,8 @@ class _MainScreenState extends State<MainScreen> {
   // Body pages LIST (Carvajal aqui ponga las otras pantallas porfi :3)
   final List<Widget> _pages = [
     TextScreen(),
-    Center(child: Text("Página de Buscar", style: TextStyle(fontSize: 24))),
-    Center(child: Text("Página de Perfil", style: TextStyle(fontSize: 24))),
+    Center(child: Text("Página de ff", style: TextStyle(fontSize: 24))),
+    AudioScreen(),
   ];
 
   void _onNavbarTapped(int index) {
@@ -39,7 +40,10 @@ class _MainScreenState extends State<MainScreen> {
           );
         },
       ),
-      body: _pages[_selectedIndex],
+      body: Padding(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+        child: _pages[_selectedIndex],
+      ),
       bottomNavigationBar: TongiNavbar(
         currentIndex: _selectedIndex,
         onTap: _onNavbarTapped,

@@ -5,6 +5,7 @@ class TongiColors {
   static const primary = Color(0xFF532FF0);
   static const secondary = Color(0xFF4F46E5);
   static const accent = Color.fromARGB(255, 116, 36, 166);
+  static const lightMainFill = Color(0xFFEFF6FF);
 
   // Gray and white colors
   static const darkGray = Color(0xFF6B7280);

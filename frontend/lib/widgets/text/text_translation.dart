@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_styles.dart';
+import 'package:frontend/widgets/copy_button.dart';
 
 class TextTranslation extends StatefulWidget {
   const TextTranslation({super.key});
@@ -26,21 +27,11 @@ class _TextTranslationState extends State<TextTranslation> {
             TextField(
               maxLines: 4,
               controller: _inputController,
-              style: TextStyle(
-                fontSize: 24,
-                color: TongiColors.darkGray,
-                fontFamily: "NotoSans",
-              ),
+              style: TongiStyles.textInput,
               decoration: InputDecoration(
                 hintText: "Ingrese un texto...",
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: TongiColors.border, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(10))
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: TongiColors.onFocus, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(10))
-                ),
+                enabledBorder: TongiStyles.enabledBorder,
+                focusedBorder: TongiStyles.focusedBorder,
                 hintStyle: TextStyle(color: TongiColors.gray),
               ),
               keyboardType: TextInputType.text,
@@ -98,24 +89,14 @@ class _TextTranslationState extends State<TextTranslation> {
               maxLines: 4,
               readOnly: true,
               controller: _outputController,
-              style: TextStyle(
-                fontSize: 24,
-                color: TongiColors.textFill,
-                fontFamily: "NotoSans",
-              ),
+              style: TongiStyles.textOutput,
               decoration: InputDecoration(
                 hintText: "Translation here...",
                 hintStyle: TextStyle(color: TongiColors.gray),
                 filled: true,
                 fillColor: TongiColors.bgGrayComponent,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: TongiColors.border, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(10))
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: TongiColors.border, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(10))
-                ),
+                enabledBorder: TongiStyles.enabledBorder,
+                focusedBorder: TongiStyles.enabledBorder,
               ),
             ),
             Positioned(
@@ -137,19 +118,7 @@ class _TextTranslationState extends State<TextTranslation> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            TextButton.icon(
-              onPressed: () {},
-              label: Text(
-                "Copiar",
-                style: TongiStyles.textBody,
-              ),
-              style: TextButton.styleFrom(
-                iconAlignment: IconAlignment.end,
-                padding: EdgeInsets.all(0),
-                overlayColor: Colors.white,
-              ),
-              icon: Icon(Icons.copy, color: TongiColors.darkGray),
-            ),
+            CopyButton()
           ],
         ),
         SizedBox(height: 5),
