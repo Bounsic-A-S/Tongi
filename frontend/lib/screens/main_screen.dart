@@ -17,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   // Aquí defines las páginas del body
   final List<Widget> _pages = [
     TextScreen(),
-    Center(child: Text("Página de Buscar", style: TextStyle(fontSize: 24))),
+    Center(child: Text("Página de ff", style: TextStyle(fontSize: 24))),
     AudioScreen(),
   ];
 

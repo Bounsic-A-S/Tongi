@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_styles.dart';
