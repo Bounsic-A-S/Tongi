@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -10,45 +7,33 @@ import 'package:path_provider_platform_interface/path_provider_platform_interfac
 
 class MockRecordService extends Mock implements RecordService {}
 
-class _FakePathProvider extends PathProviderPlatform {
-  Directory? _tempDir;
-
-  Future<Directory> _ensureTemp() async {
-    return _tempDir ??= await Directory.systemTemp.createTemp('path_provider_test_');
-  }
-
+class FakePathProvider extends PathProviderPlatform {
   @override
-  Future<String?> getApplicationDocumentsPath() async {
-    final dir = await _ensureTemp();
-    return dir.path;
-  }
+  Future<String> getApplicationDocumentsPath() async => '/tmp';
 }
 
 void main() {
   late MockRecordService mockService;
 
   setUpAll(() {
-    PathProviderPlatform.instance = _FakePathProvider();
+    PathProviderPlatform.instance = FakePathProvider();
   });
 
   setUp(() {
     mockService = MockRecordService();
   });
 
-  testWidgets('Inicia y detiene grabación al presionar el botón', (tester) async {
-    // Stub del servicio
+  testWidgets('Start and stop recording when tapping button', (
+    WidgetTester tester,
+  ) async {
+    // Arrange
     when(() => mockService.hasPermission()).thenAnswer((_) async => true);
-
-    final startCompleter = Completer<void>();
-    when(() => mockService.startRecording(any())).thenAnswer((_) async {
-      startCompleter.complete();
-    });
-
-    final stopCompleter = Completer<void>();
-    when(() => mockService.stopRecording()).thenAnswer((_) async {
-      stopCompleter.complete();
-      return 'fake_path';
-    });
+    when(
+      () => mockService.startRecording(any()),
+    ).thenAnswer((_) async => Future.value());
+    when(
+      () => mockService.stopRecording(),
+    ).thenAnswer((_) async => Future.value());
 
     await tester.pumpWidget(
       MaterialApp(
@@ -56,19 +41,24 @@ void main() {
       ),
     );
 
-    // Tap 1: inicia grabación
+    // Mic al inicio
+    expect(find.byIcon(Icons.mic), findsOneWidget);
+
+    // Tap para grabar
     await tester.tap(find.byType(IconButton));
-    await tester.pump(); // 🔑 deja que procese el cambio de estado
-    await startCompleter.future;
+    await tester.pump();
 
     verify(() => mockService.hasPermission()).called(1);
     verify(() => mockService.startRecording(any())).called(1);
 
-    // Tap 2: detiene grabación
+    expect(find.byIcon(Icons.stop), findsOneWidget);
+
+    // Tap para detener
     await tester.tap(find.byType(IconButton));
-    await tester.pump(); // 🔑 deja que procese el cambio de estado
-    await stopCompleter.future;
+    await tester.pump();
 
     verify(() => mockService.stopRecording()).called(1);
+
+    expect(find.byIcon(Icons.mic), findsOneWidget);
   });
 }
