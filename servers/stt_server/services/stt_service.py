@@ -1,4 +1,6 @@
-from ..models.stt_models import TranscriptionResponse, LanguageInfo, LanguagesResponse
+from models.stt_models import TranscriptionResponse, LanguageInfo, LanguagesResponse
+import os
+import azure.cognitiveservices.speech as speechsdk
 
 class STTService:
     def __init__(self):
@@ -9,28 +11,57 @@ class STTService:
             "de": {"name": "Deutsch", "supported": True}
         }
     
-    async def transcribe(self, audio_data: str, language: str) -> TranscriptionResponse:
-        """
-        Servicio para transcribir audio a texto
-        """
-        # Simulación de transcripción
-        # En un caso real, aquí se integraría con un servicio de STT como Google Speech-to-Text
-        
-        mock_transcriptions = {
-            "es": "Este es un texto de ejemplo transcrito del audio en español",
-            "en": "This is an example text transcribed from audio in English",
-            "fr": "Ceci est un exemple de texte transcrit de l'audio en français",
-            "de": "Dies ist ein Beispieltext, der aus Audio auf Deutsch transkribiert wurde"
-        }
-        
-        text = mock_transcriptions.get(language, mock_transcriptions["es"])
-        confidence = 0.95
-        
-        return TranscriptionResponse(
-            text=text,
-            confidence=confidence,
-            language=language
+    async def transcribe(self, audio_data: str, target_language: str):
+        api_key = os.getenv("AZURE_API_KEY")
+        location = os.getenv("AZURE_LOCATION")
+
+        translation_config = speechsdk.translation.SpeechTranslationConfig(
+            subscription=api_key,
+            region=location
         )
+
+        # Idioma de salida (ej: "es-ES", "fr-FR", "it-IT")
+        translation_config.add_target_language(target_language)
+
+        # Auto detectar entre varios idiomas de entrada
+        auto_detect_source_language_config = speechsdk.languageconfig.AutoDetectSourceLanguageConfig(
+            languages=["en-US", "es-ES", "fr-FR", "it-IT"]
+        )
+
+        # Ruta del archivo de audio
+        pathAudio = os.getcwd()
+        folderAudio= "/audio_files/"
+        os.makedirs(pathAudio + folderAudio, exist_ok=True)     
+        full_path = pathAudio + folderAudio
+        audio_file_path = os.path.join(full_path, audio_data)
+
+        audioInput = speechsdk.AudioConfig(filename=audio_file_path)
+
+        # Reconocedor con auto-detect + traducción
+        recognizer = speechsdk.translation.TranslationRecognizer(
+            translation_config=translation_config,
+            audio_config=audioInput,
+            auto_detect_source_language_config=auto_detect_source_language_config
+        )
+
+        result = recognizer.recognize_once_async().get()
+
+        if result.reason == speechsdk.ResultReason.TranslatedSpeech:
+            detected_lang = result.properties[
+                speechsdk.PropertyId.SpeechServiceConnection_AutoDetectSourceLanguageResult
+            ]
+            print(f"Idioma detectado: {detected_lang}")
+            print(f"Texto original: {result.text}")
+            print(f"Traducción: {result.translations[target_language]}")
+            return {
+                "detected_language": detected_lang,
+                "original_text": result.text,
+                "translation": result.translations[target_language]
+            }
+        elif result.reason == speechsdk.ResultReason.NoMatch:
+            return {"error": "No se reconoció nada en el audio"}
+        else:
+            return {"error": str(result.reason)}
     
     async def get_supported_languages(self) -> LanguagesResponse:
         """

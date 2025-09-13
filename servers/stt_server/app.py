@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from controllers.stt_controller import STTController;
 
 app = Flask(__name__)
 CORS(app)
+
+stt_controller = STTController()
 
 @app.route("/", methods=["GET"])
 def root():
@@ -13,7 +16,7 @@ def health_check():
     return jsonify({"status": "healthy", "service": "STT"})
 
 @app.route("/transcribe", methods=["POST"])
-def transcribe_audio():
+async def transcribe_audio():
     """
     Endpoint para transcribir audio a texto
     """
@@ -22,20 +25,13 @@ def transcribe_audio():
         if not data:
             return jsonify({"error": "No JSON data provided"}), 400
         
-        audio_data = data.get("audio_data")
-        language = data.get("language", "es")
-        
-        if not audio_data:
-            return jsonify({"error": "Audio data is required"}), 400
-        
-        # Simulación de transcripción
-        # En un caso real, aquí se procesaría el audio
-        mock_transcription = "Este es un texto de ejemplo transcrito del audio"
+
+        transcription = await stt_controller.transcribe_audio(data)
         
         return jsonify({
-            "text": mock_transcription,
+            "text": transcription.text,
             "confidence": 0.95,
-            "language": language
+            "language": data.get("language")
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500

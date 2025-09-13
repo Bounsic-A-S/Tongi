@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from controllers.tts_controller import TTSController
+from models.tts_models import SynthesisRequest
 
 app = Flask(__name__)
 CORS(app)
-
+controller = TTSController();
 @app.route("/", methods=["GET"])
 def root():
     return jsonify({"message": "TTS Server - Text to Speech API"})
@@ -12,8 +14,8 @@ def root():
 def health_check():
     return jsonify({"status": "healthy", "service": "TTS"})
 
-@app.route("/synthesize", methods=["POST"])
-def synthesize_speech():
+@app.route("/text-voice", methods=["POST"])
+async def synthesize_speech():
     """
     Endpoint para sintetizar voz desde texto
     """
@@ -23,21 +25,20 @@ def synthesize_speech():
             return jsonify({"error": "No JSON data provided"}), 400
         
         text = data.get("text")
-        language = data.get("language", "es")
-        voice = data.get("voice", "default")
+        language = data.get("language", "en-US")
+        voice = data.get("voice", "BrandonMultilingualNeural")
         
         if not text:
             return jsonify({"error": "Text is required"}), 400
 
-        # Simulación de síntesis: audio base64 ficticio
-        mock_audio_b64 = "UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAA=="
+        request_data = SynthesisRequest(
+            text=text,
+            language=language,
+            voice=voice
+        )
 
-        return jsonify({
-            "audio_data": mock_audio_b64,
-            "language": language,
-            "voice": voice,
-            "sample_rate": 22050,
-        })
+        response = await controller.synthesize(request_data)
+        return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
