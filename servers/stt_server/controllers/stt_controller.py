@@ -1,12 +1,12 @@
 from flask import abort, jsonify
-from models.stt_models import AudioRequest, TranscriptionResponse
+from models.stt_models import AudioRequest, TranscriptionResponse, TranslationResponse
 from services.stt_service import STTService
 
 class STTController:
     def __init__(self):
         self.stt_service = STTService()
     
-    async def transcribe_audio(self, request: AudioRequest) -> TranscriptionResponse:
+    async def transcribe_audio(self, request: AudioRequest) -> TranslationResponse:
         """
         Controlador para la transcripción de audio
         """

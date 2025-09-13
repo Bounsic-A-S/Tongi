@@ -27,6 +27,21 @@ class TranscriptionResponse(BaseModel):
             }
         }
 
+class TranslationResponse(BaseModel):
+    detected_language: str
+    original_text: str
+    translation: str
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "detected_language": "en",
+                "original_text": "This is a transcribed text from audio",
+                "translation": "Este es un texto transcrito del audio"
+            }
+        }
+
+
 class LanguageInfo(BaseModel):
     code: str
     name: str

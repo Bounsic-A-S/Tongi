@@ -29,9 +29,9 @@ async def transcribe_audio():
         transcription = await stt_controller.transcribe_audio(data)
         
         return jsonify({
-            "text": transcription.text,
-            "confidence": 0.95,
-            "language": data.get("language")
+                "detected_language": transcription.detected_language,
+                "original_text": transcription.original_text,
+                "translation": transcription.translation
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500

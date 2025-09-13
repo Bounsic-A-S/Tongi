@@ -1,4 +1,4 @@
-from models.stt_models import TranscriptionResponse, LanguageInfo, LanguagesResponse
+from models.stt_models import TranscriptionResponse, LanguageInfo, LanguagesResponse, TranslationResponse
 import os
 import azure.cognitiveservices.speech as speechsdk
 
@@ -11,24 +11,20 @@ class STTService:
             "de": {"name": "Deutsch", "supported": True}
         }
     
-    async def transcribe(self, audio_data: str, target_language: str):
+    async def transcribe(self, audio_data: str, language: str) -> TranslationResponse:
+        """
+        Servicio para transcribir audio a texto
+        """
         api_key = os.getenv("AZURE_API_KEY")
         location = os.getenv("AZURE_LOCATION")
 
-        translation_config = speechsdk.translation.SpeechTranslationConfig(
-            subscription=api_key,
-            region=location
+        speech_config = speechsdk.translation.SpeechTranslationConfig(subscription=api_key, region=location)
+        speech_config.add_target_language(language)
+
+        auto_translate_config = speechsdk.languageconfig.AutoDetectSourceLanguageConfig(
+            languages=["en-US", "es-ES", "fr-FR", "de-DE"]
         )
 
-        # Idioma de salida (ej: "es-ES", "fr-FR", "it-IT")
-        translation_config.add_target_language(target_language)
-
-        # Auto detectar entre varios idiomas de entrada
-        auto_detect_source_language_config = speechsdk.languageconfig.AutoDetectSourceLanguageConfig(
-            languages=["en-US", "es-ES", "fr-FR", "it-IT"]
-        )
-
-        # Ruta del archivo de audio
         pathAudio = os.getcwd()
         folderAudio= "/audio_files/"
         os.makedirs(pathAudio + folderAudio, exist_ok=True)     
@@ -36,32 +32,39 @@ class STTService:
         audio_file_path = os.path.join(full_path, audio_data)
 
         audioInput = speechsdk.AudioConfig(filename=audio_file_path)
-
-        # Reconocedor con auto-detect + traducción
-        recognizer = speechsdk.translation.TranslationRecognizer(
-            translation_config=translation_config,
+        
+        speech_transcriber = speechsdk.translation.TranslationRecognizer(
+            translation_config=speech_config, 
             audio_config=audioInput,
-            auto_detect_source_language_config=auto_detect_source_language_config
-        )
+            auto_detect_source_language_config= auto_translate_config)
 
-        result = recognizer.recognize_once_async().get()
+        result = speech_transcriber.recognize_once_async().get()
+        print(result)
 
         if result.reason == speechsdk.ResultReason.TranslatedSpeech:
             detected_lang = result.properties[
                 speechsdk.PropertyId.SpeechServiceConnection_AutoDetectSourceLanguageResult
             ]
-            print(f"Idioma detectado: {detected_lang}")
-            print(f"Texto original: {result.text}")
-            print(f"Traducción: {result.translations[target_language]}")
-            return {
-                "detected_language": detected_lang,
-                "original_text": result.text,
-                "translation": result.translations[target_language]
-            }
+            return TranslationResponse(
+                detected_language=detected_lang,
+                original_text=result.text,
+                translation=result.translations.get(language, "")
+            )
+
         elif result.reason == speechsdk.ResultReason.NoMatch:
-            return {"error": "No se reconoció nada en el audio"}
+            return TranslationResponse(
+                detected_language="unknown",
+                original_text="",
+                translation=f"No se reconoció nada en el audio para {language}"
+            )
+
         else:
-            return {"error": str(result.reason)}
+            cancellation_details = result.cancellation_details
+            return TranslationResponse(
+                detected_language="error",
+            original_text="",
+            translation=f"Error: {cancellation_details.reason}, {cancellation_details.error_details}"
+        )
     
     async def get_supported_languages(self) -> LanguagesResponse:
         """
