@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_styles.dart';
+import 'package:frontend/services/record_service.dart';
 import 'package:frontend/widgets/audio/audio_translation.dart';
 import 'package:frontend/widgets/language_selector.dart';
 import 'package:frontend/widgets/audio/record_button.dart';
@@ -14,6 +15,14 @@ class AudioScreen extends StatefulWidget {
 }
 
 class _AudioScreenState extends State<AudioScreen> {
+  late final RecordService _recordService;
+
+  @override
+  void initState() {
+    super.initState();
+    _recordService = RecordService();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -31,7 +40,7 @@ class _AudioScreenState extends State<AudioScreen> {
             children: [
               Column(
                 children: [
-                  RecordButton(),
+                  RecordButton(service: _recordService),
                   SizedBox(height: 15),
                   Text(
                     "Toca para iniciar a grabar.",
