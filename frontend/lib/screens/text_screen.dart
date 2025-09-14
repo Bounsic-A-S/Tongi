@@ -15,11 +15,17 @@ class _DashboardScreenState extends State<TextScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        LanguageSelector(),
-        SizedBox(height: 10),
-        SizedBox(height: 10),
-        TextTranslation(),
-        TextSuggestions(),
+        Expanded(
+          child: ListView(
+            children: [
+              LanguageSelector(),
+              SizedBox(height: 10),
+              SizedBox(height: 10),
+              TextTranslation(),
+              TextSuggestions(),
+            ],
+          ),
+        ),
       ],
     );
   }

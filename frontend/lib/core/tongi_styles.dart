@@ -15,7 +15,7 @@ class TongiStyles {
   );
 
   static const TextStyle textLabel = TextStyle(
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w500,
   );
