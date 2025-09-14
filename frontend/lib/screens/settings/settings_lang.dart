@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
+import 'package:frontend/core/tongi_languages.dart';
 
 class SettingsLangScreen extends StatefulWidget {
   const SettingsLangScreen({super.key});
@@ -9,15 +10,7 @@ class SettingsLangScreen extends StatefulWidget {
 }
 
 class _SettingsLangScreenState extends State<SettingsLangScreen> {
-  String _selectedLang = "Español";
-
-  final List<String> _langs = [
-    "Español",
-    "Inglés",
-    "Francés",
-    "Alemán",
-    "Italiano",
-  ];
+  String _selectedLang = availableLanguages[0].label;
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +27,11 @@ class _SettingsLangScreenState extends State<SettingsLangScreen> {
         ),
       ),
       body: ListView(
-        children: _langs.map((lang) {
+        children: availableLanguages.map((lang) {
           return RadioListTile<String>(
-            title: Text(lang),
-            value: lang,
-            groupValue: _selectedLang, // 👈 todavía se usa en stable
+            title: Text(lang.label),
+            value: lang.label,
+            groupValue: _selectedLang,
             onChanged: (value) {
               setState(() {
                 _selectedLang = value!;
