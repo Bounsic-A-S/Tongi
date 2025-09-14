@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
+import 'package:frontend/core/tongi_languages.dart';
 import 'package:frontend/core/tongi_styles.dart';
 
 class LanguageSelector extends StatefulWidget {
@@ -10,10 +11,11 @@ class LanguageSelector extends StatefulWidget {
 }
 
 class _LanguageSelectorState extends State<LanguageSelector> {
-  final List<String> languages = ["Español", "Ingles", "Alemán", "Java", "C++"];
-  final TextEditingController inputMenuController = TextEditingController();
+  final TextEditingController inputMenuController = TextEditingController(
+    text: availableLanguages[0].label,
+  );
   final TextEditingController outputMenuController = TextEditingController(
-    text: "Ingles",
+    text: availableLanguages[1].label,
   );
 
   @override
@@ -41,9 +43,14 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 ),
               ),
               textStyle: TongiStyles.textLabel,
-              dropdownMenuEntries: languages.map((lang) {
-                return DropdownMenuEntry(value: lang, label: lang);
-              }).toList(),
+              onSelected: (value) => setState(() {}),
+              dropdownMenuEntries: availableLanguages
+                  .where((lang) => lang.label != outputMenuController.text)
+                  .map(
+                    (lang) =>
+                        DropdownMenuEntry(value: lang.code, label: lang.label),
+                  )
+                  .toList(),
             ),
           ],
         ),
@@ -84,9 +91,14 @@ class _LanguageSelectorState extends State<LanguageSelector> {
               ),
               hintText: "Seleccione un idioma",
               textStyle: TongiStyles.textLabel,
-              dropdownMenuEntries: languages.map((lang) {
-                return DropdownMenuEntry(value: lang, label: lang);
-              }).toList(),
+              onSelected: (value) => setState(() {}),
+              dropdownMenuEntries: availableLanguages
+                  .where((lang) => lang.label != inputMenuController.text)
+                  .map(
+                    (lang) =>
+                        DropdownMenuEntry(value: lang.code, label: lang.label),
+                  )
+                  .toList(),
             ),
           ],
         ),
