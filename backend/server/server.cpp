@@ -5,6 +5,8 @@
 
 #include "../controllers/health/health_controller.h"
 #include "../controllers/data/data_controller.h"
+#include "../controllers/ttt/ttt_controller.h"
+
 
 TongiServer::TongiServer(Pistache::Address addr)
     : httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(addr)) {}
@@ -30,7 +32,9 @@ void TongiServer::setupRoutes() {
     Rest::Routes::Get(router, "/", Rest::Routes::bind(&HealthController::root));
     Rest::Routes::Get(router, "/hello", Rest::Routes::bind(&HealthController::hello));
     Rest::Routes::Get(router, "/api/health", Rest::Routes::bind(&HealthController::checkHealth));
-
+    // data test
     Rest::Routes::Get(router, "/api/data", Rest::Routes::bind(&DataController::getData));
     Rest::Routes::Post(router, "/api/data", Rest::Routes::bind(&DataController::postData));
+    // ttt
+    Rest::Routes::Get(router, "/api/ttt/getHealth", Rest::Routes::bind(&TTTController::getTextTranslation));
 }
