@@ -9,9 +9,14 @@ static void setJsonHeaders(Http::ResponseWriter& response) {
         .add<Http::Header::AccessControlAllowOrigin>("*")
         .add<Http::Header::ContentType>(MIME(Application, Json));
 }
-
-void TTTController::getTextTranslation(const Rest::Request&, Http::ResponseWriter response) {
+void TTTController::getHealth(const Rest::Request&, Http::ResponseWriter response) {
     setJsonHeaders(response);
-    auto json = TTTService::fetchApiData();
+    auto json = TTTService::fetchApiHealth();
+    response.send(Http::Code::Ok, json);
+}
+void TTTController::TextTranslation(const Rest::Request& request, Http::ResponseWriter response) {
+    setJsonHeaders(response);
+    auto body = request.body();
+    auto json = TTTService::fetchApiTranslation(body);
     response.send(Http::Code::Ok, json);
 }

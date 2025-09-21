@@ -5,7 +5,9 @@
 
 class TTTService {
 public:
-    static std::string fetchApiData();
+    static std::string fetchApiHealth();
+    static std::string fetchApiTranslation(const std::string& body);
+
 };
 
 #endif

@@ -6,7 +6,8 @@
 
 class TTTController {
 public:
-    static void getTextTranslation(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter response);
+    static void getHealth(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter response);
+    static void TextTranslation(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter response);
 };
 
 #endif
