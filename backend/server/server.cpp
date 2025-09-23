@@ -36,7 +36,10 @@ void TongiServer::setupRoutes() {
     Rest::Routes::Get(router, "/api/data", Rest::Routes::bind(&DataController::getData));
     Rest::Routes::Post(router, "/api/data", Rest::Routes::bind(&DataController::postData));
     // ttt
+    Rest::Routes::Get(router, "/api/ttt/", Rest::Routes::bind(&TTTController::getResponseFromMicroService));
     Rest::Routes::Get(router, "/api/ttt/health", Rest::Routes::bind(&TTTController::getHealth));
     Rest::Routes::Post(router, "/api/ttt/translate", Rest::Routes::bind(&TTTController::TextTranslation));
+    Rest::Routes::Get(router, "/api/ttt/tasks", Rest::Routes::bind(&TTTController::getTasks));
+    Rest::Routes::Get(router, "/api/ttt/languages", Rest::Routes::bind(&TTTController::getLanguagesAvailable));
 
 }
