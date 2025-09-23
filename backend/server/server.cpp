@@ -6,6 +6,7 @@
 #include "../controllers/health/health_controller.h"
 #include "../controllers/data/data_controller.h"
 #include "../controllers/ttt/ttt_controller.h"
+#include "../controllers/tts/tts_controller.h"
 
 
 TongiServer::TongiServer(Pistache::Address addr)
@@ -41,5 +42,10 @@ void TongiServer::setupRoutes() {
     Rest::Routes::Post(router, "/api/ttt/translate", Rest::Routes::bind(&TTTController::TextTranslation));
     Rest::Routes::Get(router, "/api/ttt/tasks", Rest::Routes::bind(&TTTController::getTasks));
     Rest::Routes::Get(router, "/api/ttt/languages", Rest::Routes::bind(&TTTController::getLanguagesAvailable));
+    // tts
+    Rest::Routes::Get(router, "/api/tts/", Rest::Routes::bind(&TTSController::getResponseFromMicroService));
+    Rest::Routes::Get(router, "/api/tts/health", Rest::Routes::bind(&TTSController::getHealth));
+
+
 
 }

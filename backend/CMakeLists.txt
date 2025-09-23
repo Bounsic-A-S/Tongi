@@ -30,8 +30,10 @@ add_executable(tongi_server
     controllers/health/health_controller.cpp
     controllers/data/data_controller.cpp
     controllers/ttt/ttt_controller.cpp
+    controllers/tts/tts_controller.cpp
     services/data/data_service.cpp
     services/ttt/ttt_service.cpp
+    services/tts/tts_service.cpp
 )
 
 target_link_libraries(tongi_server
