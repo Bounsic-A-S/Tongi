@@ -5,6 +5,10 @@
 
 #include "../controllers/health/health_controller.h"
 #include "../controllers/data/data_controller.h"
+#include "../controllers/ttt/ttt_controller.h"
+#include "../controllers/tts/tts_controller.h"
+#include "../controllers/stt/stt_controller.h"
+
 
 TongiServer::TongiServer(Pistache::Address addr)
     : httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(addr)) {}
@@ -30,7 +34,22 @@ void TongiServer::setupRoutes() {
     Rest::Routes::Get(router, "/", Rest::Routes::bind(&HealthController::root));
     Rest::Routes::Get(router, "/hello", Rest::Routes::bind(&HealthController::hello));
     Rest::Routes::Get(router, "/api/health", Rest::Routes::bind(&HealthController::checkHealth));
-
+    // data test
     Rest::Routes::Get(router, "/api/data", Rest::Routes::bind(&DataController::getData));
     Rest::Routes::Post(router, "/api/data", Rest::Routes::bind(&DataController::postData));
+    // ttt
+    Rest::Routes::Get(router, "/api/ttt/", Rest::Routes::bind(&TTTController::getResponseFromMicroService));
+    Rest::Routes::Get(router, "/api/ttt/health", Rest::Routes::bind(&TTTController::getHealth));
+    Rest::Routes::Post(router, "/api/ttt/translate", Rest::Routes::bind(&TTTController::TextTranslation));
+    Rest::Routes::Get(router, "/api/ttt/tasks", Rest::Routes::bind(&TTTController::getTasks));
+    Rest::Routes::Get(router, "/api/ttt/languages", Rest::Routes::bind(&TTTController::getLanguagesAvailable));
+    // tts
+    Rest::Routes::Get(router, "/api/tts/", Rest::Routes::bind(&TTSController::getResponseFromMicroService));
+    Rest::Routes::Get(router, "/api/tts/health", Rest::Routes::bind(&TTSController::getHealth));
+    //stt
+    Rest::Routes::Get(router, "/api/stt/", Rest::Routes::bind(&STTController::getResponseFromMicroService));
+    Rest::Routes::Get(router, "/api/stt/health", Rest::Routes::bind(&STTController::getHealth));
+    
+
+
 }

@@ -21,7 +21,7 @@ class _AudioTranslationState extends State<AudioTranslation> {
   final TextEditingController _outputController = TextEditingController(
     text: "",
   );
-  final audioPlayer = AudioPlayer();
+  final AudioPlayer audioPlayer  = AudioPlayer();
 
   @override
   Widget build(BuildContext context) {
