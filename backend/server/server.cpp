@@ -7,6 +7,7 @@
 #include "../controllers/data/data_controller.h"
 #include "../controllers/ttt/ttt_controller.h"
 #include "../controllers/tts/tts_controller.h"
+#include "../controllers/stt/stt_controller.h"
 
 
 TongiServer::TongiServer(Pistache::Address addr)
@@ -45,7 +46,10 @@ void TongiServer::setupRoutes() {
     // tts
     Rest::Routes::Get(router, "/api/tts/", Rest::Routes::bind(&TTSController::getResponseFromMicroService));
     Rest::Routes::Get(router, "/api/tts/health", Rest::Routes::bind(&TTSController::getHealth));
-
+    //stt
+    Rest::Routes::Get(router, "/api/stt/", Rest::Routes::bind(&STTController::getResponseFromMicroService));
+    Rest::Routes::Get(router, "/api/stt/health", Rest::Routes::bind(&STTController::getHealth));
+    
 
 
 }
