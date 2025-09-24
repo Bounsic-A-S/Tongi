@@ -2,21 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_languages.dart';
 import 'package:frontend/core/tongi_styles.dart';
+import 'package:frontend/controllers/translation_controller.dart';
 
 class LanguageSelector extends StatefulWidget {
-  const LanguageSelector({super.key});
+  final TranslationController controller;
+  
+  const LanguageSelector({super.key, required this.controller});
 
   @override
   State<LanguageSelector> createState() => _LanguageSelectorState();
 }
 
 class _LanguageSelectorState extends State<LanguageSelector> {
-  final TextEditingController inputMenuController = TextEditingController(
-    text: availableLanguages[0].label,
-  );
-  final TextEditingController outputMenuController = TextEditingController(
-    text: availableLanguages[1].label,
-  );
+  late final TextEditingController inputMenuController;
+  late final TextEditingController outputMenuController;
+  
+  @override
+  void initState() {
+    super.initState();
+    inputMenuController = TextEditingController(
+      text: widget.controller.sourceLanguageLabel,
+    );
+    outputMenuController = TextEditingController(
+      text: widget.controller.targetLanguageLabel,
+    );
+    
+    // Listen to controller changes
+    widget.controller.addListener(_updateControllers);
+  }
+  
+  @override
+  void dispose() {
+    widget.controller.removeListener(_updateControllers);
+    inputMenuController.dispose();
+    outputMenuController.dispose();
+    super.dispose();
+  }
+  
+  void _updateControllers() {
+    if (mounted) {
+      inputMenuController.text = widget.controller.sourceLanguageLabel;
+      outputMenuController.text = widget.controller.targetLanguageLabel;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +77,13 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   ),
                 ),
                 textStyle: TongiStyles.textLabel,
-                onSelected: (value) => setState(() {}),
-                dropdownMenuEntries: availableLanguages
-                    .where((lang) => lang.label != outputMenuController.text)
+                onSelected: (value) {
+                  if (value != null) {
+                    widget.controller.setSourceLanguage(value);
+                  }
+                },
+                dropdownMenuEntries: widget.controller
+                    .getAvailableSourceLanguages()
                     .map(
                       (lang) => DropdownMenuEntry(
                         value: lang.code,
@@ -68,11 +100,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             SizedBox(height: 20),
             IconButton(
               onPressed: () {
-                setState(() {
-                  String temp = inputMenuController.text;
-                  inputMenuController.text = outputMenuController.text;
-                  outputMenuController.text = temp;
-                });
+                widget.controller.swapLanguages();
               },
               icon: Icon(Icons.swap_horiz_outlined),
               iconSize: 30,
@@ -106,9 +134,13 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 ),
                 hintText: "Seleccione un idioma",
                 textStyle: TongiStyles.textLabel,
-                onSelected: (value) => setState(() {}),
-                dropdownMenuEntries: availableLanguages
-                    .where((lang) => lang.label != inputMenuController.text)
+                onSelected: (value) {
+                  if (value != null) {
+                    widget.controller.setTargetLanguage(value);
+                  }
+                },
+                dropdownMenuEntries: widget.controller
+                    .getAvailableTargetLanguages()
                     .map(
                       (lang) => DropdownMenuEntry(
                         value: lang.code,
