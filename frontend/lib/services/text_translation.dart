@@ -33,7 +33,7 @@ class ApiTranslationService {
 
       final requestBody = {
         "text": text.trim(),
-        "source_language": "",
+        "source_language": sourceLanguage,
         "target_language": targetLanguage,
         "task": "translate",
       };

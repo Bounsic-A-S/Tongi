@@ -66,6 +66,9 @@ class TranslationController extends ChangeNotifier {
     _sourceLanguageCode = _targetLanguageCode;
     _targetLanguageCode = temp;
 
+    _inputText = _translatedText;
+    _translatedText = '';
+
     _clearError();
     notifyListeners();
 
