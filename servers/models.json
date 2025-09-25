@@ -1,0 +1,67 @@
+
+{
+    "_id": "translation_models_collection",
+    "last_updated": "2024-01-15T10:30:00Z",
+    "version": "2024.1",
+    "offline_models": {
+      "google_ml_kit": {
+        "description": "Modelos offline de Google ML Kit",
+        "supported_languages": [
+          {
+            "code": "es",
+            "name": "Spanish",
+            "native_name": "Español",
+            "model_size_mb": 45,
+            "version": "1.2.0",
+            "can_translate_to": ["en", "fr", "de", "it", "pt"]
+          },
+          {
+            "code": "en", 
+            "name": "English",
+            "native_name": "English",
+            "model_size_mb": 42,
+            "version": "1.2.0",
+            "can_translate_to": ["es", "fr", "de", "it", "pt", "zh", "ja", "ko"]
+          },
+          {
+            "code": "fr",
+            "name": "French",
+            "native_name": "Français",
+            "model_size_mb": 44,
+            "version": "1.2.0",
+            "can_translate_to": ["en", "es", "de", "it"]
+          }
+        ],
+        "download_requirements": {
+          "min_storage_mb": 200,
+          "recommended_connection": "wifi",
+          "max_concurrent_downloads": 2
+        }
+      }
+    },
+    "online_models": {
+      "azure_translator": {
+        "description": "Servicio de traducción online de Azure",
+        "supported_languages": {
+          "total_count": 91,
+          "languages": ["af-ZA", "sq-AL", "am-ET", "ar-EG", "ar-SA", "hy-AM", "az-AZ", "eu-ES", "bn-IN", "bs-BA", "bg-BG", "my-MM", "ca-ES", "zh-HK", "zh-CN", "zh-TW", "hr-HR", "cs-CZ", "da-DK", "nl-BE", "nl-NL", "en-AU", "en-CA", "en-HK", "en-IN", "en-IE", "en-GB", "en-US", "et-EE", "fil-PH", "fi-FI", "fr-BE", "fr-CA", "fr-FR", "fr-CH", "gl-ES", "ka-GE", "de-AT", "de-DE", "de-CH", "el-GR", "he-IL", "hi-IN", "hu-HU", "is-IS", "id-ID", "ga-IE", "it-IT", "ja-JP", "jv-ID", "kn-IN", "kk-KZ", "km-KH", "ko-KR", "lo-LA", "lv-LV", "lt-LT", "mk-MK", "ms-MY", "ml-IN", "mt-MT", "mn-MN", "ne-NP", "nb-NO", "ps-AF", "fa-IR", "pl-PL", "pt-BR", "pt-PT", "ro-RO", "ru-RU", "sr-RS", "si-LK", "sk-SK", "sl-SI", "so-SO", "es-MX", "es-ES", "su-ID", "sw-KE", "sv-SE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "ur-PK", "uz-UZ", "vi-VN", "cy-GB", "zu-ZA"]
+        },
+        "api_limits": {
+          "requests_per_minute": 100,
+          "characters_per_request": 10000,
+          "monthly_free_characters": 2000000
+        }
+      },
+      "google_translate": {
+        "description": "Servicio de traducción online de Google",
+        "supported_languages": {
+          "total_count": 108,
+          "auto_detect": true
+        },
+        "api_limits": {
+          "requests_per_minute": 100,
+          "characters_per_request": 5000
+        }
+      }
+    }
+  }

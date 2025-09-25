@@ -1,0 +1,261 @@
+{
+    "_id": "language_mappings_collection",
+    "last_updated": "2024-01-15T10:30:00Z",
+    "languages": [
+      {
+        "code": "af-ZA",
+        "iso_639_1": "af",
+        "name": "Afrikaans",
+        "native_name": "Afrikaans",
+        "country": "South Africa",
+        "country_code": "ZA",
+        "flag": "🇿🇦",
+        "rtl": false,
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": false
+        }
+      },
+      {
+        "code": "es-ES",
+        "iso_639_1": "es",
+        "name": "Spanish",
+        "native_name": "Español",
+        "country": "Spain",
+        "country_code": "ES",
+        "flag": "🇪🇸",
+        "rtl": false,
+        "variants": [
+          {
+            "code": "es-MX",
+            "country": "Mexico",
+            "country_code": "MX",
+            "flag": "🇲🇽",
+            "name": "Spanish (Mexico)"
+          },
+          {
+            "code": "es-AR",
+            "country": "Argentina",
+            "country_code": "AR",
+            "flag": "🇦🇷",
+            "name": "Spanish (Argentina)"
+          }
+        ],
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": true
+        }
+      },
+      {
+        "code": "en-US",
+        "iso_639_1": "en",
+        "name": "English",
+        "native_name": "English",
+        "country": "United States",
+        "country_code": "US",
+        "flag": "🇺🇸",
+        "rtl": false,
+        "variants": [
+          {
+            "code": "en-GB",
+            "country": "United Kingdom",
+            "country_code": "GB",
+            "flag": "🇬🇧",
+            "name": "English (UK)"
+          },
+          {
+            "code": "en-AU",
+            "country": "Australia",
+            "country_code": "AU",
+            "flag": "🇦🇺",
+            "name": "English (Australia)"
+          },
+          {
+            "code": "en-CA",
+            "country": "Canada",
+            "country_code": "CA",
+            "flag": "🇨🇦",
+            "name": "English (Canada)"
+          }
+        ],
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": true
+        }
+      },
+      {
+        "code": "it-IT",
+        "iso_639_1": "it",
+        "name": "Italian",
+        "native_name": "Italiano",
+        "country": "Italy",
+        "country_code": "IT",
+        "flag": "🇮🇹",
+        "rtl": false,
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": true
+        }
+      },
+      {
+        "code": "fr-FR",
+        "iso_639_1": "fr",
+        "name": "French",
+        "native_name": "Français",
+        "country": "France",
+        "country_code": "FR",
+        "flag": "🇫🇷",
+        "rtl": false,
+        "variants": [
+          {
+            "code": "fr-CA",
+            "country": "Canada",
+            "country_code": "CA",
+            "flag": "🇨🇦",
+            "name": "French (Canada)"
+          },
+          {
+            "code": "fr-CH",
+            "country": "Switzerland",
+            "country_code": "CH",
+            "flag": "🇨🇭",
+            "name": "French (Switzerland)"
+          },
+          {
+            "code": "fr-BE",
+            "country": "Belgium",
+            "country_code": "BE",
+            "flag": "🇧🇪",
+            "name": "French (Belgium)"
+          }
+        ],
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": true
+        }
+      },
+      {
+        "code": "de-DE",
+        "iso_639_1": "de",
+        "name": "German",
+        "native_name": "Deutsch",
+        "country": "Germany",
+        "country_code": "DE",
+        "flag": "🇩🇪",
+        "rtl": false,
+        "variants": [
+          {
+            "code": "de-AT",
+            "country": "Austria",
+            "country_code": "AT",
+            "flag": "🇦🇹",
+            "name": "German (Austria)"
+          },
+          {
+            "code": "de-CH",
+            "country": "Switzerland",
+            "country_code": "CH",
+            "flag": "🇨🇭",
+            "name": "German (Switzerland)"
+          }
+        ],
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": true
+        }
+      },
+      {
+        "code": "zh-CN",
+        "iso_639_1": "zh",
+        "name": "Chinese (Mandarin, Simplified)",
+        "native_name": "中文 (简体)",
+        "country": "China",
+        "country_code": "CN",
+        "flag": "🇨🇳",
+        "rtl": false,
+        "variants": [
+          {
+            "code": "zh-TW",
+            "country": "Taiwan",
+            "country_code": "TW",
+            "flag": "🇹🇼",
+            "name": "Chinese (Traditional, Taiwan)"
+          },
+          {
+            "code": "zh-HK",
+            "country": "Hong Kong",
+            "country_code": "HK",
+            "flag": "🇭🇰",
+            "name": "Chinese (Cantonese, Hong Kong)"
+          }
+        ],
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": true
+        }
+      },
+      {
+        "code": "hi-IN",
+        "iso_639_1": "hi",
+        "name": "Hindi",
+        "native_name": "हिन्दी",
+        "country": "India",
+        "country_code": "IN",
+        "flag": "🇮🇳",
+        "rtl": false,
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": true
+        }
+      },
+      {
+        "code": "ja-JP",
+        "iso_639_1": "ja",
+        "name": "Japanese",
+        "native_name": "日本語",
+        "country": "Japan",
+        "country_code": "JP",
+        "flag": "🇯🇵",
+        "rtl": false,
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": true
+        }
+      },
+      {
+        "code": "ko-KR",
+        "iso_639_1": "ko",
+        "name": "Korean",
+        "native_name": "한국어",
+        "country": "South Korea",
+        "country_code": "KR",
+        "flag": "🇰🇷",
+        "rtl": false,
+        "supported_services": {
+          "azure_speech": true,
+          "azure_translate": true,
+          "google_translate": true,
+          "ml_kit_offline": true
+        }
+      }
+    ]
+  }
+  

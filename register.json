@@ -1,0 +1,11 @@
+{
+    "_id": "device_abc123",
+    "device_id": "abc123xyz",
+    "model": "Samsung A52",
+    "platform": "android",
+    "app_version": "1.0.3",
+    "registered_at": "2025-09-23T15:00:00Z",
+    "last_active": "2025-09-23T16:05:00Z",
+    "language_preference": "es-ES"
+  }
+  

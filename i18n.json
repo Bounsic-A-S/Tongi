@@ -1,0 +1,10 @@
+{
+    "_id": "welcome_message",
+    "translations": {
+      "en-US": "Welcome to Tongi!",
+      "es-ES": "¡Bienvenido a Tongi!",
+      "fr-FR": "Bienvenue sur Tongi!",
+      "ar-EG": "مرحبًا بك في تونجي!"
+    }
+  }
+  

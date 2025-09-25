@@ -4,6 +4,7 @@ import 'package:frontend/screens/settings_screen.dart';
 import 'package:frontend/screens/text_screen.dart';
 import 'package:frontend/widgets/dashboard/tongi_appbar.dart';
 import 'package:frontend/widgets/dashboard/tongi_navbar.dart';
+import 'package:frontend/addOns/background.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,6 +15,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  bool _isServiceRunning = false;
 
   // Body pages LIST (Carvajal aqui ponga las otras pantallas porfi :3)
   final List<Widget> _pages = [
@@ -42,7 +44,30 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-        child: _pages[_selectedIndex],
+        child: Column(
+          children: [
+            Expanded(child: _pages[_selectedIndex]),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                if (_isServiceRunning) {
+                  stopForegroundTask();
+                  setState(() {
+                    _isServiceRunning = false;
+                  });
+                } else {
+                  final isStarted = await startForegroundTask();
+                  if (isStarted) {
+                    setState(() {
+                      _isServiceRunning = true;
+                    });
+                  }
+                }
+              },
+              child: Text(_isServiceRunning ? "Detener Background" : "Activar Background"),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: TongiNavbar(
         currentIndex: _selectedIndex,
