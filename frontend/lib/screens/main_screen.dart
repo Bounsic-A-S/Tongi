@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/screens/audio_screen.dart';
 import 'package:frontend/screens/camera_screen.dart';
 import 'package:frontend/screens/settings_screen.dart';
@@ -15,7 +16,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-
   final List<Widget> _pages = [TextScreen(), CameraScreen(), AudioScreen()];
 
   void _onNavbarTapped(int index) {
@@ -45,7 +45,11 @@ class _MainScreenState extends State<MainScreen> {
           child:
               _selectedIndex ==
                   1 // camera index
-              ? const SizedBox.shrink(key: ValueKey("emptyAppBar"))
+              // ? const SizedBox.shrink(key: ValueKey("emptyAppBar"))
+              ? Container(
+                  height: MediaQuery.of(context).padding.top,
+                  color: TongiColors.primary,
+                )
               : TongiAppbar(
                   key: const ValueKey("tongiAppBar"),
                   onSettingsPressed: () {
@@ -60,7 +64,9 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       body: Padding(
-        padding: _selectedIndex != 1 ? EdgeInsets.only(left: 20, right: 20, top: 10) : EdgeInsetsGeometry.all(0),
+        padding: _selectedIndex != 1
+            ? EdgeInsets.only(left: 20, right: 20, top: 10)
+            : EdgeInsetsGeometry.all(0),
         child: IndexedStack(index: _selectedIndex, children: _pages),
       ),
       bottomNavigationBar: TongiNavbar(

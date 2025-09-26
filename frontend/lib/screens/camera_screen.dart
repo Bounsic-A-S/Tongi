@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:frontend/core/tongi_colors.dart';
+import 'package:frontend/widgets/language_selector.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -10,7 +10,7 @@ class CameraScreen extends StatefulWidget {
   State<CameraScreen> createState() => _CameraScreenState();
 }
 
-enum CameraState { LOADING, LOADED, ERROR, PERMDENIED }
+enum CameraState { LOADING, LOADED, ERROR, PERM_DENIED }
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
@@ -34,35 +34,11 @@ class _CameraScreenState extends State<CameraScreen>
           Center(child: CircularProgressIndicator()),
         );
       case CameraState.LOADED:
-        return _buildContent(context, CameraPreview(_cameraController));
+        return _buildCameraPreview(context);
       case CameraState.ERROR:
         return _buildContent(context, Center(child: Text("Error")));
-      case CameraState.PERMDENIED:
-        return _buildContent(
-          context,
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Acceso a cámara denegado."),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    openAppSettings();
-                  },
-                  child: Text("Abrir configuración"),
-                ),
-              ],
-            ),
-          ),
-        );
-    }
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && !_cameraController.value.isInitialized) {
-      _initializeCamera();
+      case CameraState.PERM_DENIED:
+        return _buildPermDenied(context);
     }
   }
 
@@ -73,26 +49,47 @@ class _CameraScreenState extends State<CameraScreen>
     super.dispose();
   }
 
-  Widget _buildContent(BuildContext context, Widget body) {
+  Widget _buildCameraPreview(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.black,
-      body: body,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.camera),
+      backgroundColor: Colors.white,
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 10,
+              bottom: 10,
+            ),
+            child: LanguageSelector(),
+          ),
+          CameraPreview(_cameraController),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
-  void showInSnackBarSettings(String message) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 3),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
+  Widget _buildContent(BuildContext context, Widget bodyContent) {
+    return Scaffold(backgroundColor: Colors.white, body: bodyContent);
+  }
+
+  Widget _buildPermDenied(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Acceso a cámara denegado."),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                openAppSettings();
+              },
+              child: Text("Abrir configuración"),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -113,7 +110,7 @@ class _CameraScreenState extends State<CameraScreen>
         _cameraState = CameraState.LOADED;
       }
     } else {
-      _cameraState = CameraState.PERMDENIED;
+      _cameraState = CameraState.PERM_DENIED;
     }
 
     if (mounted) setState(() {});
@@ -126,5 +123,13 @@ class _CameraScreenState extends State<CameraScreen>
       return false;
     }
     return true;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed &&
+        !_cameraController.value.isInitialized) {
+      _initializeCamera();
+    }
   }
 }
