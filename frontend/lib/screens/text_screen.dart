@@ -11,6 +11,9 @@ class TextScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<TextScreen> {
+  final TextEditingController inputLangController = TextEditingController();
+  final TextEditingController outputLangController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -18,10 +21,16 @@ class _DashboardScreenState extends State<TextScreen> {
         Expanded(
           child: ListView(
             children: [
-              LanguageSelector(),
+              LanguageSelector(
+                inputMenuController: inputLangController,
+                outputMenuController: outputLangController,
+              ),
               SizedBox(height: 10),
               SizedBox(height: 10),
-              TextTranslation(),
+              TextTranslation(
+                inputLangController: inputLangController,
+                outputLangController: outputLangController,
+              ),
               TextSuggestions(),
             ],
           ),

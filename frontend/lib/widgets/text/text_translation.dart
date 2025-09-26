@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_styles.dart';
+import 'package:frontend/services/text_translation_service.dart';
 import 'package:frontend/widgets/copy_button.dart';
+import 'package:frontend/services/model_manager_service.dart';
 
 class TextTranslation extends StatefulWidget {
-  const TextTranslation({super.key});
+  final TextEditingController inputLangController;
+  final TextEditingController outputLangController;
+
+  const TextTranslation({
+    super.key,
+    required this.inputLangController,
+    required this.outputLangController,
+  });
 
   @override
   State<TextTranslation> createState() => _TextTranslationState();
@@ -17,6 +27,11 @@ class _TextTranslationState extends State<TextTranslation> {
   final TextEditingController _inputController = TextEditingController(
     text: "",
   );
+  late final DeviceTranslatorService translationService =
+      DeviceTranslatorService(
+        sourceLanguage: _inputController.text,
+        targetLanguage: _outputController.text,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +56,11 @@ class _TextTranslationState extends State<TextTranslation> {
                   if (_inputController.text.isEmpty) {
                     _outputController.text = "";
                   } else {
-                    _outputController.text =
-                        "${_inputController.text} (translated xd)";
+                    translationService
+                        .translateText(_inputController.text)
+                        .then((translation) {
+                          _outputController.text = translation;
+                        });
                   }
                 });
               },
@@ -70,10 +88,7 @@ class _TextTranslationState extends State<TextTranslation> {
             TextButton.icon(
               onPressed: () {},
               icon: Icon(Icons.paste, color: TongiColors.darkGray),
-              label: Text(
-                "Pegar",
-                style: TongiStyles.textBody,
-              ),
+              label: Text("Pegar", style: TongiStyles.textBody),
               style: TextButton.styleFrom(
                 padding: EdgeInsets.all(0),
                 overlayColor: Colors.white,
@@ -117,9 +132,7 @@ class _TextTranslationState extends State<TextTranslation> {
         Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            CopyButton()
-          ],
+          children: [CopyButton()],
         ),
         SizedBox(height: 5),
       ],

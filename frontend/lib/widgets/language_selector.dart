@@ -4,20 +4,20 @@ import 'package:frontend/core/tongi_languages.dart';
 import 'package:frontend/core/tongi_styles.dart';
 
 class LanguageSelector extends StatefulWidget {
-  const LanguageSelector({super.key});
+  final TextEditingController inputMenuController;
+  final TextEditingController outputMenuController;
+
+  const LanguageSelector({
+    super.key,
+    required this.inputMenuController,
+    required this.outputMenuController,
+  });
 
   @override
   State<LanguageSelector> createState() => _LanguageSelectorState();
 }
 
 class _LanguageSelectorState extends State<LanguageSelector> {
-  final TextEditingController inputMenuController = TextEditingController(
-    text: availableLanguages[0].label,
-  );
-  final TextEditingController outputMenuController = TextEditingController(
-    text: availableLanguages[1].label,
-  );
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -29,7 +29,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             children: [
               SizedBox(height: 20, child: Text("Entrada")),
               DropdownMenu<String>(
-                controller: inputMenuController,
+                controller: widget.inputMenuController,
                 enableFilter: true,
                 requestFocusOnTap: true,
                 hintText: "Seleccione un idioma",
@@ -50,13 +50,13 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 ),
                 textStyle: TongiStyles.textLabel,
                 onSelected: (value) => setState(() {}),
-                dropdownMenuEntries: availableLanguages
-                    .where((lang) => lang.label != outputMenuController.text)
+                dropdownMenuEntries: availableLanguages.entries
+                    .where(
+                      (lang) => lang.key != widget.inputMenuController.text,
+                    )
                     .map(
-                      (lang) => DropdownMenuEntry(
-                        value: lang.code,
-                        label: lang.label,
-                      ),
+                      (lang) =>
+                          DropdownMenuEntry(value: lang.value, label: lang.key),
                     )
                     .toList(),
               ),
@@ -69,9 +69,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             IconButton(
               onPressed: () {
                 setState(() {
-                  String temp = inputMenuController.text;
-                  inputMenuController.text = outputMenuController.text;
-                  outputMenuController.text = temp;
+                  String temp = widget.outputMenuController.text;
+                  widget.inputMenuController.text =
+                      widget.outputMenuController.text;
+                  widget.outputMenuController.text = temp;
                 });
               },
               icon: Icon(Icons.swap_horiz_outlined),
@@ -85,7 +86,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             children: [
               SizedBox(height: 20, child: Text("Salida")),
               DropdownMenu<String>(
-                controller: outputMenuController,
+                controller: widget.outputMenuController,
                 enableFilter: true,
                 requestFocusOnTap: true,
                 keyboardType: TextInputType.text,
@@ -107,13 +108,13 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 hintText: "Seleccione un idioma",
                 textStyle: TongiStyles.textLabel,
                 onSelected: (value) => setState(() {}),
-                dropdownMenuEntries: availableLanguages
-                    .where((lang) => lang.label != inputMenuController.text)
+                dropdownMenuEntries: availableLanguages.entries
+                    .where(
+                      (lang) => lang.key != widget.inputMenuController.text,
+                    )
                     .map(
-                      (lang) => DropdownMenuEntry(
-                        value: lang.code,
-                        label: lang.label,
-                      ),
+                      (lang) =>
+                          DropdownMenuEntry(value: lang.value, label: lang.key),
                     )
                     .toList(),
               ),
