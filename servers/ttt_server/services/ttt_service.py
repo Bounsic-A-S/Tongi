@@ -114,8 +114,11 @@ class TTTService:
         params = f"&to={target_language.value}"  # <- usar .value
 
         # Solo agregar 'from' si viene definido y no es 'auto'
+        use_detection = False
         if source_language and source_language != "auto":
             params += f"&from={source_language}"
+        else:
+            use_detection = True  # vamos a usar el idioma detectado
 
         url = endpoint + path + params
 
@@ -131,13 +134,21 @@ class TTTService:
             response = requests.post(url, headers=headers, json=body)
             response.raise_for_status()
             result = response.json()
-            print("result", result)
+            
+            translations = result[0]["translations"][0]["text"]
+
+            if use_detection:
+                src_lang = result[0]["detectedLanguage"]["language"]
+                confidence = result[0]["detectedLanguage"]["score"]
+            else:
+                src_lang = source_language
+                confidence = 1.0 
             response = TextResponse(
-                result=result[0]["translations"][0]["text"],
-                source_language=result[0]["detectedLanguage"]["language"],
+                result=translations,
+                source_language=src_lang,
                 target_language=target_language,
                 task="translate",
-                confidence=result[0]["detectedLanguage"]["score"]
+                confidence=confidence
             )
             return response
 
