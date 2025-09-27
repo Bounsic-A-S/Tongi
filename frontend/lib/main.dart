@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/main_screen.dart';
+import 'package:frontend/screens/terms_conditions_scren.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tongi Demo',
       debugShowCheckedModeBanner: false,
-      home: MainScreen(),
+      home: TermsConditionsScreen(),
     );
   }
 }
