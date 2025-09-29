@@ -2,21 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_styles.dart';
 import 'package:frontend/widgets/copy_button.dart';
+import 'package:frontend/controllers/translation_controller.dart';
+import 'package:flutter/services.dart';
 
 class TextTranslation extends StatefulWidget {
-  const TextTranslation({super.key});
+  final TranslationController controller;
+  
+  const TextTranslation({super.key, required this.controller});
 
   @override
   State<TextTranslation> createState() => _TextTranslationState();
 }
 
 class _TextTranslationState extends State<TextTranslation> {
-  final TextEditingController _outputController = TextEditingController(
-    text: "",
-  );
-  final TextEditingController _inputController = TextEditingController(
-    text: "",
-  );
+  late final TextEditingController _outputController;
+  late final TextEditingController _inputController;
+  
+  @override
+  void initState() {
+    super.initState();
+    _inputController = TextEditingController(
+      text: widget.controller.inputText,
+    );
+    _outputController = TextEditingController(
+      text: widget.controller.translatedText,
+    );
+    
+    // Listen to controller changes
+    widget.controller.addListener(_updateControllers);
+  }
+  
+  @override
+  void dispose() {
+    widget.controller.removeListener(_updateControllers);
+    _inputController.dispose();
+    _outputController.dispose();
+    super.dispose();
+  }
+  
+  void _updateControllers() {
+    if (mounted) {
+      if (_inputController.text != widget.controller.inputText) {
+        _inputController.text = widget.controller.inputText;
+      }
+      if (_outputController.text != widget.controller.translatedText) {
+        _outputController.text = widget.controller.translatedText;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,26 +70,16 @@ class _TextTranslationState extends State<TextTranslation> {
               keyboardType: TextInputType.text,
               enableSuggestions: false,
               onChanged: (value) {
-                setState(() {
-                  if (_inputController.text.isEmpty) {
-                    _outputController.text = "";
-                  } else {
-                    _outputController.text =
-                        "${_inputController.text} (translated xd)";
-                  }
-                });
+                widget.controller.setInputText(value);
               },
             ),
-            if (_inputController.text.isNotEmpty)
+            if (widget.controller.inputText.isNotEmpty)
               Positioned(
                 right: 0,
                 top: 0,
                 child: IconButton(
                   onPressed: () {
-                    setState(() {
-                      _inputController.clear();
-                      _outputController.clear();
-                    });
+                    widget.controller.clearText();
                   },
                   icon: Icon(Icons.delete),
                 ),
@@ -68,7 +91,12 @@ class _TextTranslationState extends State<TextTranslation> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             TextButton.icon(
-              onPressed: () {},
+              onPressed: () async {
+                final clipboardData = await Clipboard.getData('text/plain');
+                if (clipboardData?.text != null) {
+                  widget.controller.setInputText(clipboardData!.text!);
+                }
+              },
               icon: Icon(Icons.paste, color: TongiColors.darkGray),
               label: Text(
                 "Pegar",
@@ -91,12 +119,29 @@ class _TextTranslationState extends State<TextTranslation> {
               controller: _outputController,
               style: TongiStyles.textOutput,
               decoration: InputDecoration(
-                hintText: "Translation here...",
+                hintText: widget.controller.isTranslating 
+                    ? "Traduciendo..." 
+                    : "Translation here...",
                 hintStyle: TextStyle(color: TongiColors.gray),
                 filled: true,
                 fillColor: TongiColors.bgGrayComponent,
                 enabledBorder: TongiStyles.enabledBorder,
                 focusedBorder: TongiStyles.enabledBorder,
+                suffixIcon: widget.controller.isTranslating
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              TongiColors.accent,
+                            ),
+                          ),
+                        ),
+                      )
+                    : null,
               ),
             ),
             Positioned(
