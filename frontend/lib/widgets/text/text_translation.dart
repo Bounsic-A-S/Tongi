@@ -36,7 +36,6 @@ class _TextTranslationState extends State<TextTranslation> {
   void _initTranslator() {
     final source = widget.inputLangController.text;
     final target = widget.outputLangController.text;
-    print("Idiomas: ${source} => ${target}");
 
     if (source.isEmpty || target.isEmpty) return;
 
@@ -53,6 +52,7 @@ class _TextTranslationState extends State<TextTranslation> {
     setState(() {
       translationService = newService;
     });
+    _updateTranslation(_inputController.text);
   }
 
   void _updateTranslation(String text) {
