@@ -26,7 +26,6 @@ class _DashboardScreenState extends State<TextScreen> {
                 outputMenuController: outputLangController,
               ),
               SizedBox(height: 10),
-              SizedBox(height: 10),
               TextTranslation(
                 inputLangController: inputLangController,
                 outputLangController: outputLangController,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/screens/settings/settings_about.dart';
 import 'package:frontend/screens/settings/settings_lang.dart';
+import 'package:frontend/screens/settings/settings_models_screen.dart';
 import 'package:frontend/screens/settings/settings_notifications.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -32,6 +33,18 @@ class SettingsScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const SettingsLangScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.offline_pin),
+              title: Text("Modelos sin conexión"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsModelsScreen(),
                   ),
                 );
               },

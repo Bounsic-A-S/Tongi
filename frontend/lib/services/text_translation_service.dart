@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:frontend/core/tongi_languages.dart';
 
 /// A class that translates on device the given input text.
 class DeviceTranslatorService {
@@ -24,13 +23,19 @@ class DeviceTranslatorService {
 
   /// Translates the given [text] from the source language into the target language.
   Future<String> translateText(String text) async {
-    final result = await _channel
-        .invokeMethod('nlp#startLanguageTranslator', <String, dynamic>{
-          'id': id,
-          'text': text,
-          'source': availableLanguages[sourceLanguage],
-          'target': availableLanguages[targetLanguage],
-        });
+    if (sourceLanguage.isEmpty || targetLanguage.isEmpty) {
+      throw Exception("Source or target language not set");
+    }
+
+    final result = await _channel.invokeMethod(
+      'nlp#startLanguageTranslator',
+      <String, dynamic>{
+        'id': id,
+        'text': text,
+        'source': sourceLanguage,
+        'target': targetLanguage,
+      },
+    );
 
     return result.toString();
   }

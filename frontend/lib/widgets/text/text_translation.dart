@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_styles.dart';
 import 'package:frontend/services/text_translation_service.dart';
 import 'package:frontend/widgets/copy_button.dart';
-import 'package:frontend/services/model_manager_service.dart';
 
 class TextTranslation extends StatefulWidget {
   final TextEditingController inputLangController;
@@ -21,17 +19,66 @@ class TextTranslation extends StatefulWidget {
 }
 
 class _TextTranslationState extends State<TextTranslation> {
-  final TextEditingController _outputController = TextEditingController(
-    text: "",
-  );
-  final TextEditingController _inputController = TextEditingController(
-    text: "",
-  );
-  late final DeviceTranslatorService translationService =
-      DeviceTranslatorService(
-        sourceLanguage: _inputController.text,
-        targetLanguage: _outputController.text,
-      );
+  final TextEditingController _outputController = TextEditingController();
+  final TextEditingController _inputController = TextEditingController();
+
+  late DeviceTranslatorService translationService;
+
+  @override
+  void initState() {
+    super.initState();
+    _initTranslator();
+
+    widget.inputLangController.addListener(_initTranslator);
+    widget.outputLangController.addListener(_initTranslator);
+  }
+
+  void _initTranslator() {
+    final source = widget.inputLangController.text;
+    final target = widget.outputLangController.text;
+    print("Idiomas: ${source} => ${target}");
+
+    if (source.isEmpty || target.isEmpty) return;
+
+    final stopwatch = Stopwatch()..start();
+
+    final newService = DeviceTranslatorService(
+      sourceLanguage: source,
+      targetLanguage: target,
+    );
+
+    stopwatch.stop();
+    print('Tiempo de ejecución: ${stopwatch.elapsedMilliseconds} ms');
+
+    setState(() {
+      translationService = newService;
+    });
+  }
+
+  void _updateTranslation(String text) {
+    if (text.isEmpty) {
+      _outputController.clear();
+      return;
+    }
+
+    final stopwatch = Stopwatch()..start();
+
+    translationService.translateText(text).then((translation) {
+      setState(() {
+        _outputController.text = translation;
+      });
+    });
+
+    stopwatch.stop();
+    print('Tiempo de ejecución: ${stopwatch.elapsedMilliseconds} ms');
+  }
+
+  @override
+  void dispose() {
+    widget.inputLangController.removeListener(_initTranslator);
+    widget.outputLangController.removeListener(_initTranslator);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,21 +96,7 @@ class _TextTranslationState extends State<TextTranslation> {
                 focusedBorder: TongiStyles.focusedBorder,
                 hintStyle: TextStyle(color: TongiColors.gray),
               ),
-              keyboardType: TextInputType.text,
-              enableSuggestions: false,
-              onChanged: (value) {
-                setState(() {
-                  if (_inputController.text.isEmpty) {
-                    _outputController.text = "";
-                  } else {
-                    translationService
-                        .translateText(_inputController.text)
-                        .then((translation) {
-                          _outputController.text = translation;
-                        });
-                  }
-                });
-              },
+              onChanged: _updateTranslation,
             ),
             if (_inputController.text.isNotEmpty)
               Positioned(
@@ -76,28 +109,14 @@ class _TextTranslationState extends State<TextTranslation> {
                       _outputController.clear();
                     });
                   },
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                 ),
               ),
           ],
         ),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TextButton.icon(
-              onPressed: () {},
-              icon: Icon(Icons.paste, color: TongiColors.darkGray),
-              label: Text("Pegar", style: TongiStyles.textBody),
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.all(0),
-                overlayColor: Colors.white,
-                // tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 5),
+
+        const SizedBox(height: 15),
+
         Stack(
           children: [
             TextField(
@@ -117,24 +136,25 @@ class _TextTranslationState extends State<TextTranslation> {
             Positioned(
               top: 0,
               right: 0,
-              child: IconButton(onPressed: () {}, icon: Icon(Icons.volume_up)),
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.volume_up),
+              ),
             ),
             Positioned(
               right: 0,
               bottom: 0,
               child: IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.star_border_rounded),
+                icon: const Icon(Icons.star_border_rounded),
               ),
             ),
           ],
         ),
         Row(
-          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [CopyButton()],
+          children: const [CopyButton()],
         ),
-        SizedBox(height: 5),
       ],
     );
   }

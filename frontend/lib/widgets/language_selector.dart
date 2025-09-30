@@ -49,7 +49,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   ),
                 ),
                 textStyle: TongiStyles.textLabel,
-                onSelected: (value) => setState(() {}),
+                onSelected: (value) {
+                  widget.inputMenuController.text = value ?? "";
+                  setState(() {});
+                },
                 dropdownMenuEntries: availableLanguages.entries
                     .where(
                       (lang) => lang.key != widget.inputMenuController.text,
@@ -107,7 +110,11 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 ),
                 hintText: "Seleccione un idioma",
                 textStyle: TongiStyles.textLabel,
-                onSelected: (value) => setState(() {}),
+                onSelected: (value) {
+                  widget.outputMenuController.text = value ?? "";
+                  setState(() {});
+                },
+
                 dropdownMenuEntries: availableLanguages.entries
                     .where(
                       (lang) => lang.key != widget.inputMenuController.text,
