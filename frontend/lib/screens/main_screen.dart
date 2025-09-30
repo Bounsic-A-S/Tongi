@@ -48,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
               // ? const SizedBox.shrink(key: ValueKey("emptyAppBar"))
               ? Container(
                   height: MediaQuery.of(context).padding.top,
-                  color: TongiColors.primary,
+                  color: Colors.black,
                 )
               : TongiAppbar(
                   key: const ValueKey("tongiAppBar"),

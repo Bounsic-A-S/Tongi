@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:frontend/widgets/camera_lang_selector.dart';
 import 'package:frontend/widgets/language_selector.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -51,19 +52,48 @@ class _CameraScreenState extends State<CameraScreen>
 
   Widget _buildCameraPreview(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: ListView(
+      backgroundColor: Colors.black,
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 20,
-              right: 20,
-              top: 10,
-              bottom: 10,
-            ),
-            child: LanguageSelector(),
-          ),
           CameraPreview(_cameraController),
+
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.black, Colors.transparent],
+                ),
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 8.0,
+                  ),
+                  child: CameraLangSelector(),
+                ),
+              ),
+            ),
+          ),
+
+          // Botón 2: parte inferior centrado
+          Positioned(
+            bottom: 40,
+            left: MediaQuery.of(context).size.width / 2 - 30,
+            child: FloatingActionButton(
+              heroTag: 'btn2',
+              onPressed: () {
+                print('Botón 2 presionado');
+              },
+              child: Icon(Icons.camera_alt),
+            ),
+          ),
         ],
       ),
     );
