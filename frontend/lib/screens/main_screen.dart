@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/screens/audio_screen.dart';
-import 'package:frontend/screens/camera_screen.dart';
 import 'package:frontend/screens/settings_screen.dart';
+import 'package:frontend/screens/camera/camera_screen.dart';
 import 'package:frontend/screens/text_screen.dart';
 import 'package:frontend/widgets/dashboard/tongi_appbar.dart';
 import 'package:frontend/widgets/dashboard/tongi_navbar.dart';
@@ -43,14 +42,15 @@ class _MainScreenState extends State<MainScreen> {
             );
           },
           child:
-              _selectedIndex ==
-                  1 // camera index
-              // ? const SizedBox.shrink(key: ValueKey("emptyAppBar"))
-              ? Container(
-                  height: MediaQuery.of(context).padding.top,
-                  color: Colors.black,
-                )
-              : TongiAppbar(
+              // _selectedIndex ==
+              //     1 // camera index
+              // // ? const SizedBox.shrink(key: ValueKey("emptyAppBar"))
+              // ? Container(
+              //     height: MediaQuery.of(context).padding.top,
+              //     color: Colors.black,
+              //   )
+              // :
+              TongiAppbar(
                   key: const ValueKey("tongiAppBar"),
                   onSettingsPressed: () {
                     Navigator.push(
@@ -67,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
         padding: _selectedIndex != 1
             ? EdgeInsets.only(left: 20, right: 20, top: 10)
             : EdgeInsetsGeometry.all(0),
-        child: IndexedStack(index: _selectedIndex, children: _pages),
+        child: _pages[_selectedIndex],
       ),
       bottomNavigationBar: TongiNavbar(
         currentIndex: _selectedIndex,

@@ -35,8 +35,12 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.1
   camera: ^0.11.2
+  camera_android: ^0.10.10+1
   permission_handler: ^12.0.1
   cupertino_icons: ^1.0.8
+  google_mlkit_text_recognition: ^0.15.0
+  photo_manager: ^3.7.1
+  image_picker: ^1.2.0
 
 dev_dependencies:
   flutter_test:
