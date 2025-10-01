@@ -1,5 +1,8 @@
-Flask[async]==2.3.3
-Flask-CORS==4.0.0
-Werkzeug==2.3.7
+fastapi
 requests
 python-dotenv
+pydantic
+azure-cognitiveservices-speech
+uvicorn
+gunicorn
+

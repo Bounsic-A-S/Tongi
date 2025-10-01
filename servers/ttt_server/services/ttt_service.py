@@ -19,11 +19,11 @@ class TTTService:
             {"id": "summarize", "name": "Resumen", "description": "Generar resumen del texto"},
             {"id": "analyze", "name": "Análisis", "description": "Analizar contenido del texto"}
         ]
-        api_key = os.getenv("AZURE_API_KEY")
-        endpoint = os.getenv("AZURE_ENDPOINT")
-        location = os.getenv("AZURE_LOCATION")
-        project_name = os.getenv("AZURE_PROJECT_NAME")
-        deployment_name = os.getenv("AZURE_DEPLOYMENT_NAME")
+        self.api_key = os.getenv("AZURE_API_KEY")
+        self.endpoint = os.getenv("AZURE_ENDPOINT", "https://api.cognitive.microsofttranslator.com")
+        self.location = os.getenv("AZURE_LOCATION", "eastus2")
+        self.project_name = os.getenv("AZURE_PROJECT_NAME")
+        self.deployment_name = os.getenv("AZURE_DEPLOYMENT_NAME")
     
     async def process_text(self, text: str, source_language: str, target_language: str, task: str) -> TextResponse:
         """
@@ -106,9 +106,6 @@ class TTTService:
         )
 
     async def translateAzure(self, text: str, source_language: Optional[str], target_language: str) -> TextResponse:
-        api_key = os.getenv("AZURE_API_KEY")
-        endpoint = os.getenv("AZURE_ENDPOINT")
-        location = os.getenv("AZURE_LOCATION")
 
         path = "/translate?api-version=3.0"
         params = f"&to={target_language.value}"  # <- usar .value
@@ -120,11 +117,12 @@ class TTTService:
         else:
             use_detection = True  # vamos a usar el idioma detectado
 
-        url = endpoint + path + params
+        print(self.endpoint, path, params)
+        url = self.endpoint + path + params
 
         headers = {
-            "Ocp-Apim-Subscription-Key": api_key,
-            "Ocp-Apim-Subscription-Region": location,
+            "Ocp-Apim-Subscription-Key": self.api_key,
+            "Ocp-Apim-Subscription-Region": self.location,
             "Content-type": "application/json"
         }
 
@@ -143,15 +141,23 @@ class TTTService:
             else:
                 src_lang = source_language
                 confidence = 1.0 
-            response = TextResponse(
+
+            return TextResponse(
                 result=translations,
                 source_language=src_lang,
                 target_language=target_language,
                 task="translate",
                 confidence=confidence
             )
-            return response
 
         except Exception as e:
-            return f"Error en traducción: {str(e)}"
+            return TextResponse(
+                result=f"Error en traducción: {str(e)}",
+                source_language=source_language or "unknown",
+                target_language=target_language,
+                task="translate",
+                confidence=0.0
+            )
+
+
 
