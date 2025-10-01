@@ -113,7 +113,7 @@ class TranslationController extends ChangeNotifier {
     notifyListeners();
     try {
       await Future.delayed(const Duration(milliseconds: 100));
-      final translation = await ApiTranslationService.translateText(
+      final translation = await ApiTranslationService.translateTextAzure(
         _inputText,
         _sourceLanguageCode,
         _targetLanguageCode,
