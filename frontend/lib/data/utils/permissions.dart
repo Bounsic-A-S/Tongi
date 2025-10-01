@@ -5,12 +5,15 @@ bool? isStoragePermitted;
 bool _avaliable = true;
 
 Future<void> checkCameraPermission() async {
+  if (!_avaliable) return;
+  _avaliable = false;
   var status = await Permission.camera.status;
   if (status.isDenied || status.isPermanentlyDenied) {
     isCameraPermitted = false;
   } else {
     isCameraPermitted = true;
   }
+  _avaliable = true;
 }
 
 Future<void> askCameraPermission() async {

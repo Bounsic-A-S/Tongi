@@ -11,9 +11,15 @@ class GalleryManager {
     required Function(String) onError,
   }) async {
     try {
-      // Intentar guardar en galería del sistema
-      final asset = await _saveToSystemGallery(imageBytes, isOverlay: isOverlay);
-      
+      final String title = isOverlay 
+          ? 'translated_photo_${DateTime.now().millisecondsSinceEpoch}.png'
+          : 'photo_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      final AssetEntity? asset = await PhotoManager.editor.saveImage(
+        imageBytes,
+        title: title, filename: '',
+      );
+
       if (asset != null) {
         onSuccess('Imagen guardada en galería');
       } else {

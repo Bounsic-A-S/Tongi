@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_languages.dart';
-import 'package:frontend/core/tongi_styles.dart';
 
 class CameraLangSelector extends StatefulWidget {
   const CameraLangSelector({super.key});

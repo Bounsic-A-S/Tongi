@@ -1,10 +1,9 @@
-// lib/presentation/camera/camera_view.dart
 import 'dart:io';
-import 'dart:ui' as ui;
+// import 'dart:ui' as ui;
 import 'package:camera/camera.dart';
-import 'package:camera/src/camera_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mlkit_commons/google_mlkit_commons.dart';
+import 'package:frontend/widgets/camera/camera_lang_selector.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import '../../data/services/camera/camera_manager.dart';
 import 'gallery_manager.dart';
 import 'overlay_capturer.dart';
@@ -42,7 +41,7 @@ class _CameraViewState extends State<CameraView> {
   bool _isCapturing = false;
   double _baseScale = 1.0;
   double _currentScale = 1.0;
-  
+
   final GlobalKey _cameraPreviewKey = GlobalKey();
 
   @override
@@ -71,14 +70,12 @@ class _CameraViewState extends State<CameraView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildCameraView(),
-    );
+    return Scaffold(body: _buildCameraView());
   }
 
   Widget _buildCameraView() {
     final controller = _cameraManager.controller;
-    
+
     if (controller == null || !controller.value.isInitialized) {
       return _buildLoadingView();
     }
@@ -90,9 +87,10 @@ class _CameraViewState extends State<CameraView> {
         children: <Widget>[
           // Vista previa de cámara con gestos
           _buildCameraPreview(controller),
-          
+
           // Controles de UI
-          _backButton(),
+          // _backButton(),
+          _languageSelector(),
           _detectionViewModeToggle(),
           _switchLiveCameraToggle(),
           _captureButton(),
@@ -152,7 +150,7 @@ class _CameraViewState extends State<CameraView> {
     _currentScale = (_baseScale * details.scale).clamp(1.0, 5.0);
     final minZoom = _cameraManager.minZoomLevel;
     final maxZoom = _cameraManager.maxZoomLevel;
-    
+
     final newZoom = minZoom + (_currentScale - 1.0) * (maxZoom - minZoom) / 4.0;
     _cameraManager.setZoomLevel(newZoom.clamp(minZoom, maxZoom));
   }
@@ -171,6 +169,32 @@ class _CameraViewState extends State<CameraView> {
     ),
   );
 
+  Widget _languageSelector() => Positioned(
+    top: 0,
+    left: 0,
+    right: 0,
+    child: Container(
+      height: 200,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color.fromARGB(190, 0, 0, 0),
+            const Color.fromARGB(82, 0, 0, 0),
+            Colors.transparent,
+          ],
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          child: CameraLangSelector(),
+        ),
+      ),
+    ),
+  );
+
   Widget _detectionViewModeToggle() => Positioned(
     bottom: 8,
     left: 8,
@@ -184,15 +208,15 @@ class _CameraViewState extends State<CameraView> {
     bottom: 8,
     right: 8,
     child: _buildIconButton(
-      icon: Platform.isIOS 
-          ? Icons.flip_camera_ios_outlined 
+      icon: Platform.isIOS
+          ? Icons.flip_camera_ios_outlined
           : Icons.flip_camera_android_outlined,
       onPressed: _switchCamera,
     ),
   );
 
   Widget _captureButton() => Positioned(
-    bottom: 80,
+    bottom: 70,
     left: 0,
     right: 0,
     child: Align(
@@ -204,30 +228,30 @@ class _CameraViewState extends State<CameraView> {
           heroTag: Object(),
           onPressed: _isCapturing ? null : _captureImageWithOverlay,
           backgroundColor: _isCapturing ? Colors.grey : Colors.white,
-          child: _isCapturing 
-              ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blue))
-              : Icon(Icons.camera_alt, size: 30, color: Colors.black),
+          child: _isCapturing
+              ? CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                )
+              : Icon(Icons.camera, size: 30, color: Colors.black),
         ),
       ),
     ),
   );
 
   Widget _exposureButton() => Positioned(
-    top: 100,
+    bottom: 70,
     right: 8,
     child: _buildIconButton(
-      icon: _showExposureControl 
-          ? Icons.brightness_medium 
+      icon: _showExposureControl
+          ? Icons.brightness_medium
           : Icons.brightness_medium_outlined,
       onPressed: _toggleExposureControl,
     ),
   );
 
-  Widget _exposureControl() => _showExposureControl ? Positioned(
-    top: 160,
-    right: 8,
-    child: _buildExposureSlider(),
-  ) : const SizedBox.shrink();
+  Widget _exposureControl() => _showExposureControl
+      ? Positioned(bottom: 90, right: 8, child: _buildExposureSlider())
+      : const SizedBox.shrink();
 
   Widget _buildIconButton({
     required IconData icon,
@@ -321,7 +345,7 @@ class _CameraViewState extends State<CameraView> {
       if (imagePath == null) throw Exception('No se pudo capturar la imagen');
 
       final overlayImage = await _overlayCapturer.captureOverlay();
-      
+
       if (overlayImage != null) {
         await _galleryManager.saveImageToGallery(
           overlayImage,
@@ -347,10 +371,7 @@ class _CameraViewState extends State<CameraView> {
 
   void _showSuccessMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(message), duration: Duration(seconds: 2)),
     );
   }
 
