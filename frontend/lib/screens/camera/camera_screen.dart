@@ -9,13 +9,14 @@ import 'detector_view.dart';
 import 'package:frontend/data/services/camera/image_translation_service.dart';
 
 class CameraScreen extends StatefulWidget {
+  const CameraScreen({super.key});
+
   @override
   State<CameraScreen> createState() => _CameraScreenState();
 }
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
-  bool? camera;
 
   bool _canProcess = true;
   bool _isBusy = false;
@@ -30,8 +31,7 @@ class _CameraScreenState extends State<CameraScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _translationManager = ImageTranslationService();
-    askCameraPermission();
-    _updatePermission();
+    _initPermission();
   }
 
   @override
@@ -44,7 +44,7 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   Widget build(BuildContext context) {
-    switch (camera) {
+    switch (isCameraPermitted) {
       case null:
         return Scaffold();
       case false:
@@ -63,10 +63,14 @@ class _CameraScreenState extends State<CameraScreen>
 
   _updatePermission() async {
     await checkCameraPermission();
-    camera = isCameraPermitted;
     if (mounted) {
       setState(() {});
     }
+  }
+
+  _initPermission() async {
+    await askCameraPermission();
+    if (mounted) setState(() {});
   }
 
   Future<void> _processImage(InputImage inputImage) async {

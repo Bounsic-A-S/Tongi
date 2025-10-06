@@ -179,11 +179,7 @@ class _CameraViewState extends State<CameraView> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            const Color.fromARGB(190, 0, 0, 0),
-            const Color.fromARGB(82, 0, 0, 0),
-            Colors.transparent,
-          ],
+          colors: [const Color.fromARGB(146, 0, 0, 0), Colors.transparent],
         ),
       ),
       child: SafeArea(

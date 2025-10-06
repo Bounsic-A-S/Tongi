@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/controllers/translation_controller.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_styles.dart';
 import 'package:frontend/services/record_service.dart';
@@ -16,18 +17,20 @@ class AudioScreen extends StatefulWidget {
 
 class _AudioScreenState extends State<AudioScreen> {
   late final RecordService _recordService;
+  late final TranslationController _translationController;
 
   @override
   void initState() {
     super.initState();
     _recordService = RecordService();
+    _translationController = TranslationController();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
-        // LanguageSelector(),
+        LanguageSelector(controller: _translationController),
         SizedBox(height: 20),
         Container(
           decoration: BoxDecoration(

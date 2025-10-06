@@ -32,25 +32,6 @@ class GalleryManager {
     }
   }
 
-  Future<AssetEntity?> _saveToSystemGallery(
-    Uint8List imageBytes, {
-    required bool isOverlay,
-  }) async {
-    final PermissionState state = await PhotoManager.requestPermissionExtend();
-    if (!state.hasAccess) {
-      throw Exception('Permisos de galería denegados');
-    }
-
-    final fileName = isOverlay
-        ? 'translated_photo_${DateTime.now().millisecondsSinceEpoch}.png'
-        : 'photo_${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-    return await PhotoManager.editor.saveImage(
-      imageBytes,
-      title: fileName, filename: '',
-    );
-  }
-
   Future<void> _saveToAppDirectory(
     Uint8List imageBytes, {
     required bool isOverlay,
