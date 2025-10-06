@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:frontend/widgets/audio/record_button.dart';
-import 'package:frontend/services/record_service.dart';
+import 'package:frontend/ui/widgets/audio/record_button.dart';
+import 'package:frontend/logic/services/audio/record_service.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 class MockRecordService extends Mock implements RecordService {}
