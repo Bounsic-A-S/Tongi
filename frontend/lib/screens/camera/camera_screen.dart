@@ -110,9 +110,7 @@ class _CameraScreenState extends State<CameraScreen>
       }
     } catch (e) {
       print('Error en _processImage: $e');
-      setState(() {
-        _text = 'Error: $e';
-      });
+      _text = 'Error: $e';
     } finally {
       _isBusy = false;
       if (mounted) {

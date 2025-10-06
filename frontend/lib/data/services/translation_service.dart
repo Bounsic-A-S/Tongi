@@ -1,6 +1,11 @@
 import 'package:frontend/services/text_translation.dart';
+
 class TranslationService {
-  Future<String> translateText(String text, {String from = 'auto', String to = 'es'}) async {
+  Future<String> translateText(
+    String text, {
+    String from = '',
+    String to = 'es',
+  }) async {
     String result = await ApiTranslationService.translateTextAzure(
       text,
       from,
@@ -8,7 +13,7 @@ class TranslationService {
     );
     return result;
   }
-
+ 
   Future<String> translateWithRealAPI(String text) async {
     throw UnimplementedError('Método real no implementado aún');
   }
