@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/ui/widgets/copy_button.dart';
-import 'package:frontend/logic/controllers/translation_controller.dart';
+import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:flutter/services.dart';
 
 class TextTranslation extends StatefulWidget {
-  final TranslationController controller;
-  
+  final TextTranslationController controller;
+
   const TextTranslation({super.key, required this.controller});
 
   @override
@@ -15,23 +15,22 @@ class TextTranslation extends StatefulWidget {
 }
 
 class _TextTranslationState extends State<TextTranslation> {
+  TextTranslationController translationController = TextTranslationController();
   late final TextEditingController _outputController;
   late final TextEditingController _inputController;
-  
+
   @override
   void initState() {
     super.initState();
-    _inputController = TextEditingController(
-      text: widget.controller.inputText,
-    );
+    _inputController = TextEditingController(text: widget.controller.inputText);
     _outputController = TextEditingController(
       text: widget.controller.translatedText,
     );
-    
+
     // Listen to controller changes
     widget.controller.addListener(_updateControllers);
   }
-  
+
   @override
   void dispose() {
     widget.controller.removeListener(_updateControllers);
@@ -39,7 +38,7 @@ class _TextTranslationState extends State<TextTranslation> {
     _outputController.dispose();
     super.dispose();
   }
-  
+
   void _updateControllers() {
     if (mounted) {
       if (_inputController.text != widget.controller.inputText) {
@@ -68,12 +67,13 @@ class _TextTranslationState extends State<TextTranslation> {
                 hintStyle: TextStyle(color: TongiColors.gray),
               ),
               keyboardType: TextInputType.text,
-              enableSuggestions: false,
+              enableSuggestions: true,
               onChanged: (value) {
                 widget.controller.setInputText(value);
+                setState(() {});
               },
             ),
-            if (widget.controller.inputText.isNotEmpty)
+            if (_inputController.text.isNotEmpty)
               Positioned(
                 right: 0,
                 top: 0,
@@ -98,10 +98,7 @@ class _TextTranslationState extends State<TextTranslation> {
                 }
               },
               icon: Icon(Icons.paste, color: TongiColors.darkGray),
-              label: Text(
-                "Pegar",
-                style: TongiStyles.textBody,
-              ),
+              label: Text("Pegar", style: TongiStyles.textBody),
               style: TextButton.styleFrom(
                 padding: EdgeInsets.all(0),
                 overlayColor: Colors.white,
@@ -119,8 +116,8 @@ class _TextTranslationState extends State<TextTranslation> {
               controller: _outputController,
               style: TongiStyles.textOutput,
               decoration: InputDecoration(
-                hintText: widget.controller.isTranslating 
-                    ? "Traduciendo..." 
+                hintText: widget.controller.isTranslating
+                    ? "Traduciendo..."
                     : "Translation here...",
                 hintStyle: TextStyle(color: TongiColors.gray),
                 filled: true,
@@ -162,9 +159,7 @@ class _TextTranslationState extends State<TextTranslation> {
         Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            CopyButton()
-          ],
+          children: [CopyButton()],
         ),
         SizedBox(height: 5),
       ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/logic/controllers/lang_selector_controller.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
-import 'package:frontend/ui/core/tongi_languages.dart';
 
 class CameraLangSelector extends StatefulWidget {
   const CameraLangSelector({super.key});
@@ -10,12 +10,7 @@ class CameraLangSelector extends StatefulWidget {
 }
 
 class _CameraLangSelectorState extends State<CameraLangSelector> {
-  final TextEditingController inputMenuController = TextEditingController(
-    text: availableLanguages[0].label,
-  );
-  final TextEditingController outputMenuController = TextEditingController(
-    text: availableLanguages[1].label,
-  );
+  LangSelectorController controller = LangSelectorController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +23,7 @@ class _CameraLangSelectorState extends State<CameraLangSelector> {
           child: Column(
             children: [
               DropdownMenu<String>(
-                controller: inputMenuController,
+                controller: controller.inputMenuController,
                 // enableFilter: true,
                 // requestFocusOnTap: true,
                 hintText: "Seleccione un idioma",
@@ -51,15 +46,7 @@ class _CameraLangSelectorState extends State<CameraLangSelector> {
                   fontFamily: "Poppins",
                 ),
                 onSelected: (value) => setState(() {}),
-                dropdownMenuEntries: availableLanguages
-                    .where((lang) => lang.label != outputMenuController.text)
-                    .map(
-                      (lang) => DropdownMenuEntry(
-                        value: lang.code,
-                        label: lang.label,
-                      ),
-                    )
-                    .toList(),
+                dropdownMenuEntries: controller.getAvailableInputLanguages(),
               ),
             ],
           ),
@@ -69,9 +56,7 @@ class _CameraLangSelectorState extends State<CameraLangSelector> {
             IconButton(
               onPressed: () {
                 setState(() {
-                  String temp = inputMenuController.text;
-                  inputMenuController.text = outputMenuController.text;
-                  outputMenuController.text = temp;
+                  controller.swapLanguages();
                 });
               },
               icon: Icon(Icons.swap_horiz_outlined),
@@ -84,7 +69,7 @@ class _CameraLangSelectorState extends State<CameraLangSelector> {
           child: Column(
             children: [
               DropdownMenu<String>(
-                controller: outputMenuController,
+                controller: controller.outputMenuController,
                 // enableFilter: true,
                 // requestFocusOnTap: true,
                 // keyboardType: TextInputType.text,
@@ -110,15 +95,7 @@ class _CameraLangSelectorState extends State<CameraLangSelector> {
                   fontFamily: "Poppins",
                 ),
                 onSelected: (value) => setState(() {}),
-                dropdownMenuEntries: availableLanguages
-                    .where((lang) => lang.label != inputMenuController.text)
-                    .map(
-                      (lang) => DropdownMenuEntry(
-                        value: lang.code,
-                        label: lang.label,
-                      ),
-                    )
-                    .toList(),
+                dropdownMenuEntries: controller.getAvailableOutputLanguages(),
               ),
             ],
           ),

@@ -23,7 +23,6 @@ class GalleryView extends StatefulWidget {
 
 class _GalleryViewState extends State<GalleryView> {
   File? _image;
-  // String? _path;
   ImagePicker? _imagePicker;
 
   @override
@@ -90,7 +89,6 @@ class _GalleryViewState extends State<GalleryView> {
   Future _getImage(ImageSource source) async {
     setState(() {
       _image = null;
-      // _path = null;
     });
     final pickedFile = await _imagePicker?.pickImage(source: source);
     if (pickedFile != null) {
@@ -102,7 +100,6 @@ class _GalleryViewState extends State<GalleryView> {
     setState(() {
       _image = File(path);
     });
-    // _path = path;
     final inputImage = InputImage.fromFilePath(path);
     widget.onImage(inputImage);
   }

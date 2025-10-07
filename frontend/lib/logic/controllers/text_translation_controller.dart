@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/ui/core/tongi_languages.dart';
 import 'package:frontend/logic/services/text/text_translation.dart';
 
-class TranslationController extends ChangeNotifier {
+class TextTranslationController extends ChangeNotifier {
   // Language selection state
   String _sourceLanguageCode = availableLanguages[0].code;
   String _targetLanguageCode = availableLanguages[1].code;

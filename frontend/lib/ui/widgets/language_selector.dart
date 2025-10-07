@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/logic/controllers/lang_selector_controller.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
-import 'package:frontend/ui/core/tongi_languages.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
-import 'package:frontend/logic/controllers/translation_controller.dart';
+import 'package:frontend/logic/controllers/text_translation_controller.dart';
 
 class LanguageSelector extends StatefulWidget {
-  final TranslationController controller;
-  
+  final TextTranslationController controller;
+
   const LanguageSelector({super.key, required this.controller});
 
   @override
@@ -14,36 +14,20 @@ class LanguageSelector extends StatefulWidget {
 }
 
 class _LanguageSelectorState extends State<LanguageSelector> {
-  late final TextEditingController inputMenuController;
-  late final TextEditingController outputMenuController;
-  
+  LangSelectorController controller = LangSelectorController();
+
   @override
   void initState() {
     super.initState();
-    inputMenuController = TextEditingController(
-      text: widget.controller.sourceLanguageLabel,
-    );
-    outputMenuController = TextEditingController(
-      text: widget.controller.targetLanguageLabel,
-    );
-    
+
     // Listen to controller changes
-    widget.controller.addListener(_updateControllers);
+    // widget.controller.addListener(_updateControllers);
   }
-  
+
   @override
   void dispose() {
-    widget.controller.removeListener(_updateControllers);
-    inputMenuController.dispose();
-    outputMenuController.dispose();
+    // widget.controller.removeListener(_updateControllers);
     super.dispose();
-  }
-  
-  void _updateControllers() {
-    if (mounted) {
-      inputMenuController.text = widget.controller.sourceLanguageLabel;
-      outputMenuController.text = widget.controller.targetLanguageLabel;
-    }
   }
 
   @override
@@ -57,9 +41,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             children: [
               SizedBox(height: 20, child: Text("Entrada")),
               DropdownMenu<String>(
-                controller: inputMenuController,
-                enableFilter: true,
-                requestFocusOnTap: true,
+                controller: controller.inputMenuController,
+                // enableFilter: true,
+                // requestFocusOnTap: true,
                 hintText: "Seleccione un idioma",
                 inputDecorationTheme: InputDecorationTheme(
                   focusedBorder: OutlineInputBorder(
@@ -100,6 +84,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             SizedBox(height: 20),
             IconButton(
               onPressed: () {
+                controller.swapLanguages();
                 widget.controller.swapLanguages();
               },
               icon: Icon(Icons.swap_horiz_outlined),
@@ -113,10 +98,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             children: [
               SizedBox(height: 20, child: Text("Salida")),
               DropdownMenu<String>(
-                controller: outputMenuController,
-                enableFilter: true,
-                requestFocusOnTap: true,
-                keyboardType: TextInputType.text,
+                controller: controller.outputMenuController,
+                // enableFilter: true,
+                // requestFocusOnTap: true,
                 inputDecorationTheme: InputDecorationTheme(
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: TongiColors.border),

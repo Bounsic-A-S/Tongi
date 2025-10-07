@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/ui/widgets/language_selector.dart';
 import 'package:frontend/ui/widgets/text/text_suggestions.dart';
 import 'package:frontend/ui/widgets/text/text_translation.dart';
-import 'package:frontend/logic/controllers/translation_controller.dart';
+import 'package:frontend/logic/controllers/text_translation_controller.dart';
 
 class TextScreen extends StatefulWidget {
   const TextScreen({super.key});
@@ -12,12 +12,12 @@ class TextScreen extends StatefulWidget {
 }
 
 class _TextScreenState extends State<TextScreen> {
-  late final TranslationController _translationController;
+  late final TextTranslationController _translationController;
   
   @override
   void initState() {
     super.initState();
-    _translationController = TranslationController();
+    _translationController = TextTranslationController();
   }
   
   @override

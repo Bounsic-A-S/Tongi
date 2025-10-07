@@ -1,9 +1,20 @@
+
+import 'package:flutter/material.dart';
+
 class Language {
   final String label;
   final String code;
 
   const Language({required this.label, required this.code});
 }
+
+const Map<String, String> tongiLanguages = {
+  "Español": "es",
+  "Inglés": "en",
+  "Alemán": "de",
+  "Italiano": "it",
+  "Japonés": "jp",
+};
 
 const List<Language> availableLanguages = [
   Language(label: "Español", code: "es"),

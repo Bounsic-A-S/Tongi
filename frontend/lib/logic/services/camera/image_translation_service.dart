@@ -1,3 +1,4 @@
+import 'package:frontend/logic/controllers/lang_selector_controller.dart';
 import 'package:frontend/logic/models/text_detection_result.dart';
 import 'package:frontend/logic/models/translated_block.dart';
 import 'package:frontend/logic/services/camera/ocr/text_block_merger.dart';
@@ -25,7 +26,7 @@ class ImageTranslationService {
     try {
       // 1. Reconocer texto
       final recognizedText = await _recognitionService.processImage(inputImage);
-      
+
       if (recognizedText.blocks.isEmpty) {
         return TextDetectionResult(
           originalText: '',
@@ -45,10 +46,14 @@ class ImageTranslationService {
       String fullOriginalText = '';
       String fullTranslatedText = '';
 
+      LangSelectorController langSelectorController = LangSelectorController();
+
       for (final block in mergedBlocks) {
         final blockText = block.text;
         final translatedBlockText = await _translationService.translateText(
           blockText,
+          from: langSelectorController.getInputLang(),
+          to: langSelectorController.getOutputLang(),
         );
 
         translatedBlocks.add(
