@@ -13,6 +13,17 @@ class AudioRequest(BaseModel):
             }
         }
 
+
+class AudioRequest1(BaseModel):
+    audio_data: str
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "audio_data": "base64_encoded_audio_data",
+            }
+        }
+
 class TranscriptionResponse(BaseModel):
     text: str
     confidence: float

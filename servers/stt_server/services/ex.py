@@ -15,13 +15,12 @@ class STTService:
         self.speech_key = os.getenv("AZURE_API_KEY")
         self.speech_region = os.getenv("AZURE_LOCATION", "eastus")  # cambia según tu recurso
 
-    async def transcribe(self, audio_file: str, language: str) -> TranscriptionResponse:
+    async def transcribe_auto_language(self, audio_file: str) -> TranscriptionResponse:
         """
         Transcribe un archivo de audio a texto usando Azure Speech-to-Text
+        detectando automáticamente el idioma.
         :param audio_file: Nombre del archivo en la carpeta audio_files
-        :param language: Código del idioma ("es", "en", etc.)
         """
-        # Ruta real del archivo en tu servidor
         file_path = os.path.join("audio_files", audio_file)
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"El archivo {file_path} no existe.")
@@ -31,28 +30,35 @@ class STTService:
             subscription=self.speech_key,
             region=self.speech_region
         )
-        speech_config.speech_recognition_language = language
+
+        # Configuración de detección automática de idioma
+        auto_detect_source_language_config = speechsdk.languageconfig.AutoDetectSourceLanguageConfig(
+            languages=list(self.supported_languages.keys())  # Idiomas a detectar
+        )
 
         audio_config = speechsdk.AudioConfig(filename=file_path)
         recognizer = speechsdk.SpeechRecognizer(
             speech_config=speech_config,
+            auto_detect_source_language_config=auto_detect_source_language_config,
             audio_config=audio_config
         )
 
-        result = recognizer.recognize_once_async().get()
-        
+        result = await recognizer.recognize_once_async()
 
         if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+            detected_language = result.properties.get(
+                speechsdk.PropertyId.SpeechServiceConnection_AutoDetectSourceLanguageResult
+            )
             return TranscriptionResponse(
                 text=result.text,
-                confidence=0.95,  # Azure no devuelve un número fijo de confianza, puedes ajustarlo
-                language=language
+                confidence=0.95,
+                language=detected_language
             )
         else:
             return TranscriptionResponse(
                 text="No se pudo transcribir el audio.",
                 confidence=0.0,
-                language=language
+                language=None
             )
 
     async def get_supported_languages(self) -> LanguagesResponse:

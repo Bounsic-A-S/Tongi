@@ -4,7 +4,7 @@ from typing import Dict, List
 
 class SynthesisRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=2000)
-    language: str = Field(default="es", regex="^[a-z]{2}$")
+    language: str = Field(default="es")
     voice: str = Field(default="default")
 
     class Config:
