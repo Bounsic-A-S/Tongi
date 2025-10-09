@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/logic/services/audio/record_service.dart';
 import 'package:path_provider/path_provider.dart';
@@ -8,7 +7,13 @@ import 'package:path/path.dart' as p;
 class RecordButton extends StatefulWidget {
   final RecordService service;
 
-  const RecordButton({super.key, required this.service});
+  final Future<void> Function(File audioFile)? onRecordingComplete;
+  const RecordButton({
+    super.key,
+    required this.service,
+    this.onRecordingComplete,
+  });
+
 
   @override
   State<RecordButton> createState() => _RecordButtonState();
@@ -37,11 +42,18 @@ class _RecordButtonState extends State<RecordButton> {
           if (isRecording) {
             if (await widget.service.hasPermission()) {
               final Directory dir = await getApplicationDocumentsDirectory();
-              final path = p.join(dir.path, "lastRecord.aacLc");
+              final path = p.join(dir.path, "lastRecord.wav");
               await widget.service.startRecording(path);
             }
           } else {
             await widget.service.stopRecording();
+            final Directory dir = await getApplicationDocumentsDirectory();
+            final path = p.join(dir.path, "lastRecord.wav");
+            final audioFile = File(path);
+
+            if (widget.onRecordingComplete != null) {
+              await widget.onRecordingComplete!(audioFile);
+            }
           }
         },
         style: ButtonStyle(

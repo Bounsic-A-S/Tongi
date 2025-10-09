@@ -1,54 +1,71 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.middleware.cors import CORSMiddleware
+from controllers.stt_controller import STTController
+from models.stt_models import AudioRequest
 
-app = Flask(__name__)
-CORS(app)
+app = FastAPI(title="STT Server - Speech to Text API")
 
-@app.route("/", methods=["GET"])
-def root():
-    return jsonify({"message": "STT Server - Speech to Text API"})
+# Habilitar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.route("/health", methods=["GET"])
-def health_check():
-    return jsonify({"status": "healthy", "service": "STT"})
+stt_controller = STTController()
 
-@app.route("/transcribe", methods=["POST"])
-def transcribe_audio():
+
+@app.get("/")
+async def root():
+    return {"message": "STT Server - Speech to Text API"}
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "STT"}
+
+@app.post("/transcribe")
+async def transcribe_audio(
+    file: UploadFile = File(...),
+    language: str = Form("es")
+):
     """
-    Endpoint para transcribir audio a texto
+    Endpoint para recibir un archivo de audio, transcribirlo y eliminarlo.
     """
-    try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No JSON data provided"}), 400
-        
-        audio_data = data.get("audio_data")
-        language = data.get("language", "es")
-        
-        if not audio_data:
-            return jsonify({"error": "Audio data is required"}), 400
-        
-        # Simulación de transcripción
-        # En un caso real, aquí se procesaría el audio
-        mock_transcription = "Este es un texto de ejemplo transcrito del audio"
-        
-        return jsonify({
-            "text": mock_transcription,
-            "confidence": 0.95,
-            "language": language
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    result = await stt_controller.transcribe_audio_file(file, language)
+    return {
+        "text": result.text,
+        "confidence": result.confidence,
+        "language": result.language
+    }
 
-@app.route("/languages", methods=["GET"])
-def get_supported_languages():
+@app.post("/transcribe/translate")
+async def translate_audio(
+    file: UploadFile = File(...),
+    source_language: str = Form("es-ES"),
+    target_language: str = Form("en-US")
+):
+    """
+    Endpoint para recibir un archivo de audio, transcribirlo y eliminarlo.
+    """
+    result = await stt_controller.translate_audio_file(file, source_language, target_language)
+    return {
+        "text": result.text,
+        "confidence": result.confidence,
+        "language": result.language
+    }
+
+    
+
+
+@app.get("/languages")
+async def get_supported_languages():
     """
     Obtener idiomas soportados
     """
-    return jsonify({
-        "languages": ["es", "en", "fr", "de"],
-        "default": "es"
-    })
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8001, debug=True)
+    result = await stt_controller.get_supported_languages()
+    return {
+        "languages": [lang.code for lang in result.languages],
+        "default": result.default
+    }
