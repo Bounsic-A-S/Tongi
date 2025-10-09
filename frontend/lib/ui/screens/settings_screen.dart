@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/screens/settings/settings_about.dart';
 import 'package:frontend/ui/screens/settings/settings_lang.dart';
@@ -56,6 +57,18 @@ class SettingsScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const SettingsAboutScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shield),
+              title: Text("Termirminos & Condiciones"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FullTermsScreen(),
                   ),
                 );
               },
