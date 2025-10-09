@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/widgets/dashboard/tongi_navbar.dart';
-import 'package:frontend/core/tongi_colors.dart';
+import 'package:frontend/ui/widgets/dashboard/tongi_navbar.dart';
+import 'package:frontend/ui/core/tongi_colors.dart';
 
 void main() {
   testWidgets('Navbar muestra los items correctamente', (
