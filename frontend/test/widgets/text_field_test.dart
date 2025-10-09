@@ -11,7 +11,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TextTranslation(),
+            body: TextTranslation(controller: TextTranslationController()),
           ),
         ),
       );
@@ -38,7 +38,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TextTranslation(),
+            body: TextTranslation(controller: TextTranslationController()),
           ),
         ),
       );
@@ -58,7 +58,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TextTranslation(),
+            body: TextTranslation(controller: TextTranslationController()),
           ),
         ),
       );
@@ -77,7 +77,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TextTranslation(),
+            body: TextTranslation(controller: TextTranslationController()),
           ),
         ),
       );
@@ -98,7 +98,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TextTranslation(),
+            body: TextTranslation(controller: TextTranslationController()),
           ),
         ),
       );
@@ -125,7 +125,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TextTranslation(),
+            body: TextTranslation(controller: TextTranslationController()),
           ),
         ),
       );
@@ -146,7 +146,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TextTranslation(),
+            body: TextTranslation(controller: TextTranslationController()),
           ),
         ),
       );

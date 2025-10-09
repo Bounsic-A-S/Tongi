@@ -22,38 +22,56 @@ class STTService:
         :param language: Código del idioma ("es", "en", etc.)
         """
         # Ruta real del archivo en tu servidor
-        file_path = os.path.join("audio_files", audio_file)
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"El archivo {file_path} no existe.")
+        print("🔹 Iniciando transcripción")
+        print(f"Archivo recibido: {audio_file}")
+        print(f"Idioma: {language}")
+
+        if not os.path.exists(audio_file):
+            raise FileNotFoundError(f"El archivo {audio_file} no existe.")
+
+        print("✅ Archivo encontrado, configurando Speech SDK")
 
         # Configuración de Speech
         speech_config = speechsdk.SpeechConfig(
             subscription=self.speech_key,
             region=self.speech_region
         )
-        speech_config.speech_recognition_language = language
+        print(f"Azure key: {self.speech_key}, región: {self.speech_region}")
 
-        audio_config = speechsdk.AudioConfig(filename=file_path)
+        speech_config.speech_recognition_language = language
+        print(language)
+        audio_config = speechsdk.AudioConfig(filename=audio_file)
         recognizer = speechsdk.SpeechRecognizer(
             speech_config=speech_config,
             audio_config=audio_config
         )
 
+        print("✅ Reconocedor creado, enviando audio a Azure...")
+
         result = recognizer.recognize_once_async().get()
-        
+
+        print(f"🔹 Resultado raw de Azure: reason={result.reason}, texto='{result.text}'")
 
         if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+            print("✅ Audio transcrito correctamente")
             return TranscriptionResponse(
                 text=result.text,
-                confidence=0.95,  # Azure no devuelve un número fijo de confianza, puedes ajustarlo
+                confidence=0.95,
                 language=language
             )
+        elif result.reason == speechsdk.ResultReason.NoMatch:
+            print(f"⚠️ No se pudo reconocer el audio: {result.no_match_details}")
+        elif result.reason == speechsdk.ResultReason.Canceled:
+            cancellation = speechsdk.CancellationDetails.from_result(result)
+            print(f"❌ Transcripción cancelada: {cancellation.reason}, {cancellation.error_details}")
         else:
-            return TranscriptionResponse(
-                text="No se pudo transcribir el audio.",
-                confidence=0.0,
-                language=language
-            )
+            print(f"⚠️ Resultado inesperado: {result.reason}")
+
+        return TranscriptionResponse(
+            text="No se pudo transcribir el audio.",
+            confidence=0.0,
+            language=language
+        )
 
     async def get_supported_languages(self) -> LanguagesResponse:
         """
@@ -71,4 +89,72 @@ class STTService:
         return LanguagesResponse(
             languages=languages,
             default="es"
+        )
+
+    async def translate_audio(self, audio_file: str, source_language: str, target_language: str = "en") -> TranscriptionResponse:
+        """
+        Transcribe un archivo de audio del idioma origen y lo traduce 
+        al idioma destino usando Azure Translation.
+        """
+        print("🔹 Iniciando traducción y transcripción.")
+        print(f"Archivo: {audio_file}, Origen: {source_language}, Destino: {target_language}")
+
+        if not os.path.exists(audio_file):
+            raise FileNotFoundError(f"El archivo {audio_file} no existe.")
+
+        print("✅ Archivo encontrado, configurando Translation SDK")
+
+        # 1. Configuración de Speech/Translation
+        # 🚨 CORRECCIÓN: Usar SpeechTranslationConfig 🚨
+        translation_config = speechsdk.translation.SpeechTranslationConfig(
+            subscription=self.speech_key,
+            region=self.speech_region
+        )
+
+        # 2. Establecer el idioma de entrada (source_language)
+        translation_config.speech_recognition_language = source_language 
+
+        # 3. Establecer el idioma o idiomas de destino
+        translation_config.add_target_language(target_language)
+
+        # 4. Configuración del Audio
+        audio_config = speechsdk.AudioConfig(filename=audio_file)
+        
+        # 5. Crear el TranslationRecognizer
+        recognizer = speechsdk.translation.TranslationRecognizer(
+            translation_config=translation_config,
+            audio_config=audio_config
+        )
+
+        print("✅ Reconocedor de Traducción creado, enviando audio a Azure...")
+
+        # El resultado es un TranslationRecognitionResult
+        result = recognizer.recognize_once_async().get()
+
+        if result.reason == speechsdk.ResultReason.TranslatedSpeech:
+            
+            transcription = result.text
+            translation = result.translations[target_language]
+            
+            print(f"✅ Transcripción: {transcription}")
+            print(f"✅ Traducción a {target_language}: {translation}")
+            
+            return TranscriptionResponse(
+                text=translation, 
+                confidence=0.95,
+                language=target_language
+            )
+            
+        elif result.reason == speechsdk.ResultReason.NoMatch:
+            print(f"⚠️ No se pudo reconocer o traducir el audio: {result.no_match_details}")
+        elif result.reason == speechsdk.ResultReason.Canceled:
+            cancellation = speechsdk.CancellationDetails.from_result(result)
+            print(f"❌ Traducción cancelada: {cancellation.reason}, {cancellation.error_details}")
+        else:
+            print(f"⚠️ Resultado inesperado: {result.reason}")
+
+        return TranscriptionResponse(
+            text="No se pudo traducir el audio.",
+            confidence=0.0,
+            language=target_language
         )

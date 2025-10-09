@@ -31,29 +31,29 @@ class _AudioScreenState extends State<AudioScreen> {
     return ListView(
       children: [
         LanguageSelector(controller: _translationController),
-        SizedBox(height: 20),
-        Container(
-          decoration: BoxDecoration(
-            border: BoxBorder.all(color: TongiColors.border, width: 1),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: EdgeInsets.all(15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  RecordButton(service: _recordService),
-                  SizedBox(height: 15),
-                  Text(
-                    "Toca para iniciar a grabar.",
-                    style: TongiStyles.textBody,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+        SizedBox(height: 10),
+        // Container(
+        //   decoration: BoxDecoration(
+        //     border: BoxBorder.all(color: TongiColors.border, width: 1),
+        //     borderRadius: BorderRadius.circular(16),
+        //   ),
+        //   padding: EdgeInsets.all(15),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.center,
+        //     children: [
+        //       Column(
+        //         children: [
+        //           RecordButton(service: _recordService),
+        //           SizedBox(height: 15),
+        //           Text(
+        //             "Toca para iniciar a grabar.",
+        //             style: TongiStyles.textBody,
+        //           ),
+        //         ],
+        //       ),
+        //     ],
+        //   ),
+        // ),
         // Container(
         //   decoration: BoxDecoration(
         //     border: BoxBorder.all(color: TongiColors.border, width: 1),
@@ -96,7 +96,7 @@ class _AudioScreenState extends State<AudioScreen> {
         //   ),
         // ),
         SizedBox(height: 20),
-        AudioTranslation(),
+        AudioTranslation(controller: _translationController),
       ],
     );
   }

@@ -6,7 +6,7 @@ class AudioRequest(BaseModel):
     language: str = "es"
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "audio_data": "base64_encoded_audio_data",
                 "language": "es"
@@ -18,7 +18,7 @@ class AudioRequest1(BaseModel):
     audio_data: str
     
     class Config:
-        schema_extra = {
+        json_schema_extra  = {
             "example": {
                 "audio_data": "base64_encoded_audio_data",
             }
@@ -30,7 +30,7 @@ class TranscriptionResponse(BaseModel):
     language: str
     
     class Config:
-        schema_extra = {
+        json_schema_extra  = {
             "example": {
                 "text": "Este es un texto transcrito del audio",
                 "confidence": 0.95,

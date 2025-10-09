@@ -5,4 +5,5 @@ pydantic
 azure-cognitiveservices-speech
 uvicorn
 gunicorn
+python-multipart
 

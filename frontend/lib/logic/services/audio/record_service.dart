@@ -10,13 +10,13 @@ class RecordService {
 
   Future<void> startRecording(String path) async {
     const config = RecordConfig(
-      encoder: AudioEncoder.aacLc,
-      sampleRate: 44100,
+      encoder: AudioEncoder.wav,
+      sampleRate: 16000,
       numChannels: 1,
       autoGain: true,
     );
     await _recorder.start(config, path: path);
   }
 
-  Future<String?> stopRecording() => _recorder.stop();
+  Future<String?> stopRecording() =>_recorder.stop();
 }

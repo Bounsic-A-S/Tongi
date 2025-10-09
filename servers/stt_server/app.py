@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.stt_controller import STTController
 from models.stt_models import AudioRequest
@@ -25,18 +25,38 @@ async def root():
 async def health_check():
     return {"status": "healthy", "service": "STT"}
 
-
 @app.post("/transcribe")
-async def transcribe_audio(request: AudioRequest):
+async def transcribe_audio(
+    file: UploadFile = File(...),
+    language: str = Form("es")
+):
     """
-    Endpoint para transcribir audio a texto
+    Endpoint para recibir un archivo de audio, transcribirlo y eliminarlo.
     """
-    result = await stt_controller.transcribe_audio(request)
+    result = await stt_controller.transcribe_audio_file(file, language)
     return {
         "text": result.text,
-        "confidence": 0.95,
+        "confidence": result.confidence,
         "language": result.language
     }
+
+@app.post("/transcribe/translate")
+async def translate_audio(
+    file: UploadFile = File(...),
+    source_language: str = Form("es-ES"),
+    target_language: str = Form("en-US")
+):
+    """
+    Endpoint para recibir un archivo de audio, transcribirlo y eliminarlo.
+    """
+    result = await stt_controller.translate_audio_file(file, source_language, target_language)
+    return {
+        "text": result.text,
+        "confidence": result.confidence,
+        "language": result.language
+    }
+
+    
 
 
 @app.get("/languages")
