@@ -4,6 +4,7 @@ import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/screens/settings/settings_about.dart';
 import 'package:frontend/ui/screens/settings/settings_lang.dart';
 import 'package:frontend/ui/screens/settings/settings_notifications.dart';
+import 'package:frontend/ui/screens/terms_conditions_scren.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
