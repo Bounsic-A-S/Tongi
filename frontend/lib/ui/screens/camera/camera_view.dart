@@ -159,14 +159,14 @@ class _CameraViewState extends State<CameraView> {
   }
 
   // ========== CONTROLES DE UI ==========
-  Widget _backButton() => Positioned(
-    top: 40,
-    left: 8,
-    child: _buildIconButton(
-      icon: Icons.arrow_back_ios_outlined,
-      onPressed: () => Navigator.of(context).pop(),
-    ),
-  );
+  // Widget _backButton() => Positioned(
+  //   top: 40,
+  //   left: 8,
+  //   child: _buildIconButton(
+  //     icon: Icons.arrow_back_ios_outlined,
+  //     onPressed: () => Navigator.of(context).pop(),
+  //   ),
+  // );
 
   Widget _languageSelector() => Positioned(
     top: 0,
