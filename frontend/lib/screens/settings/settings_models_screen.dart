@@ -13,9 +13,6 @@ class SettingsModelsScreen extends StatefulWidget {
 }
 
 class _SettingsModelsScreenState extends State<SettingsModelsScreen> {
-  static const MethodChannel _channel = MethodChannel(
-    'google_mlkit_on_device_translator',
-  );
   final _modelManager = OnDeviceTranslatorModelManager();
 
   var _pickedLanguage = "en";
@@ -70,7 +67,7 @@ class _SettingsModelsScreenState extends State<SettingsModelsScreen> {
         _pickedLanguage = value!;
       });
     },
-    items: availableLanguages.entries.map<DropdownMenuItem<String>>((entry) {
+    items: completeLanguages.entries.map<DropdownMenuItem<String>>((entry) {
       return DropdownMenuItem<String>(
         value: entry.value,
         child: Text(entry.key),
@@ -99,13 +96,4 @@ class _SettingsModelsScreenState extends State<SettingsModelsScreen> {
       this,
     );
   }
-}
-
-class OnDeviceTranslatorModelManager extends ModelManager {
-  /// Constructor to create an instance of [OnDeviceTranslatorModelManager].
-  OnDeviceTranslatorModelManager()
-    : super(
-        channel: _SettingsModelsScreenState._channel,
-        method: 'nlp#manageLanguageModelModels',
-      );
 }

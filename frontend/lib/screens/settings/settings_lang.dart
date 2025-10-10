@@ -10,7 +10,7 @@ class SettingsLangScreen extends StatefulWidget {
 }
 
 class _SettingsLangScreenState extends State<SettingsLangScreen> {
-  String _selectedLang = availableLanguages.keys.first;
+  String _selectedLang = completeLanguages.keys.first;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _SettingsLangScreenState extends State<SettingsLangScreen> {
         ),
       ),
       body: ListView(
-        children: availableLanguages.entries.map((lang) {
+        children: completeLanguages.entries.map((lang) {
           return RadioListTile<String>(
             title: Text(lang.key),
             value: lang.value,

@@ -39,15 +39,10 @@ class _TextTranslationState extends State<TextTranslation> {
 
     if (source.isEmpty || target.isEmpty) return;
 
-    final stopwatch = Stopwatch()..start();
-
     final newService = DeviceTranslatorService(
       sourceLanguage: source,
       targetLanguage: target,
     );
-
-    stopwatch.stop();
-    print('Tiempo de ejecución: ${stopwatch.elapsedMilliseconds} ms');
 
     setState(() {
       translationService = newService;
@@ -61,16 +56,11 @@ class _TextTranslationState extends State<TextTranslation> {
       return;
     }
 
-    final stopwatch = Stopwatch()..start();
-
     translationService.translateText(text).then((translation) {
       setState(() {
         _outputController.text = translation;
       });
     });
-
-    stopwatch.stop();
-    print('Tiempo de ejecución: ${stopwatch.elapsedMilliseconds} ms');
   }
 
   @override

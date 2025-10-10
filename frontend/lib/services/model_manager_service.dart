@@ -44,3 +44,12 @@ class ModelManager {
     return result.toString() == 'success';
   }
 }
+
+class OnDeviceTranslatorModelManager extends ModelManager {
+  /// Constructor to create an instance of [OnDeviceTranslatorModelManager].
+  OnDeviceTranslatorModelManager()
+    : super(
+        channel: MethodChannel('google_mlkit_on_device_translator'),
+        method: 'nlp#manageLanguageModelModels',
+      );
+}

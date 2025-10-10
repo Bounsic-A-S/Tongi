@@ -1,4 +1,4 @@
-const Map<String, String> availableLanguages = {
+const Map<String, String> completeLanguages = {
   "Español": "es",
   "Afrikáans": "af",
   "Albanés": "sq",
