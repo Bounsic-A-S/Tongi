@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/tongi_colors.dart';
 import 'package:frontend/core/tongi_languages.dart';
 import 'package:frontend/core/tongi_styles.dart';
+import 'package:frontend/offline_check_controller.dart';
 import 'package:frontend/services/model_manager_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:async';
@@ -21,67 +22,19 @@ class LanguageSelector extends StatefulWidget {
 }
 
 class _LanguageSelectorState extends State<LanguageSelector> {
+  static OfflineCheckController offlineCheckController =
+      OfflineCheckController();
   List<MapEntry<String, String>> _availableLanguages = [];
   bool _loading = true;
-  late final Connectivity _connectivity;
-  late final Stream<List<ConnectivityResult>> _connectivityStream;
-  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
-    _connectivity = Connectivity();
-    _connectivityStream = _connectivity.onConnectivityChanged;
-    _connectivitySubscription = _connectivityStream.listen((results) {
-      // Use the first result in the list, if available
-      final result = results.isNotEmpty
-          ? results.first
-          : ConnectivityResult.none;
-      _loadDownloadedLanguages(connectivityResult: result);
-    });
-    _loadDownloadedLanguages();
-  }
-
-  Future<void> _loadDownloadedLanguages({
-    ConnectivityResult? connectivityResult,
-  }) async {
-    ConnectivityResult result;
-    if (connectivityResult != null) {
-      result = connectivityResult;
-    } else {
-      result = (await _connectivity.checkConnectivity()) as ConnectivityResult;
-    }
-    bool isOffline = result == ConnectivityResult.none;
-
-    setState(() {
-      _loading = true;
-    });
-
-    if (isOffline) {
-      final modelManager = OnDeviceTranslatorModelManager();
-      List<MapEntry<String, String>> downloaded = [];
-      for (var entry in completeLanguages.entries) {
-        bool isDownloaded = false;
-        try {
-          isDownloaded = await modelManager.isModelDownloaded(entry.value);
-        } catch (_) {}
-        if (isDownloaded) downloaded.add(entry);
-      }
-      setState(() {
-        _availableLanguages = downloaded;
-        _loading = false;
-      });
-    } else {
-      setState(() {
-        _availableLanguages = completeLanguages.entries.toList();
-        _loading = false;
-      });
-    }
   }
 
   @override
   void dispose() {
-    _connectivitySubscription.cancel();
+    offlineCheckController.dispose();
     super.dispose();
   }
 
