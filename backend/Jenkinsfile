@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    environment {
+        IMAGE_NAME = 'myacr.azurecr.io/backend:latest'
+        AZURE_CREDENTIALS = credentials('azure-docker-login')  // credencial guardada en Jenkins
+    }
+
+    stages {
+        stage('Run Tests') {
+            steps {
+                dir('backend') {
+                    sh 'chmod +x run-test.sh'
+                    sh './run-test.sh'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('backend') {
+                    sh 'docker build -t $IMAGE_NAME .'
+                }
+            }
+        }
+
+        stage('Login to Azure Container Registry') {
+            steps {
+                sh 'echo $AZURE_CREDENTIALS_PSW | docker login myacr.azurecr.io -u $AZURE_CREDENTIALS_USR --password-stdin'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push $IMAGE_NAME'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Backend (Pistache C++) built and pushed successfully!'
+        }
+        failure {
+            echo '❌ Backend build or tests failed.'
+        }
+    }
+}
