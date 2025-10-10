@@ -26,35 +26,35 @@ pipeline {
                     jobs['Frontend'] = {
                         dir('frontend') {
                             echo '🚀 Running Frontend Pipeline...'
-                            sh '/home/Traducktor/bin/jenkinsfile-runner -f Jenkinsfile'
+                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
                         }
                     }
 
                     jobs['Backend'] = {
                         dir('backend') {
                             echo '🧱 Running Backend Pipeline (Pistache)...'
-                            sh '/home/Traducktor/bin/jenkinsfile-runner -f Jenkinsfile'
+                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
                         }
                     }
 
                     jobs['Server stt'] = {
                         dir('servers/stt_server') {
                             echo '⚙️ Running Server 1 pipeline...'
-                            sh '/home/Traducktor/bin/jenkinsfile-runner -f Jenkinsfile'
+                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
                         }
                     }
 
                     jobs['Server tts'] = {
                         dir('servers/tts_server') {
                             echo '⚙️ Running Server 2 pipeline...'
-                            sh '/home/Traducktor/bin/jenkinsfile-runner -f Jenkinsfile'
+                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
                         }
                     }
 
                     jobs['Server ttt'] = {
                         dir('servers/ttt_server') {
                             echo '⚙️ Running Server 3 pipeline...'
-                            sh '/home/Traducktor/bin/jenkinsfile-runner -f Jenkinsfile'
+                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
                         }
                     }
 
