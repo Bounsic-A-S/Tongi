@@ -7,7 +7,7 @@ import os
 class TTSController:
     def __init__(self):
         self.tts_service = TTSService()
-        self.base_url = os.getenv("BASE_URL", "http://localhost:8002")  # Para formar URLs completas de audio
+        self.base_url = os.getenv("BASE_URL", "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io")  # Para formar URLs completas de audio
 
     # --- Selecciona la voz correcta ---
     async def pick_voice(self, language: str, voice: str = None) -> str:

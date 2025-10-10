@@ -7,16 +7,16 @@ class TTSService {
   static String get baseUrl {
     if (kIsWeb) {
       // For web development
-      return "https://stt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
+      return "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
     } else if (Platform.isAndroid) {
       // For Android emulator
-      return "https://stt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io"; // in this case my ip , so change TONGI TEAM :)
+      return "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io"; // in this case my ip , so change TONGI TEAM :)
     } else if (Platform.isIOS) {
       // For iOS simulator
-      return "https://stt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
+      return "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
     } else {
       // For desktop or other platforms
-      return "https://stt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
+      return "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
     }
   }
 
@@ -56,6 +56,7 @@ class TTSService {
         // }
 
         if (data['audio_data'] != null) {
+          print(data['audio_data']);
           return data['audio_data']; // Devuelve la URL del audio
         } else {
           throw Exception("No se encontró 'audio_data' en la respuesta");
