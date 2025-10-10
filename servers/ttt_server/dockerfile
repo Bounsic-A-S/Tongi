@@ -1,0 +1,18 @@
+# ETAPA 1: Construcción de dependencias Python
+FROM python:3.11-slim AS python-base
+
+WORKDIR /app
+
+# Copiar y instalar dependencias
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar todo el proyecto
+COPY . .
+
+# Exponer puerto que Azure inyectará
+EXPOSE 8001
+
+# Gunicorn con UvicornWorker (ASGI) para producción
+CMD ["gunicorn", "--bind", "0.0.0.0:8001", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "app:app"]
+

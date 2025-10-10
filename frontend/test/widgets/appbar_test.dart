@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/widgets/dashboard/tongi_appbar.dart';
+import 'package:frontend/ui/widgets/dashboard/tongi_appbar.dart';
 
 void main() {
   testWidgets('TongiAppBar muestra logo y botón de settings', (

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:frontend/core/tongi_languages.dart';
-import 'package:frontend/services/model_manager_service.dart';
+import 'package:frontend/ui/core/tongi_languages.dart';
+import 'package:frontend/logic/controllers/model_manager_service.dart';
 
 class OfflineCheckController {
   late final Connectivity _connectivity;
@@ -39,7 +39,7 @@ class OfflineCheckController {
     if (isOffline) {
       final modelManager = OnDeviceTranslatorModelManager();
       List<MapEntry<String, String>> downloaded = [];
-      for (var entry in completeLanguages.entries) {
+      for (var entry in tongiLanguages.entries) {
         bool isDownloaded = false;
         try {
           isDownloaded = await modelManager.isModelDownloaded(entry.value);
