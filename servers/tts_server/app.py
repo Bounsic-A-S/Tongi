@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.tts_controller import TTSController
 from models.tts_models import SynthesisRequest
@@ -13,18 +14,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Inicializar controlador
 tts_controller = TTSController()
 
+# Servir archivos temporales
+app.mount("/audio", StaticFiles(directory="/tmp/audio_files"), name="audio")
 
 @app.get("/")
 async def root():
     return {"message": "TTS Server - Text to Speech API"}
 
-
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "TTS"}
-
 
 @app.post("/synthesize")
 async def synthesize_speech(request: SynthesisRequest):
@@ -33,22 +35,15 @@ async def synthesize_speech(request: SynthesisRequest):
     """
     result = await tts_controller.synthesize(request)
     return {
-        "audio_data": result.audio_data,
+        "audio_data": result.audio_data,  # URL completa
         "language": result.language,
         "voice": result.voice,
-        "sample_rate": 22050,
+        "sample_rate": result.sample_rate,
     }
-
 
 @app.get("/voices")
 async def get_available_voices():
     """
     Obtener voces disponibles por idioma
     """
-    return {
-        "languages": {
-            "es": ["default", "female_1", "male_1"],
-            "en": ["default", "female_1", "male_1"],
-        },
-        "default": {"es": "default", "en": "default"},
-    }
+    return await tts_controller.get_available_voices()

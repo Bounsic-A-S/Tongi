@@ -1,0 +1,98 @@
+{
+    "_id": "azure_voices_collection",
+    "last_updated": "2024-01-15T10:30:00Z",
+    "version": "2024.1",
+    "note": "Solo voces gratuitas incluidas: MultilingualNeural, TurboMultilingualNeural y Jenny/Ryan Multilingual.",
+    "voice_categories": {
+      "multilingual_neural": {
+        "description": "Voces neurales multiidioma (gratuitas) - alta cobertura de idiomas",
+        "capabilities": ["1", "2"],
+        "voices": [
+          { "id": "en-US-AdamMultilingualNeural", "name": "Adam", "language_code": "en-US", "country": "US", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "en-US-AmandaMultilingualNeural", "name": "Amanda", "language_code": "en-US", "country": "US", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "en-GB-AdaMultilingualNeural", "name": "Ada", "language_code": "en-GB", "country": "GB", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "en-GB-OllieMultilingualNeural", "name": "Ollie", "language_code": "en-GB", "country": "GB", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+  
+          { "id": "es-ES-ArabellaMultilingualNeural", "name": "Arabella", "language_code": "es-ES", "country": "ES", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "es-ES-IsidoraMultilingualNeural", "name": "Isidora", "language_code": "es-ES", "country": "ES", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "es-ES-TristanMultilingualNeural", "name": "Tristán", "language_code": "es-ES", "country": "ES", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "es-ES-XimenaMultilingualNeural", "name": "Ximena", "language_code": "es-ES", "country": "ES", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+  
+          { "id": "fr-FR-LucienMultilingualNeural", "name": "Lucien", "language_code": "fr-FR", "country": "FR", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "fr-FR-VivienneMultilingualNeural", "name": "Vivienne", "language_code": "fr-FR", "country": "FR", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+  
+          { "id": "de-DE-FlorianMultilingualNeural", "name": "Florian", "language_code": "de-DE", "country": "DE", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "de-DE-SeraphinaMultilingualNeural", "name": "Seraphina", "language_code": "de-DE", "country": "DE", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+  
+          { "id": "it-IT-AlessioMultilingualNeural", "name": "Alessio", "language_code": "it-IT", "country": "IT", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "it-IT-IsabellaMultilingualNeural", "name": "Isabella", "language_code": "it-IT", "country": "IT", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+  
+          { "id": "ja-JP-MasaruMultilingualNeural", "name": "Masaru", "language_code": "ja-JP", "country": "JP", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "ko-KR-HyunsuMultilingualNeural", "name": "Hyunsu", "language_code": "ko-KR", "country": "KR", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+  
+          { "id": "zh-CN-XiaoxiaoMultilingualNeural", "name": "Xiaoxiao", "language_code": "zh-CN", "country": "CN", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+          { "id": "zh-CN-YunyiMultilingualNeural", "name": "Yunyi", "language_code": "zh-CN", "country": "CN", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" },
+  
+          { "id": "hi-IN-SwaraMultilingualNeural", "name": "Swara", "language_code": "hi-IN", "country": "IN", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000" }
+        ]
+      },
+      "turbo_multilingual_neural": {
+        "description": "Voces turbo multiidioma (gratuitas) — síntesis muy rápida",
+        "capabilities": ["1", "2"],
+        "voices": [
+          { "id": "en-US-AlloyTurboMultilingualNeural", "name": "Alloy Turbo", "language_code": "en-US", "country": "US", "gender": "Male", "voice_type": "TurboMultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000", "performance": "ultra_fast" },
+          { "id": "en-US-FableTurboMultilingualNeural", "name": "Fable Turbo", "language_code": "en-US", "country": "US", "gender": "Neutral", "voice_type": "TurboMultilingualNeural", "capabilities": ["1","2"], "sample_rate": "24000", "performance": "ultra_fast" }
+        ]
+      },
+      "jenny_ryan_multilingual": {
+        "description": "Voces Jenny y Ryan (multilingües limitadas, gratuitas)",
+        "capabilities": ["2"],
+        "voices": [
+          { "id": "en-US-JennyMultilingualNeural", "name": "Jenny", "language_code": "en-US", "country": "US", "gender": "Female", "voice_type": "MultilingualNeural", "capabilities": ["2"], "sample_rate": "24000" },
+          { "id": "en-US-RyanMultilingualNeural", "name": "Ryan", "language_code": "en-US", "country": "US", "gender": "Male", "voice_type": "MultilingualNeural", "capabilities": ["2"], "sample_rate": "24000" }
+        ]
+      }
+    },
+    "language_voice_map": {
+      "es-ES": {
+        "native_voices": ["es-ES-ArabellaMultilingualNeural", "es-ES-IsidoraMultilingualNeural", "es-ES-TristanMultilingualNeural", "es-ES-XimenaMultilingualNeural"],
+        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-GB-AdaMultilingualNeural", "en-GB-OllieMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
+      },
+      "es-MX": {
+        "native_voices": ["es-ES-ArabellaMultilingualNeural", "es-ES-IsidoraMultilingualNeural", "es-ES-TristanMultilingualNeural", "es-ES-XimenaMultilingualNeural"],
+        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
+      },
+      "en-GB": {
+        "native_voices": ["en-GB-AdaMultilingualNeural", "en-GB-OllieMultilingualNeural"],
+        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
+      },
+      "ru-RU": {
+        "native_voices": [],
+        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
+      },
+      "uk-UA": {
+        "native_voices": [],
+        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
+      },
+      "pl-PL": {
+        "native_voices": [],
+        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
+      },
+      "ar-EG": {
+        "native_voices": [],
+        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
+      },
+      "ar-SA": {
+        "native_voices": [],
+        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
+      }
+    },
+    "capability_definitions": {
+      "1": "Síntesis de voz básica",
+      "2": "Síntesis de voz avanzada con emociones"
+    },
+    "meta": {
+      "explanation": "En 'native_voices' aparecen voces cuya identificación nativa corresponde al idioma (p. ej. es-ES...). En 'other_multilingual_voices' aparecen voces gratuitas multilingües que pueden producir TTS en ese idioma sin cambiar de voz. No se incluyen voces premium (Dragon HD/Flash, OpenAI HD)."
+    }
+  }
+  
