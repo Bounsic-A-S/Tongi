@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/logic/services/audio/speech_service.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/ui/widgets/copy_button.dart';
 import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
 
 class TextTranslation extends StatefulWidget {
   final TextTranslationController controller;
@@ -18,6 +20,43 @@ class _TextTranslationState extends State<TextTranslation> {
   TextTranslationController translationController = TextTranslationController();
   late final TextEditingController _outputController;
   late final TextEditingController _inputController;
+
+  static const Map<String, String> _languageRegions = {
+    'es': 'es-ES',
+    'en': 'en-US',
+    'de': 'de-DE',
+    'it': 'it-IT',
+    'jp': 'ja-JP',
+  };
+
+  Future<void> _handleSpeech(String text) async {
+    try {
+      if (text.isEmpty) {
+        setState(() => _outputController.text = "No hay texto para sintetizar");
+        return;
+      }
+
+      final lang = _languageRegions[widget.controller.targetLanguageCode] ?? 'es-ES';
+
+      const defaultVoice = "en-US-JennyMultilingualNeural";
+
+      final audioUrl = await TTSService.synthesizeSpeech(
+        text: text,
+        language: lang,
+        voice: defaultVoice,
+      );
+
+      debugPrint("✅ Audio generado en: $audioUrl");
+
+      final player = AudioPlayer();
+      await player.setAudioSource(AudioSource.uri(Uri.parse(audioUrl)));
+      await player.play();
+
+    } catch (e) {
+      setState(() => _outputController.text = "Error al generar audio");
+      debugPrint("❌ Error al generar TTS: $e");
+    }
+  }
 
   @override
   void initState() {
@@ -144,7 +183,11 @@ class _TextTranslationState extends State<TextTranslation> {
             Positioned(
               top: 0,
               right: 0,
-              child: IconButton(onPressed: () {}, icon: Icon(Icons.volume_up)),
+              child: IconButton(                    
+                onPressed: () async {
+                  await _handleSpeech(_outputController.text);
+                }, 
+                icon: Icon(Icons.volume_up)),
             ),
             Positioned(
               right: 0,
