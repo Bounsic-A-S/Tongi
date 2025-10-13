@@ -6,7 +6,7 @@ pipeline {
     }
 
     triggers {
-        githubPush() // Se ejecuta automáticamente cuando haces push a main
+        githubPush()
     }
 
     stages {
@@ -17,48 +17,41 @@ pipeline {
             }
         }
 
-        stage('Run Subprojects') {
+        stage('Detect and Run Subprojects') {
             steps {
                 script {
-                    // Definimos los pipelines paralelos
+                    // Obtener subdirectorios
+                    def dirs = sh(script: "find . -maxdepth 2 -type d", returnStdout: true).trim().split("\n")
                     def jobs = [:]
 
-                    jobs['Frontend'] = {
-                        dir('frontend') {
-                            echo '🚀 Running Frontend Pipeline...'
-                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
+                    for (dirPath in dirs) {
+                        // Ignorar el directorio raíz
+                        if (dirPath == "." || dirPath == "./frontend" || dirPath == "./backend" || dirPath.startsWith("./.git")) {
+                            continue
+                        }
+
+                        def folder = dirPath.replace("./", "")
+                        def jenkinsfileExists = fileExists("${folder}/Jenkinsfile")
+
+                        if (jenkinsfileExists) {
+                            // Cada subproyecto con Jenkinsfile se ejecuta como job paralelo
+                            jobs[folder] = {
+                                dir(folder) {
+                                    echo "🚀 Running Jenkinsfile in ${folder}"
+                                    load 'Jenkinsfile'
+                                }
+                            }
+                        } else {
+                            // Si no hay Jenkinsfile, solo listar archivos
+                            jobs[folder] = {
+                                dir(folder) {
+                                    echo "📂 No Jenkinsfile in ${folder}, listing contents..."
+                                    sh 'ls -l'
+                                }
+                            }
                         }
                     }
 
-                    jobs['Backend'] = {
-                        dir('backend') {
-                            echo '🧱 Running Backend Pipeline (Pistache)...'
-                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
-                        }
-                    }
-
-                    jobs['Server stt'] = {
-                        dir('servers/stt_server') {
-                            echo '⚙️ Running Server 1 pipeline...'
-                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
-                        }
-                    }
-
-                    jobs['Server tts'] = {
-                        dir('servers/tts_server') {
-                            echo '⚙️ Running Server 2 pipeline...'
-                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
-                        }
-                    }
-
-                    jobs['Server ttt'] = {
-                        dir('servers/ttt_server') {
-                            echo '⚙️ Running Server 3 pipeline...'
-                            sh '/usr/local/bin/jenkinsfile-runner -f Jenkinsfile'
-                        }
-                    }
-
-                    // Ejecutamos todos los jobs en paralelo
                     parallel jobs
                 }
             }
@@ -67,11 +60,11 @@ pipeline {
 
     post {
         success {
-            echo '✅ All pipelines completed successfully!'
+            echo '✅ All subprojects completed successfully!'
             jiraSendBuildInfo()
         }
         failure {
-            echo '❌ One or more pipelines failed.'
+            echo '❌ One or more subprojects failed.'
             jiraSendBuildInfo()
         }
     }
