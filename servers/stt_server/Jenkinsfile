@@ -12,16 +12,16 @@ pipeline {
                 }
             }
         }
-        stage('Login to Azure') {
-            steps {
-                sh 'echo $AZURE_CREDENTIALS_PSW | docker login myacr.azurecr.io -u $AZURE_CREDENTIALS_USR --password-stdin'
-            }
-        }
-        stage('Push Docker image') {
-            steps {
-                sh 'docker push $IMAGE_NAME'
-            }
-        }
+        // stage('Login to Azure') {
+        //     steps {
+        //         sh 'echo $AZURE_CREDENTIALS_PSW | docker login myacr.azurecr.io -u $AZURE_CREDENTIALS_USR --password-stdin'
+        //     }
+        // }
+        // stage('Push Docker image') {
+        //     steps {
+        //         sh 'docker push $IMAGE_NAME'
+        //     }
+        // }
     }
     post {
         success {
