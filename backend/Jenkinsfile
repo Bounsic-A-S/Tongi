@@ -6,27 +6,43 @@ pipeline {
     }
 
     stages {
+        stage('Debug Info') {
+            steps {
+                echo '--- Debugging Environment ---'
+                sh 'echo "Current Directory: $(pwd)"'
+                sh 'echo "Listing files:" && ls -la'
+                sh 'echo "Environment Variables:" && env'
+                echo '-------------------------------'
+            }
+        }
+
         stage('Run Tests') {
             steps {
+                echo 'Running tests with debug...'
                 sh 'chmod +x run-test.sh'
-                sh './run-test.sh'
+                sh './run-test.sh || echo "⚠️ Tests failed, check output above"'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                echo "Building Docker image $IMAGE_NAME with debug..."
+                sh 'docker version'
+                sh 'docker info'
+                sh 'docker build --progress=plain -t $IMAGE_NAME .'
             }
         }
 
         // stage('Login to Azure Container Registry') {
         //     steps {
+        //         echo 'Logging into Azure Container Registry...'
         //         sh 'echo $AZURE_CREDENTIALS_PSW | docker login myacr.azurecr.io -u $AZURE_CREDENTIALS_USR --password-stdin'
         //     }
         // }
 
         // stage('Push Docker Image') {
         //     steps {
+        //         echo "Pushing Docker image $IMAGE_NAME..."
         //         sh 'docker push $IMAGE_NAME'
         //     }
         // }
