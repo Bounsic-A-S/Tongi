@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         IMAGE_NAME = 'myacr.azurecr.io/backend:latest'
-        AZURE_CREDENTIALS = credentials('azure-docker-login')  // credencial guardada en Jenkins
+        // AZURE_CREDENTIALS = credentials('azure-docker-login')  // credencial guardada en Jenkins
     }
 
     stages {
