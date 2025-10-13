@@ -2,11 +2,11 @@ pipeline {
     agent any
     environment {
         IMAGE_NAME = 'myacr.azurecr.io/server3:latest'
-        // AZURE_CREDENTIALS = credentials('azure-docker-login')
+        AZURE_CREDENTIALS = credentials('azure-docker-login')
     }
     stages {
         stage('Build Docker image') {
-            dir('servers/ttt_server') {
+            steps {
                 sh 'docker build -t $IMAGE_NAME .'
             }
         }

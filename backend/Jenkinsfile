@@ -20,8 +20,8 @@ pipeline {
             steps {
                 dir('backend') {
                     echo 'Running tests with debug...'
-                    sh 'chmod +x run-test.sh'
-                    sh './run-test.sh || echo "⚠️ Tests failed, check output above"'
+                    sh 'chmod +x run-tests.sh'
+                    sh './run-tests.sh || echo "⚠️ Tests failed, check output above"'
                 }
             }
         }
