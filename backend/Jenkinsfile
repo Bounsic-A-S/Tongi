@@ -8,18 +8,14 @@ pipeline {
     stages {
         stage('Run Tests') {
             steps {
-                dir('backend') {
-                    sh 'chmod +x run-test.sh'
-                    sh './run-test.sh'
-                }
+                sh 'chmod +x run-test.sh'
+                sh './run-test.sh'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                dir('backend') {
-                    sh 'docker build -t $IMAGE_NAME .'
-                }
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 

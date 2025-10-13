@@ -7,9 +7,8 @@ pipeline {
     stages {
         stage('Build Docker image') {
             steps {
-                dir('servers/stt_server') {
-                    sh 'docker build -t $IMAGE_NAME .'
-                }
+                sh 'docker build -t $IMAGE_NAME .'
+                
             }
         }
         // stage('Login to Azure') {
