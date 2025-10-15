@@ -2,6 +2,8 @@
 #define TTT_SERVICE_H
 
 #include <string>
+#include <pistache/http.h>
+#include <pistache/router.h>
 
 class TTTService {
 public:

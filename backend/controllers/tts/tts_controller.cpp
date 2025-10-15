@@ -19,3 +19,15 @@ void TTSController::getHealth(const Rest::Request&, Http::ResponseWriter respons
     auto json = TTSService::fetchApiHealth();
     response.send(Http::Code::Ok, json);
 }
+void TTSController::getResponseApiSythetice(const Rest::Request& request, Http::ResponseWriter response) {
+    setJsonHeaders(response);
+    auto body = request.body();
+    auto json = TTSService::fetchApiSynthesize(body); // puedes adaptar el body si viene del frontend
+    response.send(Http::Code::Ok, json);
+}
+
+void TTSController::getResponseFromVoices(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter response) {
+    setJsonHeaders(response);
+    auto json = TTSService::fetchApiVoices();
+    response.send(Http::Code::Ok, json);
+}

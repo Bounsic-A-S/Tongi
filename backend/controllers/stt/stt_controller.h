@@ -8,7 +8,8 @@ class STTController {
 public:
     static void getResponseFromMicroService(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter response);
     static void getHealth(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter response);
-
+    static void transcribeAudio(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+    static void translateAudio(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 };
 
 #endif

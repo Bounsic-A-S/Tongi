@@ -8,6 +8,8 @@ class TTSController {
 public:
     static void getResponseFromMicroService(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter response);
     static void getHealth(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter response);
+    static void getResponseApiSythetice(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+    static void getResponseFromVoices(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter response);
 
 };
 

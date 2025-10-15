@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     ninja-build \
     curl \
+    ca-certificates \
+    libcurl4-openssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Meson 
@@ -35,8 +37,9 @@ RUN git clone https://github.com/pistacheio/pistache.git /tmp/pistache && \
 
 RUN git clone https://github.com/libcpr/cpr.git /tmp/cpr && \
     cd /tmp/cpr && mkdir build && cd build && \
-    cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCPR_BUILD_TESTS=OFF -DCPR_BUILD_TESTS_SSL=OFF && \
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCPR_BUILD_TESTS=OFF -DCPR_BUILD_TESTS_SSL=OFF -DCPR_USE_SYSTEM_CURL=ON && \
     make -j$(nproc) && make install && ldconfig && \
+    mkdir -p /usr/local/lib/pkgconfig && \
     echo 'prefix=/usr/local' > /usr/local/lib/pkgconfig/libcpr.pc && \
     echo 'exec_prefix=${prefix}' >> /usr/local/lib/pkgconfig/libcpr.pc && \
     echo 'libdir=${exec_prefix}/lib' >> /usr/local/lib/pkgconfig/libcpr.pc && \

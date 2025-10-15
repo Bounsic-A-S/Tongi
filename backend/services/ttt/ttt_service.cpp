@@ -2,7 +2,7 @@
 #include <cpr/cpr.h>
 #include <string>
 
-std::string checkForError(auto response){
+static std::string checkForError(const cpr::Response& response){
     if (response.error) {
         return "{\"error\":\"Request failed: " + response.error.message + "\"}";
     }
@@ -15,37 +15,42 @@ std::string checkForError(auto response){
 }
 
 std::string TTTService::fetchApiRoot() {
-    auto response = cpr::Get(cpr::Url{"http://host.docker.internal:8003/"},
+    cpr::Response response = cpr::Get(cpr::Url{"https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io/"},
                              cpr::Timeout{5000}); // 5s timeout
-    checkForError(response);
+    std::string err = checkForError(response);
+    if (!err.empty()) return err;
     return response.text;
 }
 std::string TTTService::fetchApiHealth() {
-    auto response = cpr::Get(cpr::Url{"http://host.docker.internal:8003/health"},
+    cpr::Response response = cpr::Get(cpr::Url{"https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io/health"},
                              cpr::Timeout{5000}); // 5s timeout
-    checkForError(response);
+    std::string err = checkForError(response);
+    if (!err.empty()) return err;
     return response.text;
 }
 
 std::string TTTService::fetchApiTranslation(const std::string& body) {
-    auto response = cpr::Post(
-        cpr::Url{"http://host.docker.internal:8003/process"},
+    cpr::Response response = cpr::Post(
+        cpr::Url{"https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io/process"},
         cpr::Body{body},
         cpr::Header{{"Content-Type", "application/json"}},
         cpr::Timeout{5000}
     );
-    checkForError(response);
+    std::string err = checkForError(response);
+    if (!err.empty()) return err;
     return response.text;
 }
 std::string TTTService::fetchApiTasks() {
-    auto response = cpr::Get(cpr::Url{"http://host.docker.internal:8003/tasks"},
+    cpr::Response response = cpr::Get(cpr::Url{"https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io/tasks"},
                              cpr::Timeout{5000}); // 5s timeout
-    checkForError(response);
+    std::string err = checkForError(response);
+    if (!err.empty()) return err;
     return response.text;
 }
 std::string TTTService::fetchApiLanguages() {
-    auto response = cpr::Get(cpr::Url{"http://host.docker.internal:8003/languages"},
+    cpr::Response response = cpr::Get(cpr::Url{"https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io/languages"},
                              cpr::Timeout{5000}); // 5s timeout
-    checkForError(response);
+    std::string err = checkForError(response);
+    if (!err.empty()) return err;
     return response.text;
 }
