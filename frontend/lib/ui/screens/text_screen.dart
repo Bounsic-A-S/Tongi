@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:frontend/ui/widgets/language_selector.dart';
 import 'package:frontend/ui/widgets/text/text_suggestions.dart';
-import 'package:frontend/ui/widgets/text/text_translation.dart';
-import 'package:frontend/logic/controllers/text_translation_controller.dart';
+import 'package:frontend/ui/widgets/text/text_translation_widget.dart';
 
 class TextScreen extends StatefulWidget {
   const TextScreen({super.key});
@@ -13,16 +13,16 @@ class TextScreen extends StatefulWidget {
 
 class _TextScreenState extends State<TextScreen> {
   late final TextTranslationController _translationController;
-  
+
   @override
   void initState() {
     super.initState();
     _translationController = TextTranslationController();
   }
-  
+
   @override
   void dispose() {
-    _translationController.dispose();
+    // _translationController.dispose();
     super.dispose();
   }
 
@@ -33,10 +33,10 @@ class _TextScreenState extends State<TextScreen> {
         Expanded(
           child: ListView(
             children: [
-              LanguageSelector(controller: _translationController),
+              LanguageSelector(),
               SizedBox(height: 10),
               SizedBox(height: 10),
-              TextTranslation(controller: _translationController),
+              TextTranslationWidget(translationController: _translationController),
               TextSuggestions(),
             ],
           ),
