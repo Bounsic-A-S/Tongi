@@ -3,6 +3,8 @@ pipeline {
     environment {
         IMAGE_NAME = 'myacr.azurecr.io/backend:latest'
         // AZURE_CREDENTIALS = credentials('azure-docker-login')
+        DOCKER_BUILDKIT = '1'
+
     }
 
     stages {
@@ -19,9 +21,15 @@ pipeline {
         stage('Run Tests') {
             steps {
                 dir('backend') {
-                    echo 'Running tests with debug...'
-                    sh 'chmod +x run-tests.sh'
-                    sh './run-tests.sh || echo "⚠️ Tests failed, check output above"'
+                    retry(2) {
+                        sh '''
+                            chmod +x run-tests.sh
+                            export DOCKER_BUILDKIT=1
+                            echo "🧪 Running Tongi Backend Tests..."
+                            ./run-tests.sh
+                            '''
+                    }
+              
                 }
             }
         }
