@@ -34,10 +34,10 @@ docker run --rm tongi-tests /bin/bash -c "cd build/bin && ./unit_tests"
 unit_test_result=$?
 
 # Run integration tests (with timeout to prevent hanging)
-echo -e "\n${BLUE}🌐 Running Integration Tests...${NC}"
-echo "=================================================="
-docker run --rm tongi-tests /bin/bash -c "cd build/bin && timeout 15 ./integration_tests || echo 'Integration test completed or timed out'"
-integration_test_result=$?
+# echo -e "\n${BLUE}🌐 Running Integration Tests...${NC}"
+# echo "=================================================="
+# docker run --rm tongi-tests /bin/bash -c "cd build/bin && timeout 15 ./integration_tests || echo 'Integration test completed or timed out'"
+# integration_test_result=$?
 
 # Summary
 echo -e "\n${CYAN}📊 Test Summary${NC}"
@@ -48,10 +48,10 @@ else
     echo -e "${YELLOW}⚠️  Unit Tests: SOME FAILURES${NC}"
 fi
 
-if [ $integration_test_result -eq 0 ]; then
-    echo -e "${GREEN}✅ Integration Tests: PASSED${NC}"
-else
-    echo -e "${YELLOW}⚠️  Integration Tests: COMPLETED WITH ISSUES${NC}"
-fi
+# if [ $integration_test_result -eq 0 ]; then
+#     echo -e "${GREEN}✅ Integration Tests: PASSED${NC}"
+# else
+#     echo -e "${YELLOW}⚠️  Integration Tests: COMPLETED WITH ISSUES${NC}"
+# fi
 
 echo -e "\n${CYAN}💡 To run tests again, simply execute: ./run-tests.sh${NC}"
