@@ -3,11 +3,14 @@ pipeline {
     environment {
         IMAGE_NAME = 'myacr.azurecr.io/server1:latest'
         // AZURE_CREDENTIALS = credentials('azure-docker-login')
-    }
+        DOCKER_BUILDKIT = '1'
+
+   }
     stages {
         stage('Build Docker image') {
             steps {
                 dir('servers/stt_server') {
+                    sh 'export DOCKER_BUILDKIT=1'
                     sh 'docker build -t $IMAGE_NAME .'
                 }
             }

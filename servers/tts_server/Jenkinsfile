@@ -3,11 +3,16 @@ pipeline {
     environment {
         IMAGE_NAME = 'myacr.azurecr.io/server2:latest'
         // AZURE_CREDENTIALS = credentials('azure-docker-login')
+        DOCKER_BUILDKIT = '1'
+
     }
     stages {
         stage('Build Docker image') {
-            dir('servers/tts_server') {
-                sh 'docker build -t $IMAGE_NAME .'
+            steps {
+                dir('servers/tts_server') {
+                    sh 'export DOCKER_BUILDKIT=1'
+                    sh 'docker build -t $IMAGE_NAME .'
+                }
             }
         }
         // stage('Login to Azure') {
