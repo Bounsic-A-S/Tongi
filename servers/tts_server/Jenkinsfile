@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        IMAGE_NAME = 'myacr.azurecr.io/server2:latest'
+        IMAGE_NAME = 'tongiservices.azurecr.io/tts-server:latest'
         // AZURE_CREDENTIALS = credentials('azure-docker-login')
         DOCKER_BUILDKIT = '1'
 
