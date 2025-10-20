@@ -84,7 +84,7 @@ class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
                   },
                   activeColor: Colors.white,
                   checkColor: TongiColors.secondary,
-                  fillColor: MaterialStateProperty.all(Colors.white70),
+                  fillColor: WidgetStateProperty.all(Colors.white70),
                 ),
                 Expanded(
                       child: RichText(

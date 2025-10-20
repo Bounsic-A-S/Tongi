@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/ui/widgets/text/text_translation.dart';
+import 'package:frontend/ui/widgets/text/text_translation_widget.dart';
 import 'package:frontend/ui/widgets/language_selector.dart';
 
 

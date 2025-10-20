@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/logic/controllers/text_translation_controller.dart';
+import 'package:frontend/logic/controllers/past_text_translation_controller.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/logic/services/audio/record_service.dart';
@@ -30,7 +30,7 @@ class _AudioScreenState extends State<AudioScreen> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        LanguageSelector(controller: _translationController),
+        LanguageSelector(),
         SizedBox(height: 10),
         // Container(
         //   decoration: BoxDecoration(
