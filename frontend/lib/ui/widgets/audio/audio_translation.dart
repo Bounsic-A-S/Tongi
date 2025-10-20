@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:frontend/logic/controllers/text_translation_controller.dart';
+import 'package:frontend/logic/controllers/past_text_translation_controller.dart';
 import 'package:frontend/logic/services/audio/record_service.dart';
 import 'package:frontend/logic/services/audio/transcription_service.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';

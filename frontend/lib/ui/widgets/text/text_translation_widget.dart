@@ -1,53 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/logic/controllers/lang_selector_controller.dart';
+import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/ui/widgets/copy_button.dart';
-import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:flutter/services.dart';
 
-class TextTranslation extends StatefulWidget {
-  final TextTranslationController controller;
+class TextTranslationWidget extends StatefulWidget {
+  final TextTranslationController translationController;
 
-  const TextTranslation({super.key, required this.controller});
+  const TextTranslationWidget({super.key, required this.translationController});
 
   @override
-  State<TextTranslation> createState() => _TextTranslationState();
+  State<TextTranslationWidget> createState() => _TextTranslationWidgetState();
 }
 
-class _TextTranslationState extends State<TextTranslation> {
-  TextTranslationController translationController = TextTranslationController();
+class _TextTranslationWidgetState extends State<TextTranslationWidget> {
+  // TextTranslationController translationController;
   late final TextEditingController _outputController;
   late final TextEditingController _inputController;
+  late bool _lastEmpty;
+  late int _lastRequestId;
 
   @override
   void initState() {
     super.initState();
-    _inputController = TextEditingController(text: widget.controller.inputText);
-    _outputController = TextEditingController(
-      text: widget.controller.translatedText,
-    );
-
-    // Listen to controller changes
-    widget.controller.addListener(_updateControllers);
+    _inputController = TextEditingController();
+    _outputController = TextEditingController();
+    _lastEmpty = false;
+    _lastRequestId = 0;
+    LangSelectorController().swapText = _swap;
+    LangSelectorController().notify = _newLanguage;
   }
 
   @override
   void dispose() {
-    widget.controller.removeListener(_updateControllers);
     _inputController.dispose();
     _outputController.dispose();
+    LangSelectorController().swapText = () {};
+    LangSelectorController().notify = () {};
     super.dispose();
   }
 
-  void _updateControllers() {
-    if (mounted) {
-      if (_inputController.text != widget.controller.inputText) {
-        _inputController.text = widget.controller.inputText;
+  Future<void> _translate(String text) async {
+    int requestId = ++_lastRequestId;
+
+    if (text.isEmpty) {
+      _outputController.clear();
+      _lastEmpty = true;
+    } else {
+      _lastEmpty = false;
+      if (_outputController.text.isNotEmpty &&
+          !_outputController.text.endsWith("...")) {
+        _outputController.text += "...";
       }
-      if (_outputController.text != widget.controller.translatedText) {
-        _outputController.text = widget.controller.translatedText;
+      String tt = await widget.translationController.translateText(
+        text,
+        id: requestId,
+      );
+      if (!_lastEmpty &&
+          requestId == widget.translationController.getLastId()) {
+        _outputController.text = tt;
       }
     }
+    setState(() {});
+  }
+
+  _reset() {
+    setState(() {
+      _inputController.clear();
+      _outputController.clear();
+      _lastRequestId = 0;
+      widget.translationController.resetId();
+      _lastEmpty = true;
+    });
   }
 
   @override
@@ -69,8 +95,7 @@ class _TextTranslationState extends State<TextTranslation> {
               keyboardType: TextInputType.text,
               enableSuggestions: true,
               onChanged: (value) {
-                widget.controller.setInputText(value);
-                setState(() {});
+                _translate(value);
               },
             ),
             if (_inputController.text.isNotEmpty)
@@ -79,7 +104,7 @@ class _TextTranslationState extends State<TextTranslation> {
                 top: 0,
                 child: IconButton(
                   onPressed: () {
-                    widget.controller.clearText();
+                    _reset();
                   },
                   icon: Icon(Icons.delete),
                 ),
@@ -94,7 +119,8 @@ class _TextTranslationState extends State<TextTranslation> {
               onPressed: () async {
                 final clipboardData = await Clipboard.getData('text/plain');
                 if (clipboardData?.text != null) {
-                  widget.controller.setInputText(clipboardData!.text!);
+                  _inputController.text = clipboardData!.text!;
+                  // widget.controller.setInputText(clipboardData!.text!);
                 }
               },
               icon: Icon(Icons.paste, color: TongiColors.darkGray),
@@ -116,15 +142,13 @@ class _TextTranslationState extends State<TextTranslation> {
               controller: _outputController,
               style: TongiStyles.textOutput,
               decoration: InputDecoration(
-                hintText: widget.controller.isTranslating
-                    ? "Traduciendo..."
-                    : "Translation here...",
+                hintText: "Translation here...",
                 hintStyle: TextStyle(color: TongiColors.gray),
                 filled: true,
                 fillColor: TongiColors.bgGrayComponent,
                 enabledBorder: TongiStyles.enabledBorder,
                 focusedBorder: TongiStyles.enabledBorder,
-                suffixIcon: widget.controller.isTranslating
+                suffixIcon: widget.translationController.isTranslating
                     ? Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SizedBox(
@@ -164,5 +188,16 @@ class _TextTranslationState extends State<TextTranslation> {
         SizedBox(height: 5),
       ],
     );
+  }
+
+  _swap() {
+    _inputController.text = _outputController.text;
+    _outputController.clear();
+    _translate(_inputController.text);
+  }
+
+  _newLanguage() {
+    _outputController.clear();
+    _translate(_inputController.text);
   }
 }
