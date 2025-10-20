@@ -1,10 +1,12 @@
 pipeline {
     agent any
     environment {
-        IMAGE_NAME = 'myacr.azurecr.io/backend:latest'
-        // AZURE_CREDENTIALS = credentials('azure-docker-login')
         DOCKER_BUILDKIT = '1'
-
+        REGISTRY_NAME = 'tongiservices'
+        IMAGE_NAME = 'tongi-backend'
+        TAG = 'latest'
+        IMAGE_LOCAL = "${IMAGE_NAME}:${TAG}"
+        IMAGE_REMOTE = "${REGISTRY_NAME}.azurecr.io/${IMAGE_NAME}:${TAG}"
     }
 
     stages {
@@ -33,31 +35,46 @@ pipeline {
                 }
             }
         }
-
-        stage('Build Docker Image') {
+        stage('Build Docker image') {
             steps {
                 dir('backend') {
-                    echo "Building Docker image $IMAGE_NAME with debug..."
-                    sh 'docker version'
-                    sh 'docker info'
-                    sh 'docker build --progress=plain -t $IMAGE_NAME .'
+                    sh '''
+                        echo "🛠️ Building Docker image..."
+                        docker build -t ${IMAGE_LOCAL} .
+                    '''
                 }
             }
         }
 
-        // stage('Login to Azure Container Registry') {
-        //     steps {
-        //         echo 'Logging into Azure Container Registry...'
-        //         sh 'echo $AZURE_CREDENTIALS_PSW | docker login myacr.azurecr.io -u $AZURE_CREDENTIALS_USR --password-stdin'
-        //     }
-        // }
+        stage('Login to Azure and ACR') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'azure-client-id', variable: 'AZ_CLIENT_ID'),
+                    string(credentialsId: 'azure-client-secret', variable: 'AZ_CLIENT_SECRET'),
+                    string(credentialsId: 'azure-tenant-id', variable: 'AZ_TENANT_ID')
+                ]) {
+                    sh '''
+                        echo "🔐 Logging in to Azure..."
+                        az login --service-principal -u "$AZ_CLIENT_ID" -p "$AZ_CLIENT_SECRET" --tenant "$AZ_TENANT_ID"
 
-        // stage('Push Docker Image') {
-        //     steps {
-        //         echo "Pushing Docker image $IMAGE_NAME..."
-        //         sh 'docker push $IMAGE_NAME'
-        //     }
-        // }
+                        echo "🔐 Logging in to ACR..."
+                        az acr login --name ${REGISTRY_NAME}
+                    '''
+                }
+            }
+        }
+
+        stage('Tag and Push image') {
+            steps {
+                sh '''
+                    echo "🏷️ Tagging image..."
+                    docker tag ${IMAGE_LOCAL} ${IMAGE_REMOTE}
+
+                    echo "🚀 Pushing image to ACR..."
+                    docker push ${IMAGE_REMOTE}
+                '''
+            }
+        }
     }
 
     post {
