@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    triggers {
+        githubPush()
+    }
     environment {
         REGISTRY_NAME = 'tongiservices'
         IMAGE_NAME = 'ttt-server'
