@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/logic/controllers/past_text_translation_controller.dart';
 import 'package:frontend/logic/services/audio/record_service.dart';
 import 'package:frontend/logic/services/audio/transcription_service.dart';
+import 'package:frontend/logic/services/audio/speech_service.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/ui/widgets/audio/record_button.dart';
@@ -10,6 +11,7 @@ import 'package:frontend/ui/widgets/copy_button.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+
 
 class AudioTranslation extends StatefulWidget {
   final TextTranslationController controller;
@@ -44,29 +46,60 @@ class _AudioTranslationState extends State<AudioTranslation> {
   
 
   Future<void> _handleRecordingComplete(File audioFile) async {
-  try {
-    if (!audioFile.existsSync()) {
-      setState(() => _outputController.text = "Archivo no encontrado");
-      return;
+    try {
+      if (!audioFile.existsSync()) {
+        setState(() => _outputController.text = "Archivo no encontrado");
+        return;
+      }
+
+      final sourceLang =
+          _languageRegions[widget.controller.sourceLanguageCode] ?? 'es-ES';
+      final targetLang =
+          _languageRegions[widget.controller.targetLanguageCode] ?? 'en-US';
+
+      final transcription = await STTService.transcribeAudio(
+        audioFile,
+        sourceLanguage: sourceLang,
+        targetLanguage: targetLang,
+      );
+
+      setState(() => _outputController.text = transcription);
+    } catch (e) {
+      setState(() => _outputController.text = "Error al transcribir audio");
+      debugPrint("❌ Error al transcribir: $e");
     }
-
-    final sourceLang =
-        _languageRegions[widget.controller.sourceLanguageCode] ?? 'es-ES';
-    final targetLang =
-        _languageRegions[widget.controller.targetLanguageCode] ?? 'en-US';
-
-    final transcription = await STTService.transcribeAudio(
-      audioFile,
-      sourceLanguage: sourceLang,
-      targetLanguage: targetLang,
-    );
-
-    setState(() => _outputController.text = transcription);
-  } catch (e) {
-    setState(() => _outputController.text = "Error al transcribir audio");
-    debugPrint("❌ Error al transcribir: $e");
   }
-}
+
+
+
+  Future<void> _handleSpeech(String text) async {
+    try {
+      if (text.isEmpty) {
+        setState(() => _outputController.text = "No hay texto para sintetizar");
+        return;
+      }
+
+      final lang = _languageRegions[widget.controller.targetLanguageCode] ?? 'es-ES';
+
+      const defaultVoice = "en-US-JennyMultilingualNeural";
+
+      final audioUrl = await TTSService.synthesizeSpeech(
+        text: text,
+        language: lang,
+        voice: defaultVoice,
+      );
+
+      debugPrint("✅ Audio generado en: $audioUrl");
+
+      final player = AudioPlayer();
+      await player.setAudioSource(AudioSource.uri(Uri.parse(audioUrl)));
+      await player.play();
+
+    } catch (e) {
+      setState(() => _outputController.text = "Error al generar audio");
+      debugPrint("❌ Error al generar TTS: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,39 +200,7 @@ class _AudioTranslationState extends State<AudioTranslation> {
                   Text("Traducción", style: TongiStyles.textFieldMainLabel),
                   TextButton.icon(
                     onPressed: () async {
-                      final Directory documents = await getApplicationDocumentsDirectory();
-                      final String filePath = p.join(documents.path, "lastRecord.wav");
-
-                      File audioFile = File(filePath);
-                      if (!audioFile.existsSync()) {
-                        setState(() {
-                          _outputController.text = "Archivo no encontrado";
-                        });
-                        return;
-                      }
-
-                      try {
-
-                        final sourceLang = _languageRegions[widget.controller.sourceLanguageCode] ?? 'es-ES';
-                        final targetLang = _languageRegions[widget.controller.targetLanguageCode] ?? 'en-US';
-
-                        print(sourceLang +"  "+ targetLang);
-                        String transcription = await STTService.transcribeAudio(audioFile,sourceLanguage: sourceLang,targetLanguage: targetLang,);
-                        
-
-                        setState(() {
-                          _outputController.text = transcription;
-                        });
-                        await audioPlayer.setFilePath(filePath);
-                        audioPlayer.setVolume(1.0);
-                        await audioPlayer.play();
-
-                      } catch (e) {
-                        setState(() {
-                          _outputController.text = "Error al transcribir audio";
-                        });
-                        print("Error al transcribir: $e");
-                      }
+                       await _handleSpeech(_outputController.text);
                     },
                     icon: Icon(Icons.volume_up, color: TongiColors.primary),
                     label: Text("          "),

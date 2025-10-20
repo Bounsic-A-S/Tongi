@@ -64,7 +64,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.shield),
-              title: Text("Termirminos & Condiciones"),
+              title: Text("Términos & Condiciones"),
               onTap: () {
                 Navigator.push(
                   context,
