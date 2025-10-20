@@ -1,0 +1,88 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_BUILDKIT = '1'
+        REGISTRY_NAME = 'tongiservices'
+        IMAGE_NAME = 'tongi-backend'
+        TAG = 'latest'
+        IMAGE_LOCAL = "${IMAGE_NAME}:${TAG}"
+        IMAGE_REMOTE = "${REGISTRY_NAME}.azurecr.io/${IMAGE_NAME}:${TAG}"
+    }
+
+    stages {
+        stage('Debug Info') {
+            steps {
+                echo '--- Debugging Environment ---'
+                sh 'echo "Current Directory: $(pwd)"'
+                sh 'echo "Listing files:" && ls -la'
+                sh 'echo "Listing backend directory:" && ls -la backend || true'
+                echo '-------------------------------'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                dir('backend') {
+                    retry(2) {
+                        sh '''
+                            chmod +x run-tests.sh
+                            export DOCKER_BUILDKIT=1
+                            echo "🧪 Running Tongi Backend Tests..."
+                            ./run-tests.sh
+                            '''
+                    }
+              
+                }
+            }
+        }
+        stage('Build Docker image') {
+            steps {
+                dir('backend') {
+                    sh '''
+                        echo "🛠️ Building Docker image..."
+                        docker build -t ${IMAGE_LOCAL} .
+                    '''
+                }
+            }
+        }
+
+        stage('Login to Azure and ACR') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'azure-client-id', variable: 'AZ_CLIENT_ID'),
+                    string(credentialsId: 'azure-client-secret', variable: 'AZ_CLIENT_SECRET'),
+                    string(credentialsId: 'azure-tenant-id', variable: 'AZ_TENANT_ID')
+                ]) {
+                    sh '''
+                        echo "🔐 Logging in to Azure..."
+                        az login --service-principal -u "$AZ_CLIENT_ID" -p "$AZ_CLIENT_SECRET" --tenant "$AZ_TENANT_ID"
+
+                        echo "🔐 Logging in to ACR..."
+                        az acr login --name ${REGISTRY_NAME}
+                    '''
+                }
+            }
+        }
+
+        stage('Tag and Push image') {
+            steps {
+                sh '''
+                    echo "🏷️ Tagging image..."
+                    docker tag ${IMAGE_LOCAL} ${IMAGE_REMOTE}
+
+                    echo "🚀 Pushing image to ACR..."
+                    docker push ${IMAGE_REMOTE}
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Backend (Pistache C++) built and pushed successfully!'
+        }
+        failure {
+            echo '❌ Backend build or tests failed.'
+        }
+    }
+}

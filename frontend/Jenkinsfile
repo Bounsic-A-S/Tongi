@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    environment {
+        FLUTTER_HOME = '/opt/flutter'
+        PATH = "$FLUTTER_HOME/bin:$PATH"
+    }
+    stages {
+        stage('Install dependencies') {
+            steps {
+                dir('frontend') {
+                    sh 'flutter pub get'
+                }
+            }
+        }
+        stage('Run tests') {
+            steps {
+                dir('frontend') {
+                    sh 'flutter test'
+                }
+            }
+        }
+        stage('Build executable') {
+            steps {
+                dir('frontend') {
+                    // sh 'flutter build web --release'
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo '✅ Frontend production successful!'
+        }
+        failure {
+            echo '❌ Frontend production failed.'
+        }
+    }
+}
