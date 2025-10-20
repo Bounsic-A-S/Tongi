@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    triggers {
+        githubPush()
+    }
     environment {
         FLUTTER_HOME = '/opt/flutter'
         PATH = "$FLUTTER_HOME/bin:$PATH"

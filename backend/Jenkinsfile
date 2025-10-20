@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    triggers {
+        githubPush()
+    }
     environment {
         DOCKER_BUILDKIT = '1'
         REGISTRY_NAME = 'tongiservices'
