@@ -14,5 +14,12 @@ COPY . .
 EXPOSE 8001
 
 # Gunicorn con UvicornWorker (ASGI) para producción
-CMD ["gunicorn", "--bind", "0.0.0.0:8001", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "app:app"]
-
+CMD ["gunicorn", \
+     "--bind", "0.0.0.0:8001", \
+     "--workers", "4", \
+     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--preload", \
+     "--timeout", "120", \
+     "--keep-alive", "75", \
+     "--log-level", "info", \
+     "app:app"]

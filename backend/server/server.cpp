@@ -14,7 +14,10 @@ TongiServer::TongiServer(Pistache::Address addr)
     : httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(addr)) {}
 
 void TongiServer::init(size_t thr) {
-    auto opts = Pistache::Http::Endpoint::options().threads(static_cast<int>(thr));
+    auto opts = Pistache::Http::Endpoint::options()
+        .threads(static_cast<int>(thr))
+        .maxRequestSize(100 * 1024 * 1024)      // 100 MB para peticiones
+        .maxResponseSize(100 * 1024 * 1024);  
     httpEndpoint->init(opts);
     setupRoutes();
 }
@@ -46,9 +49,13 @@ void TongiServer::setupRoutes() {
     // tts
     Rest::Routes::Get(router, "/api/tts/", Rest::Routes::bind(&TTSController::getResponseFromMicroService));
     Rest::Routes::Get(router, "/api/tts/health", Rest::Routes::bind(&TTSController::getHealth));
+    Rest::Routes::Post(router, "/api/tts/synthesize", Rest::Routes::bind(&TTSController::getResponseApiSythetice));
+    Rest::Routes::Get(router, "/api/tts/voices", Rest::Routes::bind(&TTSController::getResponseFromVoices)); 
     //stt
     Rest::Routes::Get(router, "/api/stt/", Rest::Routes::bind(&STTController::getResponseFromMicroService));
     Rest::Routes::Get(router, "/api/stt/health", Rest::Routes::bind(&STTController::getHealth));
+    Rest::Routes::Post(router, "/api/stt/transcribe", Rest::Routes::bind(&STTController::transcribeAudio));
+    Rest::Routes::Post(router, "/api/stt/transcribe/translate", Rest::Routes::bind(&STTController::translateAudio));
     
 
 

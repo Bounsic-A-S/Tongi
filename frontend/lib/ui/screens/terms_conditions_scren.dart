@@ -303,7 +303,7 @@ class FullTermsScreen extends StatelessWidget {
               const SizedBox(height: 10),
               Center(
                 child: GestureDetector(
-                  onTap: _launchEmail,
+                  onTap: () => _launchEmail(),
                   child: Text(
                     "induismo97@gmail.com",
                     style: TextStyle(
