@@ -2,14 +2,15 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/logic/utils/permissions.dart';
 import 'package:frontend/triggers/camera/camera_translation_painter.dart';
+import 'package:frontend/ui/screens/camera/camera_view.dart';
+import 'package:frontend/ui/screens/camera/gallery_view.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import 'detector_view.dart';
 import 'package:frontend/logic/services/camera/image_translation_service.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({super.key});
+  final VoidCallback toggleBlockView;
+  const CameraScreen({super.key, required this.toggleBlockView});
 
   @override
   State<CameraScreen> createState() => _CameraScreenState();
@@ -17,12 +18,13 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
-
   bool _canProcess = true;
   bool _isBusy = false;
   CustomPaint? _customPaint;
   String? _text;
   var _cameraLensDirection = CameraLensDirection.back;
+  bool _isCamera = true;
+  Function(CameraLensDirection direction)? onCameraLensDirectionChanged;
 
   late ImageTranslationService _translationManager;
 
@@ -50,15 +52,45 @@ class _CameraScreenState extends State<CameraScreen>
       case false:
         return _buildPermDenied(context);
       case true:
-        return DetectorView(
-          title: 'Text Detector',
-          customPaint: _customPaint,
-          text: _text,
-          onImage: _processImage,
-          initialCameraLensDirection: _cameraLensDirection,
-          onCameraLensDirectionChanged: (value) => _cameraLensDirection = value,
-        );
+        return _buildDetectorView(context);
     }
+  }
+
+  Widget _buildDetectorView(BuildContext context) {
+    return PopScope(
+      canPop: _isCamera,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (!_isCamera) {
+          _onDetectorViewModeChanged();
+          return;
+        }
+      },
+      child: _isCamera
+          ? CameraView(
+              customPaint: _customPaint,
+              onImage: _processImage,
+              // onCameraFeedReady: widget.onCameraFeedReady,
+              onDetectorViewModeChanged: _onDetectorViewModeChanged,
+              initialCameraLensDirection: CameraLensDirection.back,
+              onCameraLensDirectionChanged: onCameraLensDirectionChanged,
+            )
+          : GalleryView(
+              title: "",
+              text: _text,
+              onImage: _processImage,
+              onDetectorViewModeChanged: _onDetectorViewModeChanged,
+            ),
+    );
+  }
+
+  void _onDetectorViewModeChanged() {
+    debugPrint("viewmodeChanged()");
+    // widget.viewBlocked();
+    _isCamera = !_isCamera;
+    widget.toggleBlockView();
+    setState(() {});
+    // widget.viewBlocked();
   }
 
   _updatePermission() async {
