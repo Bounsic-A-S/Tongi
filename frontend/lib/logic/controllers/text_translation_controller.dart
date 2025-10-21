@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/ui/core/tongi_languages.dart';
 import 'package:frontend/logic/services/text/text_translation.dart';
+import 'package:frontend/logic/services/text/local_translation_service.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class TextTranslationController extends ChangeNotifier {
   // Language selection state
@@ -113,12 +115,40 @@ class TextTranslationController extends ChangeNotifier {
     notifyListeners();
     try {
       await Future.delayed(const Duration(milliseconds: 100));
-      final translation = await ApiTranslationService.translateTextAzure(
-        _inputText,
-        _sourceLanguageCode,
-        _targetLanguageCode,
-      );
-      _translatedText = translation;
+
+      // Check connectivity first; if offline, use on-device translator.
+      final connectivity = Connectivity();
+      final conn = await connectivity.checkConnectivity();
+      if (conn == ConnectivityResult.none) {
+        final device = DeviceTranslatorService(
+          sourceLanguage: _sourceLanguageCode,
+          targetLanguage: _targetLanguageCode,
+        );
+        try {
+          _translatedText = await device.translateText(_inputText);
+        } finally {
+          await device.close();
+        }
+      } else {
+        try {
+          _translatedText = await ApiTranslationService.translateTextAzure(
+            _inputText,
+            _sourceLanguageCode,
+            _targetLanguageCode,
+          );
+        } catch (e) {
+          // Fallback to device translator if remote API fails for any reason
+          final device = DeviceTranslatorService(
+            sourceLanguage: _sourceLanguageCode,
+            targetLanguage: _targetLanguageCode,
+          );
+          try {
+            _translatedText = await device.translateText(_inputText);
+          } finally {
+            await device.close();
+          }
+        }
+      }
       _isTranslating = false;
       notifyListeners();
     } catch (e) {

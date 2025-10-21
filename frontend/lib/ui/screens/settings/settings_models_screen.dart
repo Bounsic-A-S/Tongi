@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_languages.dart';
-import 'package:frontend/logic/controllers/model_manager_service.dart';
+import 'package:frontend/logic/controllers/model_manager_controller.dart';
 import 'package:frontend/widgets/transition/loading_indicator.dart';
 
 class SettingsModelsScreen extends StatefulWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/logic/controllers/lang_selector_controller.dart';
+import 'package:frontend/logic/controllers/offline_check_controller.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/logic/controllers/text_translation_controller.dart';
@@ -15,19 +16,25 @@ class LanguageSelector extends StatefulWidget {
 
 class _LanguageSelectorState extends State<LanguageSelector> {
   LangSelectorController controller = LangSelectorController();
+  late final OfflineCheckController _offlineController;
 
   @override
   void initState() {
     super.initState();
 
-    // Listen to controller changes
-    // widget.controller.addListener(_updateControllers);
+    _offlineController = OfflineCheckController();
+    _offlineController.addListener(_onOfflineChanged);
   }
 
   @override
   void dispose() {
-    // widget.controller.removeListener(_updateControllers);
+    _offlineController.removeListener(_onOfflineChanged);
+    _offlineController.dispose();
     super.dispose();
+  }
+
+  void _onOfflineChanged() {
+    if (mounted) setState(() {});
   }
 
   @override
@@ -66,12 +73,15 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     widget.controller.setSourceLanguage(value);
                   }
                 },
-                dropdownMenuEntries: widget.controller
-                    .getAvailableSourceLanguages()
+                dropdownMenuEntries: _offlineController.availableLanguages
+                    .where(
+                      (entry) =>
+                          entry.value != widget.controller.targetLanguageCode,
+                    )
                     .map(
-                      (lang) => DropdownMenuEntry(
-                        value: lang.code,
-                        label: lang.label,
+                      (entry) => DropdownMenuEntry(
+                        value: entry.value,
+                        label: entry.key,
                       ),
                     )
                     .toList(),
@@ -123,12 +133,15 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     widget.controller.setTargetLanguage(value);
                   }
                 },
-                dropdownMenuEntries: widget.controller
-                    .getAvailableTargetLanguages()
+                dropdownMenuEntries: _offlineController.availableLanguages
+                    .where(
+                      (entry) =>
+                          entry.value != widget.controller.sourceLanguageCode,
+                    )
                     .map(
-                      (lang) => DropdownMenuEntry(
-                        value: lang.code,
-                        label: lang.label,
+                      (entry) => DropdownMenuEntry(
+                        value: entry.value,
+                        label: entry.key,
                       ),
                     )
                     .toList(),

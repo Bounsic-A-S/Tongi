@@ -13,7 +13,7 @@ class TranslationService {
     );
     return result;
   }
- 
+
   Future<String> translateWithRealAPI(String text) async {
     throw UnimplementedError('Método real no implementado aún');
   }
