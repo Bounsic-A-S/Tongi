@@ -91,7 +91,7 @@ class STTService:
             default="es"
         )
 
-    async def translate_audio(self, audio_file: str, source_language: str, target_language: str = "en") -> TranscriptionResponse:
+    async def translate_audio(self, audio_file: str, source_language: str, target_language: str ) -> TranscriptionResponse:
         """
         Transcribe un archivo de audio del idioma origen y lo traduce 
         al idioma destino usando Azure Translation.
