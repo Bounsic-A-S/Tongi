@@ -5,21 +5,7 @@ import 'package:flutter/foundation.dart';
 
 class ApiTranslationService {
   // Different URLs for different environments
-  static String get baseUrl {
-    if (kIsWeb) {
-      // For web development
-      return "https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
-    } else if (Platform.isAndroid) {
-      // For Android emulator
-      return "https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io"; // in this case my ip , so change TONGI TEAM :)
-    } else if (Platform.isIOS) {
-      // For iOS simulator
-      return "http://localhost:9080";
-    } else {
-      // For desktop or other platforms
-      return "http://localhost:9080";
-    }
-  }
+  static String get baseUrl => "https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
 
   static const Duration requestTimeout = Duration(seconds: 10);
 
@@ -94,8 +80,6 @@ class ApiTranslationService {
         "target_language": targetLanguage,
         "task": "translate",
       };
-
-      print("📦 Cuerpo de la petición: ${jsonEncode(requestBody)}");
 
       final response = await http
           .post(
