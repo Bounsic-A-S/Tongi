@@ -33,7 +33,7 @@ class _SettingsLangScreenState extends State<SettingsLangScreen> {
             value: lang.label,
             groupValue: _selectedLang,
             onChanged: (value) {
-              setState(() {
+              setState(() { 
                 _selectedLang = value!;
               });
             },

@@ -15,63 +15,81 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  final List<Widget> _pages = [TextScreen(), CameraScreen(), AudioScreen()];
+  int _lastIndex = 0;
+  List<Widget> get _pages => [
+    TextScreen(),
+    CameraScreen(toggleBlockView: blockViewPop),
+    AudioScreen(),
+  ];
+  bool isViewBlocked = false;
 
   void _onNavbarTapped(int index) {
-    setState(() {
+    if (index != _selectedIndex) {
+      _lastIndex = _selectedIndex;
       _selectedIndex = index;
-    });
+      isViewBlocked = false;
+    }
+    setState(() {});
+  }
+
+  void blockViewPop() {
+    isViewBlocked = !isViewBlocked;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (child, animation) {
-            return FadeTransition(
-              opacity: animation,
-              child: SizeTransition(
-                sizeFactor: animation,
-                axisAlignment: -1.0,
-                child: child,
-              ),
-            );
-          },
-          child:
-              // _selectedIndex ==
-              //     1 // camera index
-              // // ? const SizedBox.shrink(key: ValueKey("emptyAppBar"))
-              // ? Container(
-              //     height: MediaQuery.of(context).padding.top,
-              //     color: Colors.black,
-              //   )
-              // :
-              TongiAppbar(
-                  key: const ValueKey("tongiAppBar"),
-                  onSettingsPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsScreen(),
-                      ),
-                    );
-                  },
+    return PopScope(
+      canPop: _selectedIndex == _lastIndex,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop || isViewBlocked) return;
+        if (_selectedIndex != _lastIndex) {
+          setState(() {
+            _selectedIndex = _lastIndex;
+            _lastIndex = 0;
+          });
+        } else {
+          Navigator.of(context).maybePop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SizeTransition(
+                  sizeFactor: animation,
+                  axisAlignment: -1.0,
+                  child: child,
                 ),
+              );
+            },
+            child: TongiAppbar(
+              key: const ValueKey("tongiAppBar"),
+              onSettingsPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
         ),
-      ),
-      body: Padding(
-        padding: _selectedIndex != 1
-            ? EdgeInsets.only(left: 20, right: 20, top: 10)
-            : EdgeInsetsGeometry.all(0),
-        child: _pages[_selectedIndex],
-      ),
-      bottomNavigationBar: TongiNavbar(
-        currentIndex: _selectedIndex,
-        onTap: _onNavbarTapped,
+        body: Padding(
+          padding: _selectedIndex != 1
+              ? const EdgeInsets.only(left: 20, right: 20, top: 10)
+              : EdgeInsets.zero,
+          child: _pages[_selectedIndex],
+        ),
+        bottomNavigationBar: TongiNavbar(
+          currentIndex: _selectedIndex,
+          onTap: _onNavbarTapped,
+        ),
       ),
     );
   }
