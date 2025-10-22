@@ -70,7 +70,6 @@ class _CameraScreenState extends State<CameraScreen>
           ? CameraView(
               customPaint: _customPaint,
               onImage: _processImage,
-              // onCameraFeedReady: widget.onCameraFeedReady,
               onDetectorViewModeChanged: _onDetectorViewModeChanged,
               initialCameraLensDirection: CameraLensDirection.back,
               onCameraLensDirectionChanged: onCameraLensDirectionChanged,
@@ -85,12 +84,9 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   void _onDetectorViewModeChanged() {
-    debugPrint("viewmodeChanged()");
-    // widget.viewBlocked();
     _isCamera = !_isCamera;
     widget.toggleBlockView();
     setState(() {});
-    // widget.viewBlocked();
   }
 
   _updatePermission() async {
@@ -128,8 +124,9 @@ class _CameraScreenState extends State<CameraScreen>
       }
 
       setState(() {
-        _text =
-            'Original: ${result.originalText}\n\nTraducido: ${result.translatedText}';
+        // _text =
+        //     'Original: ${result.originalText}\n\nTraducido: ${result.translatedText}';
+        _text = result.translatedText;
       });
 
       if (inputImage.metadata?.size != null &&
