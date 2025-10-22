@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/logic/controllers/auidio_translation_controller.dart';
 import 'package:frontend/logic/controllers/past_text_translation_controller.dart';
+import 'package:frontend/logic/controllers/speech_translation_comtroller.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/logic/services/audio/record_service.dart';
@@ -17,13 +19,15 @@ class AudioScreen extends StatefulWidget {
 
 class _AudioScreenState extends State<AudioScreen> {
   late final RecordService _recordService;
-  late final TextTranslationController _translationController;
+  late final STTController _translationController;
+  late final TTSController _speechController;
 
   @override
   void initState() {
     super.initState();
     _recordService = RecordService();
-    _translationController = TextTranslationController();
+    _translationController = STTController();
+    _speechController = TTSController();
   }
 
   @override
@@ -96,7 +100,7 @@ class _AudioScreenState extends State<AudioScreen> {
         //   ),
         // ),
         SizedBox(height: 20),
-        AudioTranslation(controller: _translationController),
+        AudioTranslation(controller: _translationController, ttsController:_speechController),
       ],
     );
   }

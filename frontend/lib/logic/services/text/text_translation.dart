@@ -5,7 +5,21 @@ import 'package:flutter/foundation.dart';
 
 class ApiTranslationService {
   // Different URLs for different environments
-  static String get baseUrl => "https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
+  static String get baseUrl {
+    if (kIsWeb) {
+      // For web development
+      return "https://backend-tongi.bravefield-d0689482.eastus.azurecontainerapps.io";
+    } else if (Platform.isAndroid) {
+      // For Android emulator
+      return "https://backend-tongi.bravefield-d0689482.eastus.azurecontainerapps.io"; // in this case my ip , so change TONGI TEAM :)
+    } else if (Platform.isIOS) {
+      // For iOS simulator
+      return "http://localhost:9080";
+    } else {
+      // For desktop or other platforms
+      return "http://localhost:9080";
+    }
+  }
 
   static const Duration requestTimeout = Duration(seconds: 10);
 
@@ -72,7 +86,7 @@ class ApiTranslationService {
     String targetLanguage,
   ) async {
     try {
-      final uri = Uri.parse("$baseUrl/process");
+      final uri = Uri.parse("$baseUrl/api/ttt/translate");
 
       final requestBody = {
         "text": text.trim(),
