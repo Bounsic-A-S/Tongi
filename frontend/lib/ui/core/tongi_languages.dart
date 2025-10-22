@@ -6,10 +6,10 @@ const Map<String, String> tongiLanguages = {
   "Frances": "fr",
 };
 
-const List<Language> availableLanguages = [
-  Language(label: "Español", code: "es"),
-  Language(label: "Inglés", code: "en"),
-  Language(label: "Alemán", code: "de"),
-  Language(label: "Italiano", code: "it"),
-  Language(label: "Frances", code: "fr"),
-];
+// const List<Language> availableLanguages = [
+//   Language(label: "Español", code: "es"),
+//   Language(label: "Inglés", code: "en"),
+//   Language(label: "Alemán", code: "de"),
+//   Language(label: "Italiano", code: "it"),
+//   Language(label: "Frances", code: "fr"),
+// ];

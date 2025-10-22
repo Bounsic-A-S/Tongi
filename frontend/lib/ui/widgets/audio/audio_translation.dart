@@ -9,34 +9,29 @@ import 'package:frontend/ui/widgets/audio/record_button.dart';
 import 'package:frontend/ui/widgets/copy_button.dart';
 import 'package:just_audio/just_audio.dart';
 
-
-
 class AudioTranslation extends StatefulWidget {
   final STTController controller;
-  final  TTSController ttsController;
-  const AudioTranslation({super.key, required this.controller, required this.ttsController});
-  
-  
+  final TTSController ttsController;
+  const AudioTranslation({
+    super.key,
+    required this.controller,
+    required this.ttsController,
+  });
 
   @override
   State<AudioTranslation> createState() => _AudioTranslationState();
-  
-  
 }
 
 class _AudioTranslationState extends State<AudioTranslation> {
   // TextTranslationController translationController = TextTranslationController();
 
-  
   final TextEditingController _inputController = TextEditingController(
     text: "",
   );
   final TextEditingController _outputController = TextEditingController(
     text: "",
   );
-  final AudioPlayer audioPlayer  = AudioPlayer();
-
-  
+  final AudioPlayer audioPlayer = AudioPlayer();
 
   Future<void> _processAudio(File audioFile) async {
     if (!audioFile.existsSync()) {
@@ -56,14 +51,15 @@ class _AudioTranslationState extends State<AudioTranslation> {
       setState(() => _inputController.text = originalText);
 
       // 2️⃣ Traduce el audio a otro idioma
-      final translatedText = await widget.controller.transcribeAndTranslate(audioFile);
+      final translatedText = await widget.controller.transcribeAndTranslate(
+        audioFile,
+      );
 
       setState(() => _outputController.text = translatedText);
     } catch (e) {
       _showError("❌ Error al procesar el audio: $e");
     }
   }
-
 
   Future<void> _playSpeech(String text) async {
     if (text.trim().isEmpty) {
@@ -91,7 +87,6 @@ class _AudioTranslationState extends State<AudioTranslation> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-
         Container(
           decoration: BoxDecoration(
             border: BoxBorder.all(color: TongiColors.border, width: 1),
@@ -104,8 +99,9 @@ class _AudioTranslationState extends State<AudioTranslation> {
               Column(
                 children: [
                   RecordButton(
-                  service: RecordService(),
-                  onRecordingComplete: _processAudio ),
+                    service: RecordService(),
+                    onRecordingComplete: _processAudio,
+                  ),
                   SizedBox(height: 15),
                   Text(
                     "Toca para iniciar a grabar.",
@@ -155,13 +151,14 @@ class _AudioTranslationState extends State<AudioTranslation> {
                   hintStyle: TextStyle(color: TongiColors.gray),
                   contentPadding: EdgeInsets.all(0),
                 ),
-                enableSuggestions: false,
+                keyboardType: TextInputType.text,
+                enableSuggestions: true,
                 onChanged: (value) {
                   setState(() {
                     if (_inputController.text.isEmpty) {
                       _outputController.text = "";
                     } else {
-                      _outputController.text = "${_inputController.text} ##";
+                      _outputController.text = "${_inputController.text}";
                     }
                   });
                 },
@@ -176,24 +173,22 @@ class _AudioTranslationState extends State<AudioTranslation> {
             borderRadius: BorderRadius.circular(16),
             color: TongiColors.lightMainFill,
           ),
-          padding: EdgeInsets.only(left: 20, right: 15),
+          padding: EdgeInsets.only(left: 20, right: 0),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Text("Traducción", style: TongiStyles.textFieldMainLabel),
-                  TextButton.icon(
+                  IconButton(
                     onPressed: () async {
-                       await _playSpeech(_outputController.text);
+                      await _playSpeech(_outputController.text);
                     },
                     icon: Icon(Icons.volume_up, color: TongiColors.primary),
-                    label: Text("          "),
                     style: TextButton.styleFrom(
-                      padding: EdgeInsets.all(0),
                       iconAlignment: IconAlignment.end,
-                      overlayColor: Colors.transparent,
                       iconSize: 25,
                     ),
                   ),
