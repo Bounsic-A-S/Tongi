@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:frontend/logic/controllers/auidio_translation_controller.dart';
+import 'package:frontend/logic/controllers/lang_selector_controller.dart';
 import 'package:frontend/logic/controllers/speech_translation_comtroller.dart';
+import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:frontend/logic/services/audio/record_service.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
@@ -23,7 +25,8 @@ class AudioTranslation extends StatefulWidget {
 }
 
 class _AudioTranslationState extends State<AudioTranslation> {
-  // TextTranslationController translationController = TextTranslationController();
+  TextTranslationController textTranslationController =
+      TextTranslationController();
 
   final TextEditingController _inputController = TextEditingController(
     text: "",
@@ -32,6 +35,24 @@ class _AudioTranslationState extends State<AudioTranslation> {
     text: "",
   );
   final AudioPlayer audioPlayer = AudioPlayer();
+
+  @override
+  void initState() {
+    LangSelectorController().notify = _updateLanguage;
+    LangSelectorController().swapText = () {};
+    super.initState();
+  }
+
+  _updateLanguage() {
+    _outputController.clear();
+    _translateText(_inputController.text);
+  }
+
+  Future<void> _translateText(String text) async {
+    String res = await textTranslationController.translateText(text);
+    _outputController.text = res;
+    setState(() {});
+  }
 
   Future<void> _processAudio(File audioFile) async {
     if (!audioFile.existsSync()) {
@@ -154,13 +175,7 @@ class _AudioTranslationState extends State<AudioTranslation> {
                 keyboardType: TextInputType.text,
                 enableSuggestions: true,
                 onChanged: (value) {
-                  setState(() {
-                    if (_inputController.text.isEmpty) {
-                      _outputController.text = "";
-                    } else {
-                      _outputController.text = "${_inputController.text}";
-                    }
-                  });
+                  _translateText(value);
                 },
               ),
             ],
@@ -209,7 +224,7 @@ class _AudioTranslationState extends State<AudioTranslation> {
             ],
           ),
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: [CopyButton()]),
+        Row(mainAxisAlignment: MainAxisAlignment.end, children: [CopyButton(text: _outputController.text,)]),
       ],
     );
   }

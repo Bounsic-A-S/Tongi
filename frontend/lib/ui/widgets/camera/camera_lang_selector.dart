@@ -45,7 +45,12 @@ class _CameraLangSelectorState extends State<CameraLangSelector> {
                   color: Colors.white,
                   fontFamily: "Poppins",
                 ),
-                onSelected: (value) => setState(() {}),
+                onSelected: (value) {
+                  if (value != null) {
+                    controller.setInputLang(value);
+                    setState(() {});
+                  }
+                },
                 dropdownMenuEntries: controller.getAvailableInputLanguages(),
               ),
             ],
@@ -94,7 +99,12 @@ class _CameraLangSelectorState extends State<CameraLangSelector> {
                   color: Colors.white,
                   fontFamily: "Poppins",
                 ),
-                onSelected: (value) => setState(() {}),
+                onSelected: (value) {
+                  if (value != null) {
+                    controller.setOutputLang(value);
+                    setState(() {});
+                  }
+                },
                 dropdownMenuEntries: controller.getAvailableOutputLanguages(),
               ),
             ],

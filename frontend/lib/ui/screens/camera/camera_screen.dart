@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/logic/controllers/lang_selector_controller.dart';
 import 'package:frontend/logic/utils/permissions.dart';
 import 'package:frontend/triggers/camera/camera_translation_painter.dart';
 import 'package:frontend/ui/screens/camera/camera_view.dart';
@@ -32,6 +33,8 @@ class _CameraScreenState extends State<CameraScreen>
   initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    LangSelectorController().notify = () {};
+    LangSelectorController().swapText = () {};
     _translationManager = ImageTranslationService();
     _initPermission();
   }
@@ -101,7 +104,10 @@ class _CameraScreenState extends State<CameraScreen>
     if (mounted) setState(() {});
   }
 
-  Future<void> _processImage(InputImage inputImage) async {
+  Future<void> _processImage(
+    InputImage inputImage, {
+    bool setTextRes = false,
+  }) async {
     if (!_canProcess) return;
     if (_isBusy) return;
 
@@ -114,20 +120,16 @@ class _CameraScreenState extends State<CameraScreen>
       final result = await _translationManager.processImageForTranslation(
         inputImage,
       );
+      // for (int i = 0; i < result.blocks.length; i++) {
+      //   final block = result.blocks[i];
+      //   print(
+      //     '   Bloque $i: "${block.originalText}" -> "${block.translatedText}" - Pos: ${block.boundingBox}',
+      //   );
+      // }
 
-      print('📋 Bloques enviados al painter: ${result.blocks.length}');
-      for (int i = 0; i < result.blocks.length; i++) {
-        final block = result.blocks[i];
-        print(
-          '   Bloque $i: "${block.originalText}" -> "${block.translatedText}" - Pos: ${block.boundingBox}',
-        );
-      }
-
-      setState(() {
-        // _text =
-        //     'Original: ${result.originalText}\n\nTraducido: ${result.translatedText}';
-        _text = result.translatedText;
-      });
+      if (setTextRes) _text = result.translatedText;
+      // _text =
+      //     'Original: ${result.originalText}\n\nTraducido: ${result.translatedText}';
 
       if (inputImage.metadata?.size != null &&
           inputImage.metadata?.rotation != null) {

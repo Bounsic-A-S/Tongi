@@ -30,12 +30,12 @@ class SettingsScreen extends StatelessWidget {
               leading: Icon(Icons.language),
               title: Text("Idioma"),
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const SettingsLangScreen(),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsLangScreen(),
+                  ),
+                );
               },
             ),
             ListTile(
