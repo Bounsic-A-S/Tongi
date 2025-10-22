@@ -8,10 +8,10 @@ class ApiTranslationService {
   static String get baseUrl {
     if (kIsWeb) {
       // For web development
-      return "https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
+      return "https://backend-tongi.bravefield-d0689482.eastus.azurecontainerapps.io";
     } else if (Platform.isAndroid) {
       // For Android emulator
-      return "https://ttt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io"; // in this case my ip , so change TONGI TEAM :)
+      return "https://backend-tongi.bravefield-d0689482.eastus.azurecontainerapps.io"; // in this case my ip , so change TONGI TEAM :)
     } else if (Platform.isIOS) {
       // For iOS simulator
       return "http://localhost:9080";
@@ -86,7 +86,7 @@ class ApiTranslationService {
     String targetLanguage,
   ) async {
     try {
-      final uri = Uri.parse("$baseUrl/process");
+      final uri = Uri.parse("$baseUrl/api/ttt/translate");
 
       final requestBody = {
         "text": text.trim(),

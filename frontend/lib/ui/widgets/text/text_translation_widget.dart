@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/logic/controllers/lang_selector_controller.dart';
+import 'package:frontend/logic/controllers/speech_translation_comtroller.dart';
 import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/ui/widgets/copy_button.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
 
 class TextTranslationWidget extends StatefulWidget {
   final TextTranslationController translationController;
+  final TTSController speechController;
 
-  const TextTranslationWidget({super.key, required this.translationController});
+  const TextTranslationWidget({super.key, required this.translationController, required this.speechController});
 
   @override
   State<TextTranslationWidget> createState() => _TextTranslationWidgetState();
@@ -21,6 +24,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
   late final TextEditingController _inputController;
   late bool _lastEmpty;
   late int _lastRequestId;
+  final AudioPlayer audioPlayer  = AudioPlayer();
 
   @override
   void initState() {
@@ -75,6 +79,30 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
       _lastEmpty = true;
     });
   }
+
+    Future<void> _playSpeech(String text) async {
+    if (text.trim().isEmpty) {
+      _showError("No hay texto para sintetizar");
+      return;
+    }
+
+    try {
+      final audioUrl = await widget.speechController.synthesizeSpeech(text);
+      debugPrint("✅ Audio generado: $audioUrl");
+
+      await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(audioUrl)));
+      await audioPlayer.play();
+    } catch (e) {
+      _showError("❌ Error al reproducir voz: $e");
+    }
+  }
+
+  
+  void _showError(String message) {
+    setState(() => _outputController.text = message);
+    debugPrint(message);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +196,9 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
             Positioned(
               top: 0,
               right: 0,
-              child: IconButton(onPressed: () {}, icon: Icon(Icons.volume_up)),
+              child: IconButton(onPressed: ()async{ 
+                  await _playSpeech(_outputController.text);
+                }, icon: Icon(Icons.volume_up)),
             ),
             Positioned(
               right: 0,
