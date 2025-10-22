@@ -4,7 +4,6 @@ import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 
 class LanguageSelector extends StatefulWidget {
-
   const LanguageSelector({super.key});
 
   @override
@@ -56,8 +55,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 ),
                 textStyle: TongiStyles.textLabel,
                 onSelected: (value) {
-                  controller.setLanguage();
-                  setState(() {});
+                  if (value != null) {
+                    controller.setInputLang(value);
+                    setState(() {});
+                  }
                 },
                 dropdownMenuEntries: controller.getAvailableInputLanguages(),
               ),
@@ -105,8 +106,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 hintText: "Seleccione un idioma",
                 textStyle: TongiStyles.textLabel,
                 onSelected: (value) {
-                  controller.notify();
-                  setState(() {});
+                  if (value != null) {
+                    controller.setOutputLang(value);
+                    setState(() {});
+                  }
                 },
                 dropdownMenuEntries: controller.getAvailableOutputLanguages(),
               ),

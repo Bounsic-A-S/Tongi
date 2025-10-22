@@ -19,11 +19,14 @@ class TextTranslationController {
     // use azure translation
     try {
       // await Future.delayed(const Duration(milliseconds: 100));
-      final translation = await ApiTranslationService.translateTextAzure(
-        text,
-        langSelectorController.getInputLang(),
-        langSelectorController.getOutputLang(),
-      );
+      String translation = "";
+      if (langSelectorController.getOutputLang().isNotEmpty) {
+        translation = await ApiTranslationService.translateTextAzure(
+          text,
+          langSelectorController.getInputLang(),
+          langSelectorController.getOutputLang(),
+        );
+      }
       translatedText = translation;
       if (id > _lastTranslationId) {
         isTranslating = false;

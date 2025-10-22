@@ -5,11 +5,12 @@ import 'package:frontend/ui/widgets/language_selector.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 
+// ignore: must_be_immutable
 class GalleryView extends StatefulWidget {
   GalleryView({
     super.key,
-    required this.title,
     this.text,
+    required this.title,
     required this.onImage,
     required this.onDetectorViewModeChanged,
   });
@@ -35,12 +36,11 @@ class _GalleryViewState extends State<GalleryView> {
     LangSelectorController().notify = _updateTranslation;
     LangSelectorController().swapText = _updateTranslation;
     _imagePicker = ImagePicker();
+    widget.text = "";
   }
 
   @override
   void dispose() {
-    LangSelectorController().notify = () {};
-    LangSelectorController().swapText = () {};
     super.dispose();
   }
 
@@ -287,15 +287,13 @@ class _GalleryViewState extends State<GalleryView> {
       _actualImagePath = pickedFile.path;
       _image = null;
       _processFile();
-    } else {
-      setState(() {
-        _isProcessing = false;
-      });
     }
   }
 
   _updateTranslation() {
-    _processFile();
+    if (_actualImagePath != null) {
+      _processFile();
+    }
   }
 
   Future _processFile() async {

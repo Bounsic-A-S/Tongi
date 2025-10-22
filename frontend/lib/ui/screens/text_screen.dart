@@ -33,6 +33,7 @@ class _TextScreenState extends State<TextScreen> {
         Expanded(
           child: ListView(
             children: [
+              Text("v2"),
               LanguageSelector(),
               SizedBox(height: 10),
               SizedBox(height: 10),

@@ -120,7 +120,6 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
                 final clipboardData = await Clipboard.getData('text/plain');
                 if (clipboardData?.text != null) {
                   _inputController.text = clipboardData!.text!;
-                  // widget.controller.setInputText(clipboardData!.text!);
                 }
               },
               icon: Icon(Icons.paste, color: TongiColors.darkGray),
@@ -128,7 +127,6 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
               style: TextButton.styleFrom(
                 padding: EdgeInsets.all(0),
                 overlayColor: Colors.white,
-                // tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
           ],
@@ -191,6 +189,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
   }
 
   _swap() {
+    debugPrint(" Swap");
     _inputController.text = _outputController.text;
     _outputController.clear();
     _translate(_inputController.text);

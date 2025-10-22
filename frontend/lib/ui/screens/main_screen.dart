@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/logic/controllers/lang_selector_controller.dart';
 import 'package:frontend/ui/screens/audio_screen.dart';
 import 'package:frontend/ui/screens/settings_screen.dart';
 import 'package:frontend/ui/screens/camera/camera_screen.dart';
@@ -30,6 +31,12 @@ class _MainScreenState extends State<MainScreen> {
       isViewBlocked = false;
     }
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    LangSelectorController().saveLanguages();
+    super.dispose();
   }
 
   void blockViewPop() {
