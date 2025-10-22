@@ -5,7 +5,8 @@ pipeline {
     }
     environment {
         FLUTTER_HOME = '/opt/flutter'
-        PATH = "$FLUTTER_HOME/bin:$PATH"
+        ANDROID_HOME = '/opt/android-sdk'
+        PATH = "$FLUTTER_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
         AZURE_STORAGE_ACCOUNT = 'tongiapks'
         AZURE_CONTAINER = 'apk'                
         APK_PATH = 'frontend/build/app/outputs/flutter-apk/app-release.apk'
@@ -25,6 +26,11 @@ pipeline {
                 }
             }
         }
+        stage('Check Environment') {
+            steps {
+                sh 'flutter doctor -v'
+            }
+        }
         stage('Build APK') {
             steps {
                 dir('frontend') {
@@ -38,32 +44,32 @@ pipeline {
                     string(credentialsId: 'azure-client-id', variable: 'AZURE_CLIENT_ID'),
                     string(credentialsId: 'azure-client-secret', variable: 'AZURE_CLIENT_SECRET'),
                     string(credentialsId: 'azure-tenant-id', variable: 'AZURE_TENANT_ID')
-            ]) {
-                sh '''
-                    echo "Autenticando con Azure..."
-                    az login --service-principal \
-                        -u "$AZURE_CLIENT_ID" \
-                        -p "$AZURE_CLIENT_SECRET" \
-                        --tenant "$AZURE_TENANT_ID"
+                ]) {
+                    sh '''
+                        echo "Autenticando con Azure..."
+                        az login --service-principal \
+                            -u "$AZURE_CLIENT_ID" \
+                            -p "$AZURE_CLIENT_SECRET" \
+                            --tenant "$AZURE_TENANT_ID"
 
-                    echo "Subiendo APK a Azure Blob Storage..."
-                    az storage blob upload \
-                        --account-name "$AZURE_STORAGE_ACCOUNT" \
-                        --container-name "$AZURE_CONTAINER" \
-                        --name "tongi-$(date +%Y%m%d%H%M).apk" \
-                        --file "$APK_PATH" \
-                        --auth-mode login
+                        echo "Subiendo APK a Azure Blob Storage..."
+                        az storage blob upload \
+                            --account-name "$AZURE_STORAGE_ACCOUNT" \
+                            --container-name "$AZURE_CONTAINER" \
+                            --name "tongi-$(date +%Y%m%d%H%M).apk" \
+                            --file "$APK_PATH" \
+                            --auth-mode login
 
-                    echo "✅ Upload completado correctamente!"
-                '''
+                        echo "✅ Upload completado correctamente!"
+                    '''
+                }
             }
         }
-    }
-        
     }
     post {
         success {
             echo '✅ Frontend production successful!'
+            archiveArtifacts artifacts: 'frontend/build/app/outputs/flutter-apk/*.apk', fingerprint: true
         }
         failure {
             echo '❌ Frontend production failed.'
