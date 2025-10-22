@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 
+// ignore: must_be_immutable
 class CopyButton extends StatelessWidget {
-  const CopyButton({super.key});
+  String text;
+  CopyButton({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
-      onPressed: () {},
+      onPressed: () {
+        copyText();
+      },
       label: Text("Copiar", style: TongiStyles.textBody),
       style: TextButton.styleFrom(
         iconAlignment: IconAlignment.end,
@@ -17,5 +22,9 @@ class CopyButton extends StatelessWidget {
       ),
       icon: Icon(Icons.copy, color: TongiColors.darkGray),
     );
+  }
+
+  copyText() async {
+    await Clipboard.setData(ClipboardData(text: text));
   }
 }

@@ -12,7 +12,11 @@ class TextTranslationWidget extends StatefulWidget {
   final TextTranslationController translationController;
   final TTSController speechController;
 
-  const TextTranslationWidget({super.key, required this.translationController, required this.speechController});
+  const TextTranslationWidget({
+    super.key,
+    required this.translationController,
+    required this.speechController,
+  });
 
   @override
   State<TextTranslationWidget> createState() => _TextTranslationWidgetState();
@@ -24,7 +28,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
   late final TextEditingController _inputController;
   late bool _lastEmpty;
   late int _lastRequestId;
-  final AudioPlayer audioPlayer  = AudioPlayer();
+  final AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -41,8 +45,6 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
   void dispose() {
     _inputController.dispose();
     _outputController.dispose();
-    LangSelectorController().swapText = () {};
-    LangSelectorController().notify = () {};
     super.dispose();
   }
 
@@ -80,7 +82,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
     });
   }
 
-    Future<void> _playSpeech(String text) async {
+  Future<void> _playSpeech(String text) async {
     if (text.trim().isEmpty) {
       _showError("No hay texto para sintetizar");
       return;
@@ -97,12 +99,10 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
     }
   }
 
-  
   void _showError(String message) {
     setState(() => _outputController.text = message);
     debugPrint(message);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +148,6 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
                 final clipboardData = await Clipboard.getData('text/plain');
                 if (clipboardData?.text != null) {
                   _inputController.text = clipboardData!.text!;
-                  // widget.controller.setInputText(clipboardData!.text!);
                 }
               },
               icon: Icon(Icons.paste, color: TongiColors.darkGray),
@@ -156,7 +155,6 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
               style: TextButton.styleFrom(
                 padding: EdgeInsets.all(0),
                 overlayColor: Colors.white,
-                // tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
           ],
@@ -196,9 +194,12 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
             Positioned(
               top: 0,
               right: 0,
-              child: IconButton(onPressed: ()async{ 
+              child: IconButton(
+                onPressed: () async {
                   await _playSpeech(_outputController.text);
-                }, icon: Icon(Icons.volume_up)),
+                },
+                icon: Icon(Icons.volume_up),
+              ),
             ),
             Positioned(
               right: 0,
@@ -213,7 +214,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
         Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [CopyButton()],
+          children: [CopyButton(text: _outputController.text)],
         ),
         SizedBox(height: 5),
       ],
@@ -221,6 +222,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
   }
 
   _swap() {
+    debugPrint(" Swap");
     _inputController.text = _outputController.text;
     _outputController.clear();
     _translate(_inputController.text);

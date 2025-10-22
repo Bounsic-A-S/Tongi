@@ -1,9 +1,24 @@
+class Language {
+  final String label;
+  final String code;
+
+  const Language({required this.label, required this.code});
+}
+
+// const Map<String, String> tongiLanguages = {
+//   "Español": "es",
+//   "Inglés": "en",
+//   "Alemán": "de",
+//   "Italiano": "it",
+//   "Japonés": "jp",
+// };
+
 const Map<String, String> tongiLanguages = {
-  "Español": "es",
-  "Inglés": "en",
-  "Alemán": "de",
-  "Italiano": "it",
-  "Frances": "fr",
+  "es": "Español",
+  "en": "Inglés",
+  "de": "Alemán",
+  "it": "Italiano",
+  "fr": "Francés",
 };
 
 const List<Language> availableLanguages = [

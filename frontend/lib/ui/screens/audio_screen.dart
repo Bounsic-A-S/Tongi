@@ -1,14 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/logic/controllers/auidio_translation_controller.dart';
-import 'package:frontend/logic/controllers/past_text_translation_controller.dart';
 import 'package:frontend/logic/controllers/speech_translation_comtroller.dart';
-import 'package:frontend/ui/core/tongi_colors.dart';
-import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/logic/services/audio/record_service.dart';
 import 'package:frontend/ui/widgets/audio/audio_translation.dart';
 import 'package:frontend/ui/widgets/language_selector.dart';
-import 'package:frontend/ui/widgets/audio/record_button.dart';
 
 class AudioScreen extends StatefulWidget {
   const AudioScreen({super.key});

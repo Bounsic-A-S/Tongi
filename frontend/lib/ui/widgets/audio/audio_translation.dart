@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:frontend/logic/controllers/auidio_translation_controller.dart';
+import 'package:frontend/logic/controllers/lang_selector_controller.dart';
 import 'package:frontend/logic/controllers/speech_translation_comtroller.dart';
+import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:frontend/logic/services/audio/record_service.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
@@ -9,34 +11,48 @@ import 'package:frontend/ui/widgets/audio/record_button.dart';
 import 'package:frontend/ui/widgets/copy_button.dart';
 import 'package:just_audio/just_audio.dart';
 
-
-
 class AudioTranslation extends StatefulWidget {
   final STTController controller;
-  final  TTSController ttsController;
-  const AudioTranslation({super.key, required this.controller, required this.ttsController});
-  
-  
+  final TTSController ttsController;
+  const AudioTranslation({
+    super.key,
+    required this.controller,
+    required this.ttsController,
+  });
 
   @override
   State<AudioTranslation> createState() => _AudioTranslationState();
-  
-  
 }
 
 class _AudioTranslationState extends State<AudioTranslation> {
-  // TextTranslationController translationController = TextTranslationController();
+  TextTranslationController textTranslationController =
+      TextTranslationController();
 
-  
   final TextEditingController _inputController = TextEditingController(
     text: "",
   );
   final TextEditingController _outputController = TextEditingController(
     text: "",
   );
-  final AudioPlayer audioPlayer  = AudioPlayer();
+  final AudioPlayer audioPlayer = AudioPlayer();
 
-  
+  @override
+  void initState() {
+    LangSelectorController().notify = _updateLanguage;
+    LangSelectorController().swapText = () {};
+    super.initState();
+  }
+
+  _updateLanguage() {
+    _outputController.clear();
+    _translateText(_inputController.text);
+  }
+
+  Future<void> _translateText(String text) async {
+    String res = await textTranslationController.translateText(text);
+    _outputController.text = res;
+    setState(() {});
+  }
 
   Future<void> _processAudio(File audioFile) async {
     if (!audioFile.existsSync()) {
@@ -56,14 +72,15 @@ class _AudioTranslationState extends State<AudioTranslation> {
       setState(() => _inputController.text = originalText);
 
       // 2️⃣ Traduce el audio a otro idioma
-      final translatedText = await widget.controller.transcribeAndTranslate(audioFile);
+      final translatedText = await widget.controller.transcribeAndTranslate(
+        audioFile,
+      );
 
       setState(() => _outputController.text = translatedText);
     } catch (e) {
       _showError("❌ Error al procesar el audio: $e");
     }
   }
-
 
   Future<void> _playSpeech(String text) async {
     if (text.trim().isEmpty) {
@@ -91,7 +108,6 @@ class _AudioTranslationState extends State<AudioTranslation> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-
         Container(
           decoration: BoxDecoration(
             border: BoxBorder.all(color: TongiColors.border, width: 1),
@@ -104,8 +120,9 @@ class _AudioTranslationState extends State<AudioTranslation> {
               Column(
                 children: [
                   RecordButton(
-                  service: RecordService(),
-                  onRecordingComplete: _processAudio ),
+                    service: RecordService(),
+                    onRecordingComplete: _processAudio,
+                  ),
                   SizedBox(height: 15),
                   Text(
                     "Toca para iniciar a grabar.",
@@ -155,15 +172,10 @@ class _AudioTranslationState extends State<AudioTranslation> {
                   hintStyle: TextStyle(color: TongiColors.gray),
                   contentPadding: EdgeInsets.all(0),
                 ),
-                enableSuggestions: false,
+                keyboardType: TextInputType.text,
+                enableSuggestions: true,
                 onChanged: (value) {
-                  setState(() {
-                    if (_inputController.text.isEmpty) {
-                      _outputController.text = "";
-                    } else {
-                      _outputController.text = "${_inputController.text} ##";
-                    }
-                  });
+                  _translateText(value);
                 },
               ),
             ],
@@ -176,24 +188,22 @@ class _AudioTranslationState extends State<AudioTranslation> {
             borderRadius: BorderRadius.circular(16),
             color: TongiColors.lightMainFill,
           ),
-          padding: EdgeInsets.only(left: 20, right: 15),
+          padding: EdgeInsets.only(left: 20, right: 0),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Text("Traducción", style: TongiStyles.textFieldMainLabel),
-                  TextButton.icon(
+                  IconButton(
                     onPressed: () async {
-                       await _playSpeech(_outputController.text);
+                      await _playSpeech(_outputController.text);
                     },
                     icon: Icon(Icons.volume_up, color: TongiColors.primary),
-                    label: Text("          "),
                     style: TextButton.styleFrom(
-                      padding: EdgeInsets.all(0),
                       iconAlignment: IconAlignment.end,
-                      overlayColor: Colors.transparent,
                       iconSize: 25,
                     ),
                   ),
@@ -214,7 +224,7 @@ class _AudioTranslationState extends State<AudioTranslation> {
             ],
           ),
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: [CopyButton()]),
+        Row(mainAxisAlignment: MainAxisAlignment.end, children: [CopyButton(text: _outputController.text,)]),
       ],
     );
   }
