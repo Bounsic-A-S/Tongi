@@ -95,8 +95,6 @@ class ApiTranslationService {
         "task": "translate",
       };
 
-      print("📦 Cuerpo de la petición: ${jsonEncode(requestBody)}");
-
       final response = await http
           .post(
             uri,

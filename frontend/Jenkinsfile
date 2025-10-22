@@ -22,13 +22,6 @@ pipeline {
                 }
             }
         }
-        stage('Build executable') {
-            steps {
-                dir('frontend') {
-                    // sh 'flutter build web --release'
-                }
-            }
-        }
     }
     post {
         success {
