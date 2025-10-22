@@ -104,6 +104,49 @@ static bool extractFileFromMultipart(const std::string& body, const std::string&
     return false;
 }
 
+static std::string extractTextFieldFromMultipart(const std::string& body, const std::string& boundary, const std::string& fieldName) {
+    std::string delimiter = "--" + boundary;
+    std::string fieldNameToFind = "name=\"" + fieldName + "\"";
+    size_t pos = 0;
+
+    while (pos < body.length()) {
+        size_t partStart = body.find(delimiter, pos);
+        if (partStart == std::string::npos) break;
+
+        partStart += delimiter.length();
+        if (body.substr(partStart, 2) == "--") break; // Fin del multipart
+        partStart += 2; // Saltar \r\n
+
+        size_t partEnd = body.find(delimiter, partStart);
+        if (partEnd == std::string::npos) partEnd = body.length();
+        
+        std::string part = body.substr(partStart, partEnd - partStart);
+        
+        size_t headerEnd = part.find("\r\n\r\n");
+        if (headerEnd == std::string::npos) {
+            pos = partEnd;
+            continue;
+        }
+
+        std::string headers = part.substr(0, headerEnd);
+        
+        // Verificar si es el campo que buscamos Y NO es un archivo
+        if (headers.find(fieldNameToFind) != std::string::npos && headers.find("filename=\"") == std::string::npos) {
+            std::string data = part.substr(headerEnd + 4); // +4 para \r\n\r\n
+            
+            // Remover \r\n final si existe
+            if (data.length() >= 2 && data.substr(data.length() - 2) == "\r\n") {
+                data = data.substr(0, data.length() - 2);
+            }
+            return data;
+        }
+        
+        pos = partEnd;
+    }
+
+    return ""; // Devuelve vacío si no lo encuentra
+}
+
 std::string STTService::fetchApiRoot() {
     cpr::Response response = cpr::Get(cpr::Url{"https://stt-server-app.bravefield-d0689482.eastus.azurecontainerapps.io/"},
                              cpr::Timeout{5000});
@@ -271,9 +314,11 @@ void STTService::translateEndpoint(const Rest::Request& request, Http::ResponseW
         
         std::cout << "Archivo extraído: " << filename << " (" << fileData.size() << " bytes)" << std::endl;
 
-        // Obtener idiomas desde query o form-data
-        auto sourceLang = request.query().get("source_language").value_or("es-ES");
-        auto targetLang = request.query().get("target_language").value_or("en-US");
+        std::string sourceLang = extractTextFieldFromMultipart(request.body(), boundary, "source_language");
+        std::string targetLang = extractTextFieldFromMultipart(request.body(), boundary, "target_language");
+        
+        if (sourceLang.empty()) sourceLang = "es-ES";
+        if (targetLang.empty()) targetLang = "en-US";
 
         // Guardar archivo temporal
         const std::string tempFile = "/tmp/temp_translate.wav";
@@ -346,4 +391,6 @@ void STTService::translateEndpoint(const Rest::Request& request, Http::ResponseW
         response.send(Http::Code::Internal_Server_Error,
                       "{\"error\":\"Exception: " + std::string(e.what()) + "\"}");
     }
+
+
 }

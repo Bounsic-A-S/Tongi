@@ -3,24 +3,19 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
-class TTSService {
+class ApiTTSService {
   static String get baseUrl {
-    if (kIsWeb) {
-      // For web development
-      return "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
-    } else if (Platform.isAndroid) {
-      // For Android emulator
-      return "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io"; // in this case my ip , so change TONGI TEAM :)
-    } else if (Platform.isIOS) {
-      // For iOS simulator
-      return "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
+    const endpoint =
+        "https://backend-tongi.bravefield-d0689482.eastus.azurecontainerapps.io";
+    if (kIsWeb || Platform.isAndroid || Platform.isIOS) {
+      return "$endpoint/api/tts";
     } else {
-      // For desktop or other platforms
-      return "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io";
+      return "$endpoint/api/tts";
     }
   }
 
   static const Duration requestTimeout = Duration(seconds: 20);
+
 
   static Future<String> synthesizeSpeech({
     required String text,
@@ -31,13 +26,14 @@ class TTSService {
       final uri = Uri.parse("$baseUrl/synthesize");
 
       final body = jsonEncode({
-        "text": text,
+        "text": text.trim(),
         "language": language,
         "voice": voice,
       });
 
       final headers = {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       };
 
       final response = await http
@@ -47,28 +43,29 @@ class TTSService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        // Esperamos algo como:
-        // {
-        //   "audio_data": "http://localhost:8002/audio/80c7c06010f34f8da0c63d800ef20e42.wav",
-        //   "language": "es-ES",
-        //   "voice": "es-ES-TristanMultilingualNeural",
-        //   "sample_rate": 22050
-        // }
-
         if (data['audio_data'] != null) {
-          print(data['audio_data']);
-          return data['audio_data']; // Devuelve la URL del audio
+          return data['audio_data']; // URL del archivo de audio
         } else {
-          throw Exception("No se encontró 'audio_data' en la respuesta");
+          throw Exception("Respuesta sin campo 'audio_data'");
         }
+      } else if (response.statusCode == 404) {
+        throw Exception("Servicio TTS no encontrado. Verifica el backend.");
+      } else if (response.statusCode == 500) {
+        throw Exception("Error interno del servidor TTS.");
       } else {
-        throw Exception(
-          "Error ${response.statusCode}: ${response.reasonPhrase}\n${response.body}",
-        );
+        throw Exception("Error HTTP ${response.statusCode}: ${response.reasonPhrase}");
       }
-    } catch (e) {
-      debugPrint("❌ Error al sintetizar texto: $e");
+    } on http.ClientException catch (e) {
+      throw Exception("Error de conexión: ${e.message}");
+    } on FormatException catch (e) {
+      throw Exception("Error en formato de respuesta: ${e.message}");
+    } on Exception catch (e) {
+      if (e.toString().contains('TimeoutException')) {
+        throw Exception("Tiempo de espera agotado. El servidor no respondió a tiempo.");
+      }
       rethrow;
+    } catch (e) {
+      throw Exception("Error inesperado: $e");
     }
   }
 }

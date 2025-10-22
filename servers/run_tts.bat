@@ -33,6 +33,12 @@ echo Instalando dependencias TTS...
 python -m pip install --upgrade pip
 pip install -r tts_server\requirements.txt
 
+REM ---------------------------------------------
+REM Ejecutar tests con python -m pytest y PYTHONPATH correcto
+REM ---------------------------------------------
+set PYTHONPATH=%CD%\tts_server
+python -m pytest tts_server\test\test_tts_service.py -q
+
 REM Iniciar servidor
 cd tts_server
 python app.py

@@ -33,6 +33,12 @@ echo Instalando dependencias STT...
 python -m pip install --upgrade pip
 pip install -r stt_server\requirements.txt
 
+REM ---------------------------------------------
+REM Ejecutar tests con python -m pytest y PYTHONPATH correcto
+REM ---------------------------------------------
+set PYTHONPATH=%CD%\stt_server
+python -m pytest stt_server\test\test_stt_service.py -v -s
+
 REM Iniciar servidor
 cd stt_server
 python app.py

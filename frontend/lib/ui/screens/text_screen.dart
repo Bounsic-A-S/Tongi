@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/logic/controllers/speech_translation_comtroller.dart';
 import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:frontend/ui/widgets/language_selector.dart';
 import 'package:frontend/ui/widgets/text/text_suggestions.dart';
@@ -13,11 +14,13 @@ class TextScreen extends StatefulWidget {
 
 class _TextScreenState extends State<TextScreen> {
   late final TextTranslationController _translationController;
+  late final TTSController _speechController;
 
   @override
   void initState() {
     super.initState();
     _translationController = TextTranslationController();
+    _speechController = TTSController();
   }
 
   @override
@@ -36,7 +39,7 @@ class _TextScreenState extends State<TextScreen> {
               LanguageSelector(),
               SizedBox(height: 10),
               SizedBox(height: 10),
-              TextTranslationWidget(translationController: _translationController),
+              TextTranslationWidget(translationController: _translationController, speechController: _speechController,),
               TextSuggestions(),
             ],
           ),
