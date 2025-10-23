@@ -34,7 +34,7 @@ pipeline {
         stage('Build APK') {
             steps {
                 dir('frontend') {
-                    sh 'flutter build apk --release'
+                    sh 'flutter build apk --release --no-shrink'
                 }
             }
         }
