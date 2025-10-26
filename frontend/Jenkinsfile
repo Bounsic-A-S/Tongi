@@ -26,14 +26,10 @@ pipeline {
                 }
             }
         }
-        stage('Check Environment') {
-            steps {
-                sh 'flutter doctor -v'
-            }
-        }
         stage('Build APK') {
             steps {
                 dir('frontend') {
+                    sh 'flutter clean'
                     sh 'flutter build apk --release --no-shrink --verbose'
                 }
             }
