@@ -26,6 +26,27 @@ pipeline {
                 }
             }
         }
+        stage('Prepare signing keys') {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'flutter-keystore', variable: 'KEYSTORE_FILE'),
+                    string(credentialsId: 'store_password', variable: 'STORE_PASSWORD'),
+                    string(credentialsId: 'key_password', variable: 'KEY_PASSWORD'),
+                    string(credentialsId: 'key_alias', variable: 'KEY_ALIAS')
+                ]) {
+                    dir('frontend/android') {
+                        sh '''
+                            echo "storePassword=$STORE_PASSWORD" > key.properties
+                            echo "keyPassword=$KEY_PASSWORD" >> key.properties
+                            echo "keyAlias=$KEY_ALIAS" >> key.properties
+                            echo "storeFile=app/release-key.jks" >> key.properties
+                            cp $KEYSTORE_FILE app/release-key.jks
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Build APK') {
             steps {
                 dir('frontend') {
