@@ -12,12 +12,21 @@ class TTSController {
   void resetId() => _lastTTSId = 0;
 
   static const Map<String, String> _languageRegions = {
-    'es': 'es-ES',
-    'en': 'en-US',
-    'de': 'de-DE',
-    'it': 'it-IT',
-    'fr': 'fr-FR',
+    'es': 'es-ES',       // Español (España)
+    'en': 'en-US',       // Inglés (Estados Unidos)
+    'fr': 'fr-FR',       // Francés (Francia)
+    'de': 'de-DE',       // Alemán (Alemania)
+    'it': 'it-IT',       // Italiano (Italia)
+    'pt': 'pt-PT',       // Portugués (Portugal)
+    'zh-Hans': 'zh-CN',  // Chino simplificado (China)
+    'zh-Hant': 'zh-TW',  // Chino tradicional (Taiwán)
+    'ja': 'ja-JP',       // Japonés (Japón)
+    'ko': 'ko-KR',       // Coreano (Corea del Sur)
+    'ar': 'ar-SA',       // Árabe (Arabia Saudita)
+    'ru': 'ru-RU',       // Ruso (Rusia)
+    'hi': 'hi-IN',       // Hindi (India)
   };
+
 
 
   Future<String> synthesizeSpeech(
@@ -60,15 +69,42 @@ class TTSController {
   String _getDefaultVoiceForLang(String langCode) {
     switch (langCode) {
       case "es-ES":
-        return "es-ES-TristanMultilingualNeural";
+        return "es-ES-AlvaroNeural"; // Español (España)
+      case "es-MX":
+        return "es-MX-DaliaNeural"; // Español (México)
       case "en-US":
-        return "en-US-JennyMultilingualNeural";
+        return "en-US-JennyNeural"; // Inglés (EE. UU.)
+      case "en-GB":
+        return "en-GB-SoniaNeural"; // Inglés (Reino Unido)
       case "fr-FR":
-        return "fr-FR-DeniseMultilingualNeural";
+        return "fr-FR-DeniseNeural"; // Francés (Francia)
+      case "de-DE":
+        return "de-DE-KatjaNeural"; // Alemán (Alemania)
+      case "it-IT":
+        return "it-IT-ElsaNeural"; // Italiano (Italia)
+      case "pt-PT":
+        return "pt-PT-FernandaNeural"; // Portugués (Portugal)
       case "pt-BR":
-        return "pt-BR-FranciscaMultilingualNeural";
+        return "pt-BR-FranciscaNeural"; // Portugués (Brasil)
+      case "zh-CN":
+      case "zh-Hans":
+        return "zh-CN-XiaoxiaoNeural"; // Chino simplificado (China)
+      case "zh-TW":
+      case "zh-Hant":
+        return "zh-TW-HsiaoChenNeural"; // Chino tradicional (Taiwán)
+      case "ja-JP":
+        return "ja-JP-NanamiNeural"; // Japonés (Japón)
+      case "ko-KR":
+        return "ko-KR-SunHiNeural"; // Coreano (Corea del Sur)
+      case "ar-SA":
+        return "ar-SA-HamedNeural"; // Árabe (Arabia Saudita)
+      case "ru-RU":
+        return "ru-RU-DariyaNeural"; // Ruso (Rusia)
+      case "hi-IN":
+        return "hi-IN-SwaraNeural"; // Hindi (India)
       default:
-        return "es-ES-TristanMultilingualNeural";
+        return "en-US-JennyMultilingualNeural"; // Fallback general
     }
   }
+
 }
