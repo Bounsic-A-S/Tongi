@@ -8,12 +8,21 @@ class STTController {
   int _lastSTTId = 0;
   bool isTranscribing = false;
   static const Map<String, String> _languageRegions = {
-    'es': 'es-ES',
-    'en': 'en-US',
-    'de': 'de-DE',
-    'it': 'it-IT',
-    'fr': 'fr-FR',
+    'es': 'es-ES',       // Español (España)
+    'en': 'en-US',       // Inglés (Estados Unidos)
+    'fr': 'fr-FR',       // Francés (Francia)
+    'de': 'de-DE',       // Alemán (Alemania)
+    'it': 'it-IT',       // Italiano (Italia)
+    'pt': 'pt-PT',       // Portugués (Portugal)
+    'zh-Hans': 'zh-CN',  // Chino simplificado (China)
+    'zh-Hant': 'zh-TW',  // Chino tradicional (Taiwán)
+    'ja': 'ja-JP',       // Japonés (Japón)
+    'ko': 'ko-KR',       // Coreano (Corea del Sur)
+    'ar': 'ar-SA',       // Árabe (Arabia Saudita)
+    'ru': 'ru-RU',       // Ruso (Rusia)
+    'hi': 'hi-IN',       // Hindi (India)
   };
+
 
   int getLastId() => _lastSTTId;
   void resetId() => _lastSTTId = 0;

@@ -53,39 +53,68 @@
         ]
       }
     },
-    "language_voice_map": {
-      "es-ES": {
-        "native_voices": ["es-ES-ArabellaMultilingualNeural", "es-ES-IsidoraMultilingualNeural", "es-ES-TristanMultilingualNeural", "es-ES-XimenaMultilingualNeural"],
-        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-GB-AdaMultilingualNeural", "en-GB-OllieMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
-      },
-      "es-MX": {
-        "native_voices": ["es-ES-ArabellaMultilingualNeural", "es-ES-IsidoraMultilingualNeural", "es-ES-TristanMultilingualNeural", "es-ES-XimenaMultilingualNeural"],
-        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
-      },
-      "en-GB": {
-        "native_voices": ["en-GB-AdaMultilingualNeural", "en-GB-OllieMultilingualNeural"],
-        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
-      },
-      "ru-RU": {
-        "native_voices": [],
-        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
-      },
-      "uk-UA": {
-        "native_voices": [],
-        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
-      },
-      "pl-PL": {
-        "native_voices": [],
-        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
-      },
-      "ar-EG": {
-        "native_voices": [],
-        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
-      },
-      "ar-SA": {
-        "native_voices": [],
-        "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"]
-      }
+      "language_voice_map": {
+        "es-ES": {
+          "native_voices": ["es-ES-ArabellaMultilingualNeural", "es-ES-IsidoraMultilingualNeural", "es-ES-TristanMultilingualNeural", "es-ES-XimenaMultilingualNeural"],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-GB-AdaMultilingualNeural", "en-GB-OllieMultilingualNeural"]
+        },
+        "en-US": {
+          "native_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural", "en-US-AlloyTurboMultilingualNeural", "en-US-FableTurboMultilingualNeural", "en-US-JennyMultilingualNeural", "en-US-RyanMultilingualNeural"],
+          "other_multilingual_voices": []
+        },
+        "en-GB": {
+          "native_voices": ["en-GB-AdaMultilingualNeural", "en-GB-OllieMultilingualNeural"],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural"]
+        },
+        "fr-FR": {
+          "native_voices": ["fr-FR-LucienMultilingualNeural", "fr-FR-VivienneMultilingualNeural"],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "de-DE": {
+          "native_voices": ["de-DE-FlorianMultilingualNeural", "de-DE-SeraphinaMultilingualNeural"],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "it-IT": {
+          "native_voices": ["it-IT-AlessioMultilingualNeural", "it-IT-IsabellaMultilingualNeural"],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "pt-BR": {
+          "native_voices": [],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural", "en-US-AmandaMultilingualNeural"]
+        },
+        "zh-CN": {
+          "native_voices": ["zh-CN-XiaoxiaoMultilingualNeural", "zh-CN-YunyiMultilingualNeural"],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "zh-TW": {
+          "native_voices": [],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "ja-JP": {
+          "native_voices": ["ja-JP-MasaruMultilingualNeural"],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "ko-KR": {
+          "native_voices": ["ko-KR-HyunsuMultilingualNeural"],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "ar-SA": {
+          "native_voices": [],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "ar-EG": {
+          "native_voices": [],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "ru-RU": {
+          "native_voices": [],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        },
+        "hi-IN": {
+          "native_voices": ["hi-IN-SwaraMultilingualNeural"],
+          "other_multilingual_voices": ["en-US-AdamMultilingualNeural"]
+        }
+    
     },
     "capability_definitions": {
       "1": "Síntesis de voz básica",
