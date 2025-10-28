@@ -126,17 +126,17 @@ pipeline {
             }
         }
     }
-    
+
     post {
         success {
             echo '✅ Frontend build exitoso.'
             archiveArtifacts artifacts: 'frontend/build/app/outputs/flutter-apk/*.apk', fingerprint: true
-            cleanWs(cleanWhenAborted: true, cleanWhenFailure: true)  // ✅ limpiar solo al final del success
         }
         failure {
             echo '❌ Frontend build falló.'
+        }
+        always {
             cleanWs(cleanWhenAborted: true, cleanWhenFailure: true)
         }
     }
-
 }
