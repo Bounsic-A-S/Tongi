@@ -67,7 +67,7 @@ class _SettingsModelsScreenState extends State<SettingsModelsScreen> {
         _pickedLanguage = value!;
       });
     },
-    items: tongiLanguages.entries.map<DropdownMenuItem<String>>((entry) {
+    items: localLanguages.entries.map<DropdownMenuItem<String>>((entry) {
       return DropdownMenuItem<String>(
         value: entry.value,
         child: Text(entry.key),

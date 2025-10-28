@@ -18,10 +18,14 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   @override
   void initState() {
     super.initState();
+    _offlineController = OfflineCheckController();
+    _offlineController.addListener(_onOfflineChanged);
   }
 
   @override
   void dispose() {
+    _offlineController.removeListener(_onOfflineChanged);
+    _offlineController.dispose();
     super.dispose();
   }
 
@@ -66,7 +70,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     setState(() {});
                   }
                 },
-                dropdownMenuEntries: controller.getAvailableInputLanguages(),
+                dropdownMenuEntries: _buildInputEntries(),
               ),
             ],
           ),
@@ -117,12 +121,36 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     setState(() {});
                   }
                 },
-                dropdownMenuEntries: controller.getAvailableOutputLanguages(),
+                dropdownMenuEntries: _buildOutputEntries(),
               ),
             ],
           ),
         ),
       ],
     );
+  }
+
+  List<DropdownMenuEntry<String>> _buildInputEntries() {
+    final List<DropdownMenuEntry<String>> res = [];
+
+    for (final entry in _offlineController.availableLanguages) {
+      if (entry.value != controller.outputMenuController.text) {
+        res.add(DropdownMenuEntry(value: entry.key, label: entry.value));
+      }
+    }
+
+    return res;
+  }
+
+  List<DropdownMenuEntry<String>> _buildOutputEntries() {
+    final List<DropdownMenuEntry<String>> res = [];
+
+    for (final entry in _offlineController.availableLanguages) {
+      if (entry.value != controller.inputMenuController.text) {
+        res.add(DropdownMenuEntry(value: entry.key, label: entry.value));
+      }
+    }
+
+    return res;
   }
 }

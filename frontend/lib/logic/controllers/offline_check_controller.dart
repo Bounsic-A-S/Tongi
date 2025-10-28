@@ -13,6 +13,7 @@ class OfflineCheckController extends ChangeNotifier {
   List<MapEntry<String, String>> availableLanguages = tongiLanguages.entries
       .toList();
   bool loading = false;
+  bool isOffline = false;
 
   OfflineCheckController() {
     // Listen to connectivity changes. Some plugin versions emit a single
@@ -55,19 +56,36 @@ class OfflineCheckController extends ChangeNotifier {
       }
     }
 
-    final bool isOffline = result == ConnectivityResult.none;
+    final RegExp validModelRegex = RegExp(r'^[a-z]{2,3}(?:_[a-z]{2,3})?$');
 
-    if (isOffline) {
+    isOffline = result == ConnectivityResult.none;
+    final bool isOfflineLocal = isOffline;
+
+    if (isOfflineLocal) {
       final modelManager = OnDeviceTranslatorModelManager();
-      List<MapEntry<String, String>> downloaded = [];
-      for (var entry in tongiLanguages.entries) {
-        bool isDownloaded = false;
+      // Check downloaded models in parallel to avoid blocking the UI while
+      // querying each model serially. If a check fails, treat as not
+      // downloaded.
+      final futures = tongiLanguages.entries.map((entry) async {
+        // Normalize key to lower-case for validation
+        final code = entry.key.toLowerCase();
+        if (!validModelRegex.hasMatch(code)) {
+          // skip codes that don't match ML Kit expected pattern (e.g. zh-Hans)
+          return MapEntry(entry, false);
+        }
         try {
-          isDownloaded = await modelManager.isModelDownloaded(entry.value);
-        } catch (_) {}
-        if (isDownloaded) downloaded.add(entry);
-      }
-      availableLanguages = downloaded;
+          final isDownloaded = await modelManager.isModelDownloaded(code);
+          return MapEntry(entry, isDownloaded);
+        } catch (_) {
+          return MapEntry(entry, false);
+        }
+      }).toList();
+
+      final results = await Future.wait(futures);
+      availableLanguages = results
+          .where((e) => e.value)
+          .map((e) => e.key)
+          .toList();
     } else {
       availableLanguages = tongiLanguages.entries.toList();
     }
