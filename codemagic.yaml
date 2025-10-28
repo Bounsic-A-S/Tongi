@@ -8,6 +8,14 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      vars:
+        AZURE_STORAGE_ACCOUNT: "tongiapks"
+        AZURE_CONTAINER: "apk"
+      # Configura estas variables secretas en Codemagic UI
+      # Settings > Environment variables > Add variable
+      # AZURE_CLIENT_ID
+      # AZURE_CLIENT_SECRET
+      # AZURE_TENANT_ID
 
     triggering:
       events:
@@ -34,6 +42,32 @@ workflows:
         script: |
           cd frontend
           flutter build ipa --release --no-codesign
+
+      - name: Install Azure CLI
+        script: |
+          brew update
+          brew install azure-cli
+
+      - name: Upload IPA to Azure Blob Storage
+        script: |
+          echo "☁️ Autenticando con Azure..."
+          az login --service-principal \
+            -u "$AZURE_CLIENT_ID" \
+            -p "$AZURE_CLIENT_SECRET" \
+            --tenant "$AZURE_TENANT_ID"
+
+          TIMESTAMP=$(date +%Y%m%d%H%M)
+          IPA_FILE=$(find frontend/build/ios/ipa -name "*.ipa" | head -n 1)
+
+          echo "⬆️ Subiendo IPA a Azure Blob Storage..."
+          az storage blob upload \
+            --account-name "$AZURE_STORAGE_ACCOUNT" \
+            --container-name "$AZURE_CONTAINER" \
+            --name "tongi-ios-${TIMESTAMP}.ipa" \
+            --file "$IPA_FILE" \
+            --auth-mode login
+
+          echo "✅ IPA subido correctamente a Azure!"
 
     artifacts:
       - frontend/build/ios/ipa/*.ipa
