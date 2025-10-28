@@ -8,7 +8,14 @@ class LanguageEnum(str, Enum):
     fr = "fr"
     de = "de"
     es = "es"
-    jp = "jp"
+    ja = "ja"
+    pt = "pt"
+    ko = "ko"
+    chz = "zh-Hans"
+    chs = "zh-Hant"
+    ar = "ar"
+    ru = "ru"
+    hi = "hi"
 
 class TextRequest(BaseModel):
     text: str

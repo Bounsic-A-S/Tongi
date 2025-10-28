@@ -3,12 +3,9 @@ import 'package:frontend/logic/controllers/lang_selector_controller.dart';
 import 'package:frontend/logic/controllers/offline_check_controller.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
-import 'package:frontend/logic/controllers/text_translation_controller.dart';
 
 class LanguageSelector extends StatefulWidget {
-  final TextTranslationController controller;
-
-  const LanguageSelector({super.key, required this.controller});
+  const LanguageSelector({super.key});
 
   @override
   State<LanguageSelector> createState() => _LanguageSelectorState();
@@ -21,15 +18,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   @override
   void initState() {
     super.initState();
-
-    _offlineController = OfflineCheckController();
-    _offlineController.addListener(_onOfflineChanged);
   }
 
   @override
   void dispose() {
-    _offlineController.removeListener(_onOfflineChanged);
-    _offlineController.dispose();
     super.dispose();
   }
 
@@ -70,21 +62,11 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 textStyle: TongiStyles.textLabel,
                 onSelected: (value) {
                   if (value != null) {
-                    widget.controller.setSourceLanguage(value);
+                    controller.setInputLang(value);
+                    setState(() {});
                   }
                 },
-                dropdownMenuEntries: _offlineController.availableLanguages
-                    .where(
-                      (entry) =>
-                          entry.value != widget.controller.targetLanguageCode,
-                    )
-                    .map(
-                      (entry) => DropdownMenuEntry(
-                        value: entry.value,
-                        label: entry.key,
-                      ),
-                    )
-                    .toList(),
+                dropdownMenuEntries: controller.getAvailableInputLanguages(),
               ),
             ],
           ),
@@ -94,8 +76,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             SizedBox(height: 20),
             IconButton(
               onPressed: () {
-                controller.swapLanguages();
-                widget.controller.swapLanguages();
+                setState(() {
+                  controller.swapLanguages();
+                });
               },
               icon: Icon(Icons.swap_horiz_outlined),
               iconSize: 30,
@@ -130,21 +113,11 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 textStyle: TongiStyles.textLabel,
                 onSelected: (value) {
                   if (value != null) {
-                    widget.controller.setTargetLanguage(value);
+                    controller.setOutputLang(value);
+                    setState(() {});
                   }
                 },
-                dropdownMenuEntries: _offlineController.availableLanguages
-                    .where(
-                      (entry) =>
-                          entry.value != widget.controller.sourceLanguageCode,
-                    )
-                    .map(
-                      (entry) => DropdownMenuEntry(
-                        value: entry.value,
-                        label: entry.key,
-                      ),
-                    )
-                    .toList(),
+                dropdownMenuEntries: controller.getAvailableOutputLanguages(),
               ),
             ],
           ),

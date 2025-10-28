@@ -19,3 +19,14 @@ void STTController::getHealth(const Rest::Request&, Http::ResponseWriter respons
     auto json = STTService::fetchApiHealth();
     response.send(Http::Code::Ok, json);
 }
+
+void STTController::transcribeAudio(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+    setJsonHeaders(response);
+    STTService::transcribeEndpoint(request, std::move(response));
+}
+
+void STTController::translateAudio(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
+    setJsonHeaders(response);
+    STTService::translateEndpoint(request, std::move(response));
+}
+

@@ -19,6 +19,12 @@ COPY . .
 # Exponer puerto que Azure inyectará
 EXPOSE 8003
 
-# Gunicorn con UvicornWorker (ASGI) para producción
-CMD ["gunicorn", "--bind", "0.0.0.0:8003", "--workers", "1", "--worker-class", "uvicorn.workers.UvicornWorker", "--log-level", "debug", "--access-logfile", "-", "--error-logfile", "-", "app:app"]
-
+CMD ["gunicorn", \
+     "--bind", "0.0.0.0:8003", \
+     "--workers", "4", \
+     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--preload", \
+     "--timeout", "300", \
+     "--keep-alive", "75", \
+     "--log-level", "info", \
+     "app:app"]
