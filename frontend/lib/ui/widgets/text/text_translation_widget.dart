@@ -6,6 +6,7 @@ import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 import 'package:frontend/ui/widgets/copy_button.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/ui/widgets/text/text_suggestions.dart';
 import 'package:just_audio/just_audio.dart';
 
 class TextTranslationWidget extends StatefulWidget {
@@ -23,7 +24,6 @@ class TextTranslationWidget extends StatefulWidget {
 }
 
 class _TextTranslationWidgetState extends State<TextTranslationWidget> {
-  // TextTranslationController translationController;
   late final TextEditingController _outputController;
   late final TextEditingController _inputController;
   late bool _lastEmpty;
@@ -217,8 +217,14 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
           children: [CopyButton(text: _outputController.text)],
         ),
         SizedBox(height: 5),
+        TextSuggestions(onTap: _onTapSuggestion),
       ],
     );
+  }
+
+  _onTapSuggestion(String suggesttext) {
+    _inputController.text = suggesttext;
+    _translate(_inputController.text);
   }
 
   _swap() {

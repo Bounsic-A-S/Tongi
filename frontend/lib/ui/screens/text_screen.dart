@@ -2,31 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:frontend/logic/controllers/speech_translation_comtroller.dart';
 import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:frontend/ui/widgets/language_selector.dart';
-import 'package:frontend/ui/widgets/text/text_suggestions.dart';
 import 'package:frontend/ui/widgets/text/text_translation_widget.dart';
 
-class TextScreen extends StatefulWidget {
-  const TextScreen({super.key});
-
-  @override
-  State<TextScreen> createState() => _TextScreenState();
-}
-
-class _TextScreenState extends State<TextScreen> {
+class TextScreen extends StatelessWidget {
   late final TextTranslationController _translationController;
   late final TTSController _speechController;
 
-  @override
-  void initState() {
-    super.initState();
-    _translationController = TextTranslationController();
-    _speechController = TTSController();
-  }
-
-  @override
-  void dispose() {
-    // _translationController.dispose();
-    super.dispose();
+  TextScreen({super.key}) {
+    this._translationController = TextTranslationController();
+    this._speechController = TTSController();
   }
 
   @override
@@ -39,8 +23,10 @@ class _TextScreenState extends State<TextScreen> {
               LanguageSelector(),
               SizedBox(height: 10),
               SizedBox(height: 10),
-              TextTranslationWidget(translationController: _translationController, speechController: _speechController,),
-              TextSuggestions(),
+              TextTranslationWidget(
+                translationController: _translationController,
+                speechController: _speechController,
+              ),
             ],
           ),
         ),
