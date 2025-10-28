@@ -1,0 +1,32 @@
+workflows:
+  ios-workflow:
+    name: iOS Release
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      vars:
+        # Opcional: variables de entorno, p.ej. versión
+        BUILD_NUMBER: 1
+    triggering:
+      events:
+        - push
+    scripts:
+      - name: Install CocoaPods
+        script: |
+          brew install cocoapods || true
+      - name: Flutter pub get
+        script: |
+          flutter pub get
+      - name: Build iOS (IPA)
+        script: |
+          # Para publish en App Store, usualmente se hace codesign automático
+          flutter clean
+          flutter build ipa --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        # publish automático a TestFlight / App Store (requiere App Store Connect API key configurada)
+        api_key: "APP_STORE_CONNECT_API_KEY" # referencia al nombre de la API key guardada en Codemagic
+        bundle_id: "com.tuempresa.tuapp"
+        submit_for_testflight: true
