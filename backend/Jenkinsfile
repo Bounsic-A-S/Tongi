@@ -43,7 +43,7 @@ pipeline {
                 dir('backend') {
                     sh '''
                         echo "🛠️ Building Docker image..."
-                        docker build -t ${IMAGE_LOCAL} .
+                        docker build --no-cache -t ${IMAGE_LOCAL} .
                     '''
                 }
             }
