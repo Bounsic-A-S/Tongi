@@ -9,22 +9,29 @@ class TTSController:
         self.tts_service = TTSService()
         self.base_url = os.getenv("BASE_URL", "https://tts-server-app.bravefield-d0689482.eastus.azurecontainerapps.io")  # Para formar URLs completas de audio
 
-    # --- Selecciona la voz correcta ---
+
     async def pick_voice(self, language: str, voice: str = None) -> str:
-        available_voices = await self.tts_service.get_available_voices()
-        voices_for_lang = available_voices.languages.get(language, [])
+        available_voices: VoicesResponse = await self.tts_service.get_available_voices()
+        lang_map = available_voices.languages  # ✅ en vez de language_voice_map
 
-        if not voices_for_lang:
-            # No hay voces para este idioma, usar Jenny por defecto
-            return "en-US-JennyMultilingualNeural"
+        # Voces disponibles para ese idioma
+        all_voices = lang_map.get(language, [])
 
-        if voice in voices_for_lang:
+        # 1️⃣ Si se especifica una voz válida, devolverla
+        if voice and voice in all_voices:
             return voice
 
-        # Si la voz no es válida o no se especificó, usar la primera disponible
-        return available_voices.default.get(language, voices_for_lang[0])
+        # 2️⃣ Usar la voz por defecto si existe
+        default_voice = available_voices.default.get(language)
+        if default_voice:
+            return default_voice
 
-    # --- Endpoint de síntesis ---
+        # 3️⃣ Fallback a Jenny
+        return "en-US-JennyMultilingualNeural"
+
+
+
+ # --- Endpoint de síntesis ---
     async def synthesize(self, request: SynthesisRequest) -> SynthesisResponse:
         if not request.text:
             raise HTTPException(status_code=400, detail="Text is required")
