@@ -1,32 +1,76 @@
 workflows:
-  ios-workflow:
-    name: iOS Release
-    max_build_duration: 60
+  ios-test:
+    name: "iOS Build Test"
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+
     environment:
       flutter: stable
+      xcode: latest
+      cocoapods: default
       vars:
-        # Opcional: variables de entorno, p.ej. versión
-        BUILD_NUMBER: 1
+        AZURE_STORAGE_ACCOUNT: "tongiapks"
+        AZURE_CONTAINER: "apk"
+      # Configura estas variables secretas en Codemagic UI
+      # Settings > Environment variables > Add variable
+      groups:
+        - azure
+           $AZURE_CLIENT_ID
+           $AZURE_CLIENT_SECRET
+           $AZURE_TENANT_ID
+
+
     triggering:
       events:
         - push
+
     scripts:
-      - name: Install CocoaPods
+      - name: Clean
         script: |
-          brew install cocoapods || true
+          cd frontend
+          flutter clean
+          rm -rf ios/Pods ios/Podfile.lock
+
       - name: Flutter pub get
         script: |
+          cd frontend
           flutter pub get
-      - name: Build iOS (IPA)
+
+      - name: Install CocoaPods dependencies
         script: |
-          # Para publish en App Store, usualmente se hace codesign automático
-          flutter clean
+          cd frontend/ios
+          pod install
+
+      - name: Build IPA (sin firmar)
+        script: |
+          cd frontend
           flutter build ipa --release --no-codesign
+
+      - name: Install Azure CLI
+        script: |
+          brew update
+          brew install azure-cli
+
+      - name: Upload IPA to Azure Blob Storage
+        script: |
+          echo "☁️ Autenticando con Azure..."
+          az login --service-principal \
+            -u "$AZURE_CLIENT_ID" \
+            -p "$AZURE_CLIENT_SECRET" \
+            --tenant "$AZURE_TENANT_ID"
+
+          TIMESTAMP=$(date +%Y%m%d%H%M)
+          IPA_FILE=$(find frontend/build/ios/ipa -name "*.ipa" | head -n 1)
+
+          echo "⬆️ Subiendo IPA a Azure Blob Storage..."
+          az storage blob upload \
+            --account-name "$AZURE_STORAGE_ACCOUNT" \
+            --container-name "$AZURE_CONTAINER" \
+            --name "tongi-ios-${TIMESTAMP}.ipa" \
+            --file "$IPA_FILE" \
+            --auth-mode login
+
+          echo "✅ IPA subido correctamente a Azure!"
+
     artifacts:
-      - build/ios/ipa/*.ipa
-    publishing:
-      app_store_connect:
-        # publish automático a TestFlight / App Store (requiere App Store Connect API key configurada)
-        api_key: "APP_STORE_CONNECT_API_KEY" # referencia al nombre de la API key guardada en Codemagic
-        bundle_id: "com.tuempresa.tuapp"
-        submit_for_testflight: true
+      - frontend/build/ios/ipa/*.ipa
