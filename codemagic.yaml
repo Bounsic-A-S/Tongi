@@ -11,14 +11,8 @@ workflows:
       vars:
         AZURE_STORAGE_ACCOUNT: "tongiapks"
         AZURE_CONTAINER: "apk"
-      # Configura estas variables secretas en Codemagic UI
-      # Settings > Environment variables > Add variable
       groups:
         - azure
-           $AZURE_CLIENT_ID
-           $AZURE_CLIENT_SECRET
-           $AZURE_TENANT_ID
-
 
     triggering:
       events:
