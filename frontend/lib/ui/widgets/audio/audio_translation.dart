@@ -11,21 +11,19 @@ import 'package:frontend/ui/widgets/audio/record_button.dart';
 import 'package:frontend/ui/widgets/copy_button.dart';
 import 'package:just_audio/just_audio.dart';
 
-class AudioTranslation extends StatefulWidget {
+class AudioTranslation extends StatelessWidget {
   final STTController controller;
   final TTSController ttsController;
-  const AudioTranslation({
+  AudioTranslation({
     super.key,
     required this.controller,
     required this.ttsController,
-  });
+  }) {
+    LangSelectorController().notify = _updateLanguage;
+    LangSelectorController().swapText = _swap;
+  }
 
-  @override
-  State<AudioTranslation> createState() => _AudioTranslationState();
-}
-
-class _AudioTranslationState extends State<AudioTranslation> {
-  TextTranslationController textTranslationController =
+  final TextTranslationController textTranslationController =
       TextTranslationController();
 
   final TextEditingController _inputController = TextEditingController(
@@ -35,74 +33,6 @@ class _AudioTranslationState extends State<AudioTranslation> {
     text: "",
   );
   final AudioPlayer audioPlayer = AudioPlayer();
-
-  @override
-  void initState() {
-    LangSelectorController().notify = _updateLanguage;
-    LangSelectorController().swapText = () {};
-    super.initState();
-  }
-
-  _updateLanguage() {
-    _outputController.clear();
-    _translateText(_inputController.text);
-  }
-
-  Future<void> _translateText(String text) async {
-    String res = await textTranslationController.translateText(text);
-    _outputController.text = res;
-    setState(() {});
-  }
-
-  Future<void> _processAudio(File audioFile) async {
-    if (!audioFile.existsSync()) {
-      _showError("Archivo no encontrado");
-      return;
-    }
-
-    setState(() {
-      _inputController.text = "Procesando...";
-      _outputController.text = "Traduciendo...";
-    });
-
-    try {
-      // 1️⃣ Transcribe el audio original
-      final originalText = await widget.controller.transcribeAudio(audioFile);
-
-      setState(() => _inputController.text = originalText);
-
-      // 2️⃣ Traduce el audio a otro idioma
-      final translatedText = await widget.controller.transcribeAndTranslate(
-        audioFile,
-      );
-
-      setState(() => _outputController.text = translatedText);
-    } catch (e) {
-      _showError("❌ Error al procesar el audio: $e");
-    }
-  }
-
-  Future<void> _playSpeech(String text) async {
-    if (text.trim().isEmpty) {
-      _showError("No hay texto para sintetizar");
-      return;
-    }
-
-    try {
-      final audioUrl = await widget.ttsController.synthesizeSpeech(text);
-      debugPrint("✅ Audio generado: $audioUrl");
-
-      await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(audioUrl)));
-      await audioPlayer.play();
-    } catch (e) {
-      _showError("❌ Error al reproducir voz: $e");
-    }
-  }
-
-  void _showError(String message) {
-    setState(() => _outputController.text = message);
-    debugPrint(message);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,8 +154,73 @@ class _AudioTranslationState extends State<AudioTranslation> {
             ],
           ),
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: [CopyButton(text: _outputController.text,)]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [CopyButton(text: _outputController.text)],
+        ),
       ],
     );
+  }
+
+  _updateLanguage() {
+    _outputController.clear();
+    _translateText(_inputController.text);
+  }
+
+  _swap() {
+    _inputController.text = _outputController.text;
+    _outputController.clear();
+    _translateText(_inputController.text);
+  }
+
+  Future<void> _translateText(String text) async {
+    String res = await textTranslationController.translateText(text);
+    _outputController.text = res;
+  }
+
+  Future<void> _processAudio(File audioFile) async {
+    if (!audioFile.existsSync()) {
+      _showError("Archivo no encontrado");
+      return;
+    }
+
+    _inputController.text = "Procesando...";
+    _outputController.text = "Traduciendo...";
+
+    try {
+      // 1️⃣ Transcribe el audio original
+      final originalText = await controller.transcribeAudio(audioFile);
+
+      _inputController.text = originalText;
+
+      // 2️⃣ Traduce el audio a otro idioma
+      final translatedText = await controller.transcribeAndTranslate(audioFile);
+
+      _outputController.text = translatedText;
+    } catch (e) {
+      _showError("❌ Error al procesar el audio: $e");
+    }
+  }
+
+  Future<void> _playSpeech(String text) async {
+    if (text.trim().isEmpty) {
+      _showError("No hay texto para sintetizar");
+      return;
+    }
+
+    try {
+      final audioUrl = await ttsController.synthesizeSpeech(text);
+      debugPrint("✅ Audio generado: $audioUrl");
+
+      await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(audioUrl)));
+      await audioPlayer.play();
+    } catch (e) {
+      _showError("❌ Error al reproducir voz: $e");
+    }
+  }
+
+  void _showError(String message) {
+    _outputController.text = message;
+    debugPrint(message);
   }
 }
