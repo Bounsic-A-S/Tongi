@@ -73,7 +73,7 @@ pipeline {
                             echo "storePassword=$STORE_PASSWORD" > key.properties
                             echo "keyPassword=$KEY_PASSWORD" >> key.properties
                             echo "keyAlias=$KEY_ALIAS" >> key.properties
-                            echo "storeFile=app/release-key.jks" >> key.properties
+                            echo "storeFile=${WORKSPACE}/frontend/android/app/release-key.jks" >> key.properties
                             cp $KEYSTORE_FILE app/release-key.jks
                             cat key.properties
                         '''
@@ -91,7 +91,6 @@ pipeline {
                         export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
         
                         flutter doctor -v
-        
                         flutter clean
                         flutter build apk --release --no-shrink --verbose
                     '''
