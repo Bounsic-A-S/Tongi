@@ -87,8 +87,13 @@ pipeline {
                 dir('frontend') {
                     sh '''
                         echo "🏗️ Construyendo APK de producción..."
+                        export ANDROID_HOME=/opt/android-sdk
+                        export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+        
+                        flutter doctor -v
+        
                         flutter clean
-                        flutter build apk --release --no-shrink --stacktrace --info
+                        flutter build apk --release --no-shrink --verbose
                     '''
                 }
             }
