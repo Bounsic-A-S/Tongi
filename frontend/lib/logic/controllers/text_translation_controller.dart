@@ -17,9 +17,7 @@ class TextTranslationController {
   Future<String> translateText(String text, {int id = 0}) async {
     isTranslating = true;
     String translatedText;
-    // Determine connectivity via OfflineCheckController. The controller
-    // performs an async initial check in its constructor, so wait until
-    // its initial loading completes before reading `isOffline`.
+
     final offlineController = OfflineCheckController();
     try {
       if (offlineController.loading) {
@@ -41,51 +39,16 @@ class TextTranslationController {
         offlineController.removeListener(listener);
       }
 
-      // If offline, use on-device translator
+      // If offline, use on-device translator; otherwise try online and
+      // fallback to device if online fails.
       if (offlineController.isOffline) {
-        if (langSelectorController.getOutputLang().isNotEmpty) {
-          final device = DeviceTranslatorService(
-            sourceLanguage: langSelectorController.getInputLang(),
-            targetLanguage: langSelectorController.getOutputLang(),
-          );
-          try {
-            final deviceTranslation = await device.translateText(text);
-            translatedText = deviceTranslation;
-          } finally {
-            // release native translator resources
-            await device.close();
-          }
-        } else {
-          translatedText = '';
-        }
+        translatedText = await _translateOnDevice(text);
       } else {
-        // Online: use API/Azure translation
         try {
-          String translation = "";
-          if (langSelectorController.getOutputLang().isNotEmpty) {
-            translation = await ApiTranslationService.translateTextAzure(
-              text,
-              langSelectorController.getInputLang(),
-              langSelectorController.getOutputLang(),
-            );
-          }
-          translatedText = translation;
+          translatedText = await _translateOnline(text);
         } catch (e) {
-          // If online translation fails, fall back to on-device translation
-          debugPrint('Online translation failed: $e');
-          if (langSelectorController.getOutputLang().isNotEmpty) {
-            final device = DeviceTranslatorService(
-              sourceLanguage: langSelectorController.getInputLang(),
-              targetLanguage: langSelectorController.getOutputLang(),
-            );
-            try {
-              translatedText = await device.translateText(text);
-            } finally {
-              await device.close();
-            }
-          } else {
-            translatedText = '';
-          }
+          debugPrint('Online translation failed, falling back to device: $e');
+          translatedText = await _translateOnDevice(text);
         }
       }
 
@@ -104,5 +67,29 @@ class TextTranslationController {
     }
 
     return translatedText;
+  }
+
+  // Attempt translation using the backend API/Azure service.
+  Future<String> _translateOnline(String text) async {
+    if (langSelectorController.getOutputLang().isEmpty) return '';
+    return await ApiTranslationService.translateTextAzure(
+      text,
+      langSelectorController.getInputLang(),
+      langSelectorController.getOutputLang(),
+    );
+  }
+
+  // Attempt translation using on-device translator (ML Kit).
+  Future<String> _translateOnDevice(String text) async {
+    if (langSelectorController.getOutputLang().isEmpty) return '';
+    final device = DeviceTranslatorService(
+      sourceLanguage: langSelectorController.getInputLang(),
+      targetLanguage: langSelectorController.getOutputLang(),
+    );
+    try {
+      return await device.translateText(text);
+    } finally {
+      await device.close();
+    }
   }
 }
