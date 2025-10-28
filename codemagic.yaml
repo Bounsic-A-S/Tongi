@@ -7,6 +7,7 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
+      cocoapods: default
 
     triggering:
       events:
@@ -17,11 +18,17 @@ workflows:
         script: |
           cd frontend
           flutter clean
+          rm -rf ios/Pods ios/Podfile.lock
 
       - name: Flutter pub get
         script: |
           cd frontend
           flutter pub get
+
+      - name: Install CocoaPods dependencies
+        script: |
+          cd frontend/ios
+          pod install
 
       - name: Build IPA (sin firmar)
         script: |
