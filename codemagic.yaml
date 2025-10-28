@@ -35,34 +35,46 @@ workflows:
           cd frontend/ios
           pod install
 
-      - name: Build IPA (sin firmar)
+      - name: Build iOS archive
         script: |
           cd frontend
-          set -e  # Detener si hay error
-          flutter build ipa --release --no-codesign
+          set -e
+          flutter build ios --release --no-codesign
           
-          # Verificar que el build fue exitoso
-          if [ ! -d "build/ios/iphoneos" ]; then
-            echo "❌ Error: No se generó el build de iOS"
-            exit 1
-          fi
+          echo "✅ Build de iOS completado"
+          echo "📦 Verificando archivos generados:"
+          ls -lh build/ios/archive/ || true
+          ls -lh build/ios/iphoneos/ || true
 
-      - name: Create IPA manually
+      - name: Create IPA from xcarchive
         script: |
           cd frontend
           
           # Crear directorio para el IPA
           mkdir -p build/ios/ipa
           
-          # Crear el IPA desde el .app
-          cd build/ios/iphoneos
-          mkdir -p Payload
-          cp -r Runner.app Payload/
-          zip -r Runner.ipa Payload
-          mv Runner.ipa ../ipa/
-          cd ../../../
+          # Buscar el archivo .app en el xcarchive
+          APP_PATH=$(find build/ios/archive -name "Runner.app" | head -n 1)
           
-          echo "✅ IPA creado manualmente"
+          if [ -z "$APP_PATH" ]; then
+            echo "❌ Error: No se encontró Runner.app"
+            ls -R build/ios/
+            exit 1
+          fi
+          
+          echo "✅ Encontrado: $APP_PATH"
+          
+          # Crear el IPA manualmente
+          PAYLOAD_DIR="build/ios/ipa/Payload"
+          mkdir -p "$PAYLOAD_DIR"
+          cp -r "$APP_PATH" "$PAYLOAD_DIR/"
+          
+          cd build/ios/ipa
+          zip -r Runner.ipa Payload
+          rm -rf Payload
+          cd ../../..
+          
+          echo "✅ IPA creado exitosamente"
           ls -lh build/ios/ipa/
 
       - name: Install Azure CLI
@@ -74,11 +86,10 @@ workflows:
         script: |
           cd frontend
           
-          # Verificar que el IPA existe
-          IPA_FILE=$(find build/ios/ipa -name "*.ipa" | head -n 1)
+          IPA_FILE="build/ios/ipa/Runner.ipa"
           
-          if [ -z "$IPA_FILE" ] || [ ! -f "$IPA_FILE" ]; then
-            echo "❌ Error: No se encontró el archivo IPA"
+          if [ ! -f "$IPA_FILE" ]; then
+            echo "❌ Error: No se encontró el archivo IPA en $IPA_FILE"
             ls -R build/ios/
             exit 1
           fi
@@ -93,17 +104,19 @@ workflows:
             --tenant "$AZURE_TENANT_ID"
 
           TIMESTAMP=$(date +%Y%m%d%H%M)
+          BLOB_NAME="tongi-ios-${TIMESTAMP}.ipa"
 
           echo "⬆️ Subiendo IPA a Azure Blob Storage..."
           az storage blob upload \
             --account-name "$AZURE_STORAGE_ACCOUNT" \
             --container-name "$AZURE_CONTAINER" \
-            --name "tongi-ios-${TIMESTAMP}.ipa" \
+            --name "$BLOB_NAME" \
             --file "$IPA_FILE" \
             --auth-mode login
 
           echo "✅ IPA subido correctamente a Azure!"
-          echo "📍 URL: https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${AZURE_CONTAINER}/tongi-ios-${TIMESTAMP}.ipa"
+          echo "📍 Nombre del archivo: $BLOB_NAME"
+          echo "📍 URL: https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${AZURE_CONTAINER}/${BLOB_NAME}"
 
     artifacts:
       - frontend/build/ios/ipa/*.ipa
