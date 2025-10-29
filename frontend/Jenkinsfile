@@ -12,7 +12,7 @@ pipeline {
         AZURE_STORAGE_ACCOUNT = 'tongiapks'
         AZURE_CONTAINER = 'apk'
         APK_PATH = 'frontend/build/app/outputs/flutter-apk/app-release.apk'
-        GRADLE_OPTS = '-Dorg.gradle.vfs.watch=false' // 🔧 Desactiva file watcher de Gradle
+        GRADLE_OPTS = '-Dorg.gradle.vfs.watch=false'
     }
 
     stages {
@@ -26,13 +26,8 @@ pipeline {
             steps {
                 sh '''
                     echo "🧹 Limpiando cachés locales..."
-                    rm -rf ~/.gradle/caches || true
-                    rm -rf ~/.gradle/daemon || true
-                    rm -rf ~/.gradle/native || true
-                    rm -rf ~/.gradle/wrapper || true
-                    rm -rf frontend/build || true
-                    rm -rf frontend/.dart_tool || true
-                    rm -rf frontend/.gradle || true
+                    rm -rf ~/.gradle/caches ~/.gradle/daemon ~/.gradle/native ~/.gradle/wrapper || true
+                    rm -rf frontend/build frontend/.dart_tool frontend/.gradle || true
                 '''
             }
         }
@@ -89,11 +84,19 @@ pipeline {
                         echo "🏗️ Construyendo APK de producción..."
                         export ANDROID_HOME=/opt/android-sdk
                         export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
-        
+
                         flutter doctor -v
                         flutter clean
-                        flutter build apk --release --no-shrink --verbose
+                        echo "🚀 Iniciando build detallado..."
+                        set -o pipefail
+                        flutter build apk --release --no-shrink -v | tee build_log.txt
                     '''
+                }
+            }
+            post {
+                failure {
+                    echo "📄 Guardando log detallado del build..."
+                    archiveArtifacts artifacts: 'frontend/build_log.txt', fingerprint: true
                 }
             }
         }
@@ -130,11 +133,10 @@ pipeline {
     post {
         success {
             echo '✅ Frontend build exitoso.'
+            cleanWs(cleanWhenAborted: true, cleanWhenFailure: true)
         }
         failure {
             echo '❌ Frontend build falló.'
-        }
-        always {
             cleanWs(cleanWhenAborted: true, cleanWhenFailure: true)
         }
     }
