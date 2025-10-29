@@ -4,7 +4,7 @@ import 'package:frontend/ui/screens/settings/settings_about.dart';
 import 'package:frontend/ui/screens/settings/settings_lang.dart';
 import 'package:frontend/ui/screens/settings/settings_notifications.dart';
 import 'package:frontend/ui/screens/settings/settings_models_screen.dart';
-import 'package:frontend/ui/screens/terms_conditions_scren.dart';
+import 'package:frontend/ui/screens/settings/terms_conditions_scren.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
