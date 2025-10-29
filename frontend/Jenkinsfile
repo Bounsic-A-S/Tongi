@@ -81,10 +81,11 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh '''
+                        #!/usr/bin/env bash
                         echo "🏗️ Construyendo APK de producción..."
                         export ANDROID_HOME=/opt/android-sdk
                         export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
-
+        
                         flutter doctor -v
                         flutter clean
                         echo "🚀 Iniciando build detallado..."
@@ -100,6 +101,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Upload to Azure Blob Storage') {
             steps {
