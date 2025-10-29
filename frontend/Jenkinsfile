@@ -90,9 +90,9 @@ pipeline {
                         export ANDROID_HOME=/opt/android-sdk
                         export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
         
-                        flutter doctor -v
+                        flutter doctor
                         flutter clean
-                        flutter build apk --release --no-shrink --verbose
+                        flutter build apk --release --no-shrink
                     '''
                 }
             }
