@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/logic/controllers/lang_selector_controller.dart';
 import 'package:frontend/logic/utils/permissions.dart';
-import 'package:frontend/triggers/camera/camera_translation_painter.dart';
+import 'package:frontend/ui/painters/camera_translation_painter.dart';
 import 'package:frontend/ui/screens/camera/camera_view.dart';
 import 'package:frontend/ui/screens/camera/gallery_view.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -33,7 +33,6 @@ class _CameraScreenState extends State<CameraScreen>
   initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    LangSelectorController().notify = () {};
     LangSelectorController().swapText = () {};
     _translationManager = ImageTranslationService();
     _initPermission();

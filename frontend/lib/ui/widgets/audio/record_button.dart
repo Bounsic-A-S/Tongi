@@ -14,13 +14,18 @@ class RecordButton extends StatefulWidget {
     this.onRecordingComplete,
   });
 
-
   @override
   State<RecordButton> createState() => _RecordButtonState();
 }
 
 class _RecordButtonState extends State<RecordButton> {
   bool isRecording = false;
+
+  @override
+  void dispose() {
+    if (isRecording) widget.service.stopRecording();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

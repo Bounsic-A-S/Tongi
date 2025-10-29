@@ -10,7 +10,7 @@ class SettingsLangScreen extends StatefulWidget {
 }
 
 class _SettingsLangScreenState extends State<SettingsLangScreen> {
-  String _selectedLang = availableLanguages[0].label;
+  String _selectedLang = tongiLanguages.keys.first;
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +27,10 @@ class _SettingsLangScreenState extends State<SettingsLangScreen> {
         ),
       ),
       body: ListView(
-        children: availableLanguages.map((lang) {
+        children: tongiLanguages.entries.map((lang) {
           return RadioListTile<String>(
-            title: Text(lang.label),
-            value: lang.label,
+            title: Text(lang.key),
+            value: lang.value,
             groupValue: _selectedLang,
             onChanged: (value) {
               setState(() { 

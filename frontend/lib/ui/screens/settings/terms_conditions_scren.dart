@@ -305,7 +305,7 @@ class FullTermsScreen extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => _launchEmail(),
                   child: Text(
-                    "induismo97@gmail.com",
+                    "contacto@tongi.com",
                     style: TextStyle(
                       fontSize: 16,
                       height: 1.5,

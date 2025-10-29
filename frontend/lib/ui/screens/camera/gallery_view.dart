@@ -33,7 +33,7 @@ class _GalleryViewState extends State<GalleryView> {
   @override
   void initState() {
     super.initState();
-    LangSelectorController().notify = _updateTranslation;
+    LangSelectorController().addListener(_updateTranslation);
     LangSelectorController().swapText = _updateTranslation;
     _imagePicker = ImagePicker();
     widget.text = "";
@@ -41,6 +41,7 @@ class _GalleryViewState extends State<GalleryView> {
 
   @override
   void dispose() {
+    LangSelectorController().removeListener(_updateTranslation);
     super.dispose();
   }
 
