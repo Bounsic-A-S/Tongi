@@ -38,13 +38,14 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
     _lastEmpty = false;
     _lastRequestId = 0;
     LangSelectorController().swapText = _swap;
-    LangSelectorController().notify = _newLanguage;
+    LangSelectorController().addListener(_newLanguage);
   }
 
   @override
   void dispose() {
     _inputController.dispose();
     _outputController.dispose();
+    LangSelectorController().removeListener(_newLanguage);
     super.dispose();
   }
 
@@ -134,7 +135,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
                   onPressed: () {
                     _reset();
                   },
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                 ),
               ),
           ],
@@ -148,6 +149,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
                 final clipboardData = await Clipboard.getData('text/plain');
                 if (clipboardData?.text != null) {
                   _inputController.text = clipboardData!.text!;
+                  _translate(_inputController.text);
                 }
               },
               icon: Icon(Icons.paste, color: TongiColors.darkGray),
@@ -206,7 +208,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
               bottom: 0,
               child: IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.star_border_rounded),
+                icon: const Icon(Icons.star_border_rounded),
               ),
             ),
           ],

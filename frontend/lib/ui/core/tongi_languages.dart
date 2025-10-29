@@ -21,6 +21,21 @@ const Map<String, String> tongiLanguages = {
   "hi": "Hindi",
 };
 
+const Map<String, String> localLanguages = {
+  "es": "Español",
+  "en": "Inglés",
+  "fr": "Francés",
+  "de": "Alemán",
+  "it": "Italiano",
+  "pt": "Portugués",
+  "zh": "Chino",
+  "ja": "Japonés",
+  "ko": "Coreano",
+  "ar": "Árabe",
+  "ru": "Ruso",
+  "hi": "Hindi",
+};
+
 const List<Language> availableLanguages = [
   Language(label: "Español", code: "es"),
   Language(label: "Inglés", code: "en"),
