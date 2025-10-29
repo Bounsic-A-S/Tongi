@@ -68,9 +68,11 @@ class _SettingsModelsScreenState extends State<SettingsModelsScreen> {
       });
     },
     items: localLanguages.entries.map<DropdownMenuItem<String>>((entry) {
+      // localLanguages now maps code -> label, so value should be the
+      // language code (entry.key) and the visible label the entry.value.
       return DropdownMenuItem<String>(
-        value: entry.value,
-        child: Text(entry.key),
+        value: entry.key,
+        child: Text(entry.value),
       );
     }).toList(),
   );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/logic/controllers/lang_selector_controller.dart';
-import 'package:frontend/logic/controllers/offline_check_controller.dart';
 import 'package:frontend/ui/core/tongi_colors.dart';
 import 'package:frontend/ui/core/tongi_styles.dart';
 
@@ -13,24 +12,20 @@ class LanguageSelector extends StatefulWidget {
 
 class _LanguageSelectorState extends State<LanguageSelector> {
   LangSelectorController controller = LangSelectorController();
-  late final OfflineCheckController _offlineController;
-
+  late VoidCallback _langListener;
   @override
   void initState() {
     super.initState();
-    _offlineController = OfflineCheckController();
-    _offlineController.addListener(_onOfflineChanged);
+    _langListener = () {
+      if (mounted) setState(() {});
+    };
+    controller.addListener(_langListener);
   }
 
   @override
   void dispose() {
-    _offlineController.removeListener(_onOfflineChanged);
-    _offlineController.dispose();
+    controller.removeListener(_langListener);
     super.dispose();
-  }
-
-  void _onOfflineChanged() {
-    if (mounted) setState(() {});
   }
 
   @override
@@ -70,7 +65,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     setState(() {});
                   }
                 },
-                dropdownMenuEntries: _buildInputEntries(),
+                dropdownMenuEntries: controller.getAvailableInputLanguages(),
               ),
             ],
           ),
@@ -121,36 +116,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     setState(() {});
                   }
                 },
-                dropdownMenuEntries: _buildOutputEntries(),
+                dropdownMenuEntries: controller.getAvailableOutputLanguages(),
               ),
             ],
           ),
         ),
       ],
     );
-  }
-
-  List<DropdownMenuEntry<String>> _buildInputEntries() {
-    final List<DropdownMenuEntry<String>> res = [];
-
-    for (final entry in _offlineController.availableLanguages) {
-      if (entry.value != controller.outputMenuController.text) {
-        res.add(DropdownMenuEntry(value: entry.key, label: entry.value));
-      }
-    }
-
-    return res;
-  }
-
-  List<DropdownMenuEntry<String>> _buildOutputEntries() {
-    final List<DropdownMenuEntry<String>> res = [];
-
-    for (final entry in _offlineController.availableLanguages) {
-      if (entry.value != controller.inputMenuController.text) {
-        res.add(DropdownMenuEntry(value: entry.key, label: entry.value));
-      }
-    }
-
-    return res;
   }
 }

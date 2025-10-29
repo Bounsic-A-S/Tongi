@@ -38,13 +38,14 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
     _lastEmpty = false;
     _lastRequestId = 0;
     LangSelectorController().swapText = _swap;
-    LangSelectorController().notify = _newLanguage;
+    LangSelectorController().addListener(_newLanguage);
   }
 
   @override
   void dispose() {
     _inputController.dispose();
     _outputController.dispose();
+    LangSelectorController().removeListener(_newLanguage);
     super.dispose();
   }
 

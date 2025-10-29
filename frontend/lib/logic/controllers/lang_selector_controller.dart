@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/ui/core/tongi_languages.dart';
+import 'package:frontend/logic/controllers/offline_check_controller.dart';
+import 'package:frontend/logic/controllers/model_manager_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LangSelectorController {
+class LangSelectorController extends ChangeNotifier {
   static final LangSelectorController _instance = LangSelectorController._();
   late TextEditingController inputMenuController;
   late TextEditingController outputMenuController;
   late Function swapText;
-  late Function notify;
   late String _sourceCodeLang;
   late String _targetCodeLang;
+  late final OfflineCheckController _offlineController;
+  final _modelManager = OnDeviceTranslatorModelManager();
+
+  /// Current available languages (code -> label).
+  late Map<String, String> _availableLanguages;
 
   LangSelectorController._() {
     inputMenuController = TextEditingController();
     outputMenuController = TextEditingController();
     loadLanguages();
     swapText = () {};
-    notify = () {};
+    // Start offline watcher and refresh available languages accordingly.
+    _offlineController = OfflineCheckController();
+    _offlineController.addListener(_onOfflineChanged);
+    // Initialize available languages based on current connectivity.
+    _refreshAvailableLanguages();
   }
 
   factory LangSelectorController() {
@@ -36,9 +46,41 @@ class LangSelectorController {
     saveLanguages();
   }
 
+  Future<void> _onOfflineChanged() async {
+    // Called when OfflineCheckController updates (connectivity / available models)
+    // Wait for available languages to be refreshed before notifying UI so
+    // widgets rebuild with the updated list immediately.
+    await _refreshAvailableLanguages();
+    notifyListeners();
+  }
+
+  Future<void> _refreshAvailableLanguages() async {
+    try {
+      if (_offlineController.isOffline) {
+        print('Is it me');
+        final downloaded = await _modelManager.loadDownloadedLanguages();
+        // downloaded is Map<code,label>
+        _availableLanguages = Map<String, String>.from(downloaded);
+      } else {
+        print('Or me');
+        _availableLanguages = tongiLanguages;
+      }
+    } catch (_) {
+      print('Or is it me');
+      _availableLanguages = tongiLanguages;
+    }
+  }
+
+  /// Whether the device is currently offline according to the internal
+  /// `OfflineCheckController`.
+  bool get isOffline => _offlineController.isOffline;
+
+  /// Returns the currently available languages mapping (code -> label).
+  Map<String, String> get availableLanguagesMap => _availableLanguages;
+
   void setLanguage() {
     saveLanguages();
-    notify();
+    notifyListeners();
   }
 
   void setInputLang(String code) {
@@ -67,10 +109,8 @@ class LangSelectorController {
   }
 
   List<DropdownMenuEntry<String>> getAvailableInputLanguages() {
-    List<DropdownMenuEntry<String>> res = [];
-
-    res.add(DropdownMenuEntry(value: "", label: "Auto"));
-    tongiLanguages.forEach((key, value) {
+    final List<DropdownMenuEntry<String>> res = [];
+    _availableLanguages.forEach((key, value) {
       if (value != outputMenuController.text) {
         res.add(DropdownMenuEntry(value: key, label: value));
       }
@@ -79,9 +119,8 @@ class LangSelectorController {
   }
 
   List<DropdownMenuEntry<String>> getAvailableOutputLanguages() {
-    List<DropdownMenuEntry<String>> res = [];
-
-    tongiLanguages.forEach((key, value) {
+    final List<DropdownMenuEntry<String>> res = [];
+    _availableLanguages.forEach((key, value) {
       if (value != inputMenuController.text) {
         res.add(DropdownMenuEntry(value: key, label: value));
       }
@@ -100,6 +139,11 @@ class LangSelectorController {
   void dispose() {
     inputMenuController.dispose();
     outputMenuController.dispose();
+    try {
+      _offlineController.removeListener(_onOfflineChanged);
+      _offlineController.dispose();
+    } catch (_) {}
+    super.dispose();
   }
 
   Future<void> saveLanguages() async {

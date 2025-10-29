@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:frontend/ui/core/tongi_languages.dart';
 
 /// A class to manage remote models.
 class ModelManager {
@@ -42,6 +43,34 @@ class ModelManager {
       'model': model,
     });
     return result.toString() == 'success';
+  }
+
+  /// Check which language models are downloaded locally and return a
+  /// mapping from model code (lower-cased) to its display label.
+  ///
+  /// Uses `localLanguages` keys (language codes) and queries
+  /// [isModelDownloaded] in parallel. Failures are treated as "not
+  /// downloaded".
+  Future<Map<String, String>> loadDownloadedLanguages() async {
+    final entries = localLanguages.entries
+        .map((e) => MapEntry(e.key.toLowerCase(), e.value))
+        .toList();
+
+    final futures = entries.map((entry) async {
+      try {
+        final downloaded = await isModelDownloaded(entry.key);
+        return downloaded ? entry : null;
+      } catch (_) {
+        return null;
+      }
+    }).toList();
+
+    final results = await Future.wait(futures);
+    final Map<String, String> downloaded = {};
+    for (final e in results.whereType<MapEntry<String, String>>()) {
+      downloaded[e.key] = e.value;
+    }
+    return downloaded;
   }
 }
 
