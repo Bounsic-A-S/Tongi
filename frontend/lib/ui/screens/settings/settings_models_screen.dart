@@ -132,6 +132,9 @@ class _SettingsModelsScreenState extends State<SettingsModelsScreen> {
               ],
             ),
             SizedBox(height: 10),
+            if (_downloadedKeys != null && _downloadedKeys!.length < 2) 
+              Text("Para poder usar la traducción offline correctamente necesitas descargar almenos 2 lenguajes."),
+            SizedBox(height: 10),
             SizedBox(
               height: 305,
               child: (_downloadedKeys != null)
