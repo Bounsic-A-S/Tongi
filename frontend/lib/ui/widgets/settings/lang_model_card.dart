@@ -82,7 +82,7 @@ class _LangModelCardState extends State<LangModelCard> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Eliminar modelo $widget.name?",
+              "Eliminar modelo ${widget.name}?",
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
