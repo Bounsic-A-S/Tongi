@@ -1,32 +1,141 @@
 workflows:
-  ios-workflow:
-    name: iOS Release
-    max_build_duration: 60
+  ios-test:
+    name: "iOS Build Test"
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+
     environment:
       flutter: stable
+      xcode: latest
+      cocoapods: default
       vars:
-        # Opcional: variables de entorno, p.ej. versión
-        BUILD_NUMBER: 1
+        AZURE_STORAGE_ACCOUNT: "tongiapks"
+        AZURE_CONTAINER: "apk"
+      groups:
+        - azure
+
     triggering:
       events:
         - push
+
     scripts:
-      - name: Install CocoaPods
+      - name: Clean
         script: |
-          brew install cocoapods || true
+          cd frontend
+          flutter clean
+          rm -rf ios/Pods ios/Podfile.lock
+          rm -rf build/
+
       - name: Flutter pub get
         script: |
+          cd frontend
           flutter pub get
-      - name: Build iOS (IPA)
+
+      - name: Install CocoaPods dependencies
         script: |
-          # Para publish en App Store, usualmente se hace codesign automático
-          flutter clean
-          flutter build ipa --release --no-codesign
+          cd frontend/ios
+          pod install
+
+      - name: Build iOS (verbose mode)
+        script: |
+          cd frontend
+          
+          echo "🔍 Información del entorno:"
+          flutter doctor -v
+          xcodebuild -version
+          
+          echo "🏗️ Construyendo iOS..."
+          flutter build ios --release --no-codesign --verbose
+          
+          BUILD_STATUS=$?
+          
+          if [ $BUILD_STATUS -ne 0 ]; then
+            echo "❌ Build falló con código: $BUILD_STATUS"
+            exit 1
+          fi
+          
+          echo "✅ Build completado exitosamente"
+          echo ""
+          echo "📦 Verificando archivos generados:"
+          find build/ios -name "*.app" -o -name "*.xcarchive" | head -20
+
+      - name: Create IPA
+        script: |
+          cd frontend
+          
+          # Buscar el .app más reciente
+          APP_PATH=$(find build/ios -name "Runner.app" -type d | head -n 1)
+          
+          if [ -z "$APP_PATH" ] || [ ! -d "$APP_PATH" ]; then
+            echo "❌ Error: No se encontró Runner.app"
+            echo "Contenido de build/ios/:"
+            ls -R build/ios/ | head -100
+            exit 1
+          fi
+          
+          echo "✅ Encontrado Runner.app en: $APP_PATH"
+          
+          # Crear el IPA
+          IPA_DIR="build/ios/ipa"
+          mkdir -p "$IPA_DIR/Payload"
+          
+          echo "📦 Copiando aplicación..."
+          cp -r "$APP_PATH" "$IPA_DIR/Payload/"
+          
+          echo "🗜️ Comprimiendo..."
+          cd "$IPA_DIR"
+          zip -r -q Runner.ipa Payload
+          rm -rf Payload
+          cd ../../..
+          
+          echo "✅ IPA creado exitosamente"
+          ls -lh build/ios/ipa/Runner.ipa
+
+      - name: Install Azure CLI
+        script: |
+          echo "📦 Instalando Azure CLI..."
+          brew update
+          brew install azure-cli
+
+      - name: Upload to Azure
+        script: |
+          cd frontend
+          
+          IPA_FILE="build/ios/ipa/Runner.ipa"
+          
+          if [ ! -f "$IPA_FILE" ]; then
+            echo "❌ Error: $IPA_FILE no existe"
+            exit 1
+          fi
+          
+          FILE_SIZE=$(ls -lh "$IPA_FILE" | awk '{print $5}')
+          echo "📦 Archivo a subir: $IPA_FILE ($FILE_SIZE)"
+          
+          echo "☁️ Autenticando con Azure..."
+          az login --service-principal \
+            -u "$AZURE_CLIENT_ID" \
+            -p "$AZURE_CLIENT_SECRET" \
+            --tenant "$AZURE_TENANT_ID"
+
+          TIMESTAMP=$(date +%Y%m%d%H%M)
+          BLOB_NAME="tongi-ios-${TIMESTAMP}.ipa"
+
+          echo "⬆️ Subiendo a Azure Blob Storage..."
+          az storage blob upload \
+            --account-name "$AZURE_STORAGE_ACCOUNT" \
+            --container-name "$AZURE_CONTAINER" \
+            --name "$BLOB_NAME" \
+            --file "$IPA_FILE" \
+            --auth-mode login \
+            --overwrite
+
+          echo ""
+          echo "✅ ¡IPA subido correctamente!"
+          echo "📱 Archivo: $BLOB_NAME"
+          echo "📍 URL: https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${AZURE_CONTAINER}/${BLOB_NAME}"
+          echo ""
+          echo "Para descargar desde Azure CLI:"
+          echo "az storage blob download --account-name ${AZURE_STORAGE_ACCOUNT} --container-name ${AZURE_CONTAINER} --name ${BLOB_NAME} --file tongi-ios.ipa --auth-mode login"
+
     artifacts:
-      - build/ios/ipa/*.ipa
-    publishing:
-      app_store_connect:
-        # publish automático a TestFlight / App Store (requiere App Store Connect API key configurada)
-        api_key: "APP_STORE_CONNECT_API_KEY" # referencia al nombre de la API key guardada en Codemagic
-        bundle_id: "com.tuempresa.tuapp"
-        submit_for_testflight: true
+      - frontend/build/ios/ipa/*.ipa
