@@ -26,8 +26,13 @@ pipeline {
             steps {
                 sh '''
                     echo "🧹 Limpiando cachés locales..."
-                    rm -rf ~/.gradle/caches ~/.gradle/daemon ~/.gradle/native ~/.gradle/wrapper || true
-                    rm -rf frontend/build frontend/.dart_tool frontend/.gradle || true
+                    rm -rf ~/.gradle/caches || true
+                    rm -rf ~/.gradle/daemon || true
+                    rm -rf ~/.gradle/native || true
+                    rm -rf ~/.gradle/wrapper || true
+                    rm -rf frontend/build || true
+                    rm -rf frontend/.dart_tool || true
+                    rm -rf frontend/.gradle || true
                 '''
             }
         }
@@ -80,28 +85,18 @@ pipeline {
         stage('Build APK') {
             steps {
                 dir('frontend') {
-                    sh '''
-                        #!/usr/bin/env bash
+                    sh '''#!/bin/bash
                         echo "🏗️ Construyendo APK de producción..."
                         export ANDROID_HOME=/opt/android-sdk
                         export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
         
                         flutter doctor -v
                         flutter clean
-                        echo "🚀 Iniciando build detallado..."
-                        set -o pipefail
-                        flutter build apk --release --no-shrink -v | tee build_log.txt
+                        flutter build apk --release --no-shrink --verbose
                     '''
                 }
             }
-            post {
-                failure {
-                    echo "📄 Guardando log detallado del build..."
-                    archiveArtifacts artifacts: 'frontend/build_log.txt', fingerprint: true
-                }
-            }
         }
-
 
         stage('Upload to Azure Blob Storage') {
             steps {
@@ -135,11 +130,11 @@ pipeline {
     post {
         success {
             echo '✅ Frontend build exitoso.'
-            archiveArtifacts artifacts: 'frontend/build/app/outputs/flutter-apk/*.apk', fingerprint: true
-            cleanWs(cleanWhenAborted: true, cleanWhenFailure: true)
         }
         failure {
             echo '❌ Frontend build falló.'
+        }
+        always {
             cleanWs(cleanWhenAborted: true, cleanWhenFailure: true)
         }
     }
