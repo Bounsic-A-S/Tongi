@@ -50,7 +50,7 @@ class SettingsAboutScreen extends StatelessWidget {
             const Divider(),
             const SizedBox(height: 10),
             const Text(
-              "Desarrollado por el equipo de Tongi\nContacto: induismo97@gmail.com",
+              "Desarrollado por el equipo de Tongi\nContacto: contacto@tongi.com",
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),

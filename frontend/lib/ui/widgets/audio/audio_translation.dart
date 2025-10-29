@@ -38,9 +38,15 @@ class _AudioTranslationState extends State<AudioTranslation> {
 
   @override
   void initState() {
-    LangSelectorController().notify = _updateLanguage;
+    LangSelectorController().addListener(_updateLanguage);
     LangSelectorController().swapText = () {};
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    LangSelectorController().removeListener(_updateLanguage);
+    super.dispose();
   }
 
   _updateLanguage() {
@@ -224,7 +230,10 @@ class _AudioTranslationState extends State<AudioTranslation> {
             ],
           ),
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: [CopyButton(text: _outputController.text,)]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [CopyButton(text: _outputController.text)],
+        ),
       ],
     );
   }

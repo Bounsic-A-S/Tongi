@@ -12,14 +12,19 @@ class LanguageSelector extends StatefulWidget {
 
 class _LanguageSelectorState extends State<LanguageSelector> {
   LangSelectorController controller = LangSelectorController();
-
+  late VoidCallback _langListener;
   @override
   void initState() {
     super.initState();
+    _langListener = () {
+      if (mounted) setState(() {});
+    };
+    controller.addListener(_langListener);
   }
 
   @override
   void dispose() {
+    controller.removeListener(_langListener);
     super.dispose();
   }
 

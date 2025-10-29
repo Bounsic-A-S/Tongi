@@ -33,7 +33,6 @@ class _CameraScreenState extends State<CameraScreen>
   initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    LangSelectorController().notify = () {};
     LangSelectorController().swapText = () {};
     _translationManager = ImageTranslationService();
     _initPermission();

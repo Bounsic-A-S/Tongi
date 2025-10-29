@@ -7,7 +7,7 @@ class CameraManager {
   static List<CameraDescription> _cameras = [];
   CameraController? _controller;
   int _cameraIndex = -1;
-  
+
   // Configuración de cámara
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
@@ -19,6 +19,8 @@ class CameraManager {
   final Function(InputImage inputImage)? onImage;
   final Function()? onCameraFeedReady;
   final Function(CameraLensDirection direction)? onCameraLensDirectionChanged;
+
+  bool initialized = false;
 
   CameraManager({
     this.onImage,
@@ -49,15 +51,16 @@ class CameraManager {
         break;
       }
     }
-    
+
     if (_cameraIndex != -1) {
       await _startLiveFeed();
     }
+    initialized = true;
   }
 
   Future<void> _startLiveFeed() async {
     final camera = _cameras[_cameraIndex];
-    
+
     _controller = CameraController(
       camera,
       ResolutionPreset.high,
@@ -80,7 +83,7 @@ class CameraManager {
 
     // Iniciar stream de imágenes
     await _controller!.startImageStream(_processCameraImage);
-    
+
     onCameraFeedReady?.call();
     onCameraLensDirectionChanged?.call(camera.lensDirection);
   }
@@ -95,15 +98,18 @@ class CameraManager {
 
   Future<void> setZoomLevel(double zoomLevel) async {
     if (_controller == null) return;
-    
+
     final clampedZoom = zoomLevel.clamp(_minAvailableZoom, _maxAvailableZoom);
     await _controller!.setZoomLevel(clampedZoom);
   }
 
   Future<void> setExposureOffset(double offset) async {
     if (_controller == null) return;
-    
-    final clampedOffset = offset.clamp(_minAvailableExposureOffset, _maxAvailableExposureOffset);
+
+    final clampedOffset = offset.clamp(
+      _minAvailableExposureOffset,
+      _maxAvailableExposureOffset,
+    );
     await _controller!.setExposureOffset(clampedOffset);
     _currentExposureOffset = clampedOffset;
   }
@@ -178,7 +184,8 @@ class CameraManager {
       if (camera.lensDirection == CameraLensDirection.front) {
         finalRotation = (camera.sensorOrientation + rotationCompensation) % 360;
       } else {
-        finalRotation = (camera.sensorOrientation - rotationCompensation + 360) % 360;
+        finalRotation =
+            (camera.sensorOrientation - rotationCompensation + 360) % 360;
       }
 
       return InputImageRotationValue.fromRawValue(finalRotation);
@@ -187,9 +194,11 @@ class CameraManager {
   }
 
   Future<void> _stopLiveFeed() async {
-    await _controller?.stopImageStream();
-    await _controller?.dispose();
-    _controller = null;
+    if (initialized) {
+      await _controller?.stopImageStream();
+      await _controller?.dispose();
+      _controller = null;
+    }
   }
 
   Future<void> dispose() async {
