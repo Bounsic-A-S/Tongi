@@ -1,44 +1,104 @@
 pipeline {
     agent any
+
     triggers {
         githubPush()
     }
+
     environment {
         FLUTTER_HOME = '/opt/flutter'
         ANDROID_HOME = '/opt/android-sdk'
         PATH = "$FLUTTER_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
         AZURE_STORAGE_ACCOUNT = 'tongiapks'
-        AZURE_CONTAINER = 'apk'                
+        AZURE_CONTAINER = 'apk'
         APK_PATH = 'frontend/build/app/outputs/flutter-apk/app-release.apk'
+        GRADLE_OPTS = '-Dorg.gradle.vfs.watch=false' // 🔧 Desactiva file watcher de Gradle
     }
+
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Clean environment') {
+            steps {
+                sh '''
+                    echo "🧹 Limpiando cachés locales..."
+                    rm -rf ~/.gradle/caches || true
+                    rm -rf ~/.gradle/daemon || true
+                    rm -rf ~/.gradle/native || true
+                    rm -rf ~/.gradle/wrapper || true
+                    rm -rf frontend/build || true
+                    rm -rf frontend/.dart_tool || true
+                    rm -rf frontend/.gradle || true
+                '''
+            }
+        }
+
         stage('Install dependencies') {
             steps {
                 dir('frontend') {
-                    sh 'flutter pub get'
+                    sh '''
+                        echo "📦 Instalando dependencias Flutter..."
+                        flutter pub get
+                    '''
                 }
             }
         }
+
         stage('Run tests') {
             steps {
                 dir('frontend') {
-                    sh 'flutter test'
+                    sh '''
+                        echo "🧪 Ejecutando tests..."
+                        flutter test
+                    '''
                 }
             }
         }
-        stage('Check Environment') {
+
+        stage('Prepare signing keys') {
             steps {
-                sh 'flutter doctor -v'
+                withCredentials([
+                    file(credentialsId: 'flutter-keystore', variable: 'KEYSTORE_FILE'),
+                    string(credentialsId: 'store_password', variable: 'STORE_PASSWORD'),
+                    string(credentialsId: 'key_password', variable: 'KEY_PASSWORD'),
+                    string(credentialsId: 'key_alias', variable: 'KEY_ALIAS')
+                ]) {
+                    dir('frontend/android') {
+                        sh '''
+                            echo "🔐 Configurando firma..."
+                            echo "storePassword=$STORE_PASSWORD" > key.properties
+                            echo "keyPassword=$KEY_PASSWORD" >> key.properties
+                            echo "keyAlias=$KEY_ALIAS" >> key.properties
+                            echo "storeFile=${WORKSPACE}/frontend/android/app/release-key.jks" >> key.properties
+                            cp $KEYSTORE_FILE app/release-key.jks
+                            cat key.properties
+                        '''
+                    }
+                }
             }
         }
+
         stage('Build APK') {
             steps {
                 dir('frontend') {
-                    sh 'flutter build apk --release --no-shrink'
+                    sh '''
+                        echo "🏗️ Construyendo APK de producción..."
+                        export ANDROID_HOME=/opt/android-sdk
+                        export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+        
+                        flutter doctor -v
+                        flutter clean
+                        flutter build apk --release --no-shrink --verbose
+                    '''
                 }
             }
         }
-        stage('Upload to Azure Blob') {
+
+        stage('Upload to Azure Blob Storage') {
             steps {
                 withCredentials([
                     string(credentialsId: 'azure-client-id', variable: 'AZURE_CLIENT_ID'),
@@ -46,13 +106,13 @@ pipeline {
                     string(credentialsId: 'azure-tenant-id', variable: 'AZURE_TENANT_ID')
                 ]) {
                     sh '''
-                        echo "Autenticando con Azure..."
+                        echo "☁️ Autenticando con Azure..."
                         az login --service-principal \
                             -u "$AZURE_CLIENT_ID" \
                             -p "$AZURE_CLIENT_SECRET" \
                             --tenant "$AZURE_TENANT_ID"
 
-                        echo "Subiendo APK a Azure Blob Storage..."
+                        echo "⬆️ Subiendo APK a Azure Blob Storage..."
                         az storage blob upload \
                             --account-name "$AZURE_STORAGE_ACCOUNT" \
                             --container-name "$AZURE_CONTAINER" \
@@ -66,13 +126,16 @@ pipeline {
             }
         }
     }
+
     post {
         success {
-            echo '✅ Frontend production successful!'
-            archiveArtifacts artifacts: 'frontend/build/app/outputs/flutter-apk/*.apk', fingerprint: true
+            echo '✅ Frontend build exitoso.'
         }
         failure {
-            echo '❌ Frontend production failed.'
+            echo '❌ Frontend build falló.'
+        }
+        always {
+            cleanWs(cleanWhenAborted: true, cleanWhenFailure: true)
         }
     }
 }

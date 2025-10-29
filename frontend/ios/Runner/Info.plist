@@ -49,5 +49,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>MinimumOSVersion</key>
+	<string>15.5</string>
 </dict>
 </plist>
