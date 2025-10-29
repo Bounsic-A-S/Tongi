@@ -88,8 +88,11 @@ class LangSelectorController extends ChangeNotifier {
       inputMenuController.text = "Auto";
       _sourceCodeLang = "";
     } else {
-      inputMenuController.text =
-          tongiLanguages[code] ?? inputMenuController.text;
+      String? r = tongiLanguages[code];
+      if (r != null) {
+        inputMenuController.text = r;
+        _sourceCodeLang = code;
+      }
     }
     setLanguage();
   }
@@ -110,6 +113,8 @@ class LangSelectorController extends ChangeNotifier {
 
   List<DropdownMenuEntry<String>> getAvailableInputLanguages() {
     final List<DropdownMenuEntry<String>> res = [];
+    
+    res.add(DropdownMenuEntry(value: "", label: "Auto"));
     _availableLanguages.forEach((key, value) {
       if (value != outputMenuController.text) {
         res.add(DropdownMenuEntry(value: key, label: value));

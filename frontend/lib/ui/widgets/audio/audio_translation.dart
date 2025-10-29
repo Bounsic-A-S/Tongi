@@ -57,7 +57,7 @@ class _AudioTranslationState extends State<AudioTranslation> {
   Future<void> _translateText(String text) async {
     String res = await textTranslationController.translateText(text);
     _outputController.text = res;
-    setState(() {});
+    _safeSetState();
   }
 
   Future<void> _processAudio(File audioFile) async {
@@ -66,23 +66,21 @@ class _AudioTranslationState extends State<AudioTranslation> {
       return;
     }
 
-    setState(() {
-      _inputController.text = "Procesando...";
-      _outputController.text = "Traduciendo...";
-    });
+    _inputController.text = "Procesando...";
+    _outputController.text = "Traduciendo...";
 
     try {
       // 1️⃣ Transcribe el audio original
       final originalText = await widget.controller.transcribeAudio(audioFile);
 
-      setState(() => _inputController.text = originalText);
+      _inputController.text = originalText;
 
       // 2️⃣ Traduce el audio a otro idioma
       final translatedText = await widget.controller.transcribeAndTranslate(
         audioFile,
       );
 
-      setState(() => _outputController.text = translatedText);
+      _outputController.text = translatedText;
     } catch (e) {
       _showError("❌ Error al procesar el audio: $e");
     }
@@ -106,7 +104,7 @@ class _AudioTranslationState extends State<AudioTranslation> {
   }
 
   void _showError(String message) {
-    setState(() => _outputController.text = message);
+    _outputController.text = message;
     debugPrint(message);
   }
 
@@ -236,5 +234,11 @@ class _AudioTranslationState extends State<AudioTranslation> {
         ),
       ],
     );
+  }
+
+  void _safeSetState() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

@@ -149,6 +149,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
                 final clipboardData = await Clipboard.getData('text/plain');
                 if (clipboardData?.text != null) {
                   _inputController.text = clipboardData!.text!;
+                  _translate(_inputController.text);
                 }
               },
               icon: Icon(Icons.paste, color: TongiColors.darkGray),

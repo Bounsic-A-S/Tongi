@@ -18,6 +18,7 @@ class TextTranslationController {
     String translatedText;
 
     try {
+      debugPrint(" ( ---- ) id: $id");
       if (langSelectorController.isOffline) {
         translatedText = await _translateOnDevice(text);
       } else {
@@ -39,7 +40,6 @@ class TextTranslationController {
       // ensure flags are updated and resources cleaned
       isTranslating = false;
     }
-
     return translatedText;
   }
 
