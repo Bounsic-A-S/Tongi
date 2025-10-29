@@ -19,6 +19,7 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: TongiColors.primary,
         titleTextStyle: const TextStyle(
           color: Colors.white,
+          fontFamily: "Poppins",
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),

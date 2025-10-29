@@ -1,20 +1,20 @@
-import 'package:frontend/logic/controllers/lang_selector_controller.dart';
+import 'package:frontend/logic/controllers/text_translation_controller.dart';
 import 'package:frontend/logic/models/text_detection_result.dart';
 import 'package:frontend/logic/models/translated_block.dart';
 import 'package:frontend/logic/services/camera/ocr/text_block_merger.dart';
-import 'package:frontend/logic/services/translation_service.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
 class ImageTranslationService {
   late final TextRecognizer _recognitionService;
-  final TranslationService _translationService;
+  // final TranslationService _translationService;
   final TextBlockMerger _textBlockMerger;
+  TextTranslationController _translationService;
 
   ImageTranslationService({
     double horizontalMergeThreshold = 50.0,
     double verticalMergeThreshold = 30.0,
   }) : _recognitionService = TextRecognizer(),
-       _translationService = TranslationService(),
+       _translationService = TextTranslationController(),
        _textBlockMerger = TextBlockMerger(
          horizontalMergeThreshold: horizontalMergeThreshold,
          verticalMergeThreshold: verticalMergeThreshold,
@@ -46,14 +46,10 @@ class ImageTranslationService {
       String fullOriginalText = '';
       String fullTranslatedText = '';
 
-      LangSelectorController langSelectorController = LangSelectorController();
-
       for (final block in mergedBlocks) {
         final blockText = block.text;
         final translatedBlockText = await _translationService.translateText(
-          blockText,
-          from: langSelectorController.getInputLang(),
-          to: langSelectorController.getOutputLang(),
+          blockText
         );
 
         translatedBlocks.add(
