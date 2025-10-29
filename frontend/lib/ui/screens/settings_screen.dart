@@ -40,7 +40,7 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.offline_pin),
+              leading: Icon(Icons.wifi_off_outlined),
               title: Text("Modelos sin conexión"),
               onTap: () {
                 Navigator.push(

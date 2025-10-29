@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class LangModelCard extends StatelessWidget {
+class LangModelCard extends StatefulWidget {
   final String code;
   final String name;
   final Function(String code) onDelete;
@@ -14,6 +13,13 @@ class LangModelCard extends StatelessWidget {
     required this.onDelete,
     required this.callback,
   });
+
+  @override
+  State<LangModelCard> createState() => _LangModelCardState();
+}
+
+class _LangModelCardState extends State<LangModelCard> {
+  bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +39,7 @@ class LangModelCard extends StatelessWidget {
               radius: 22,
               backgroundColor: Colors.green.shade100,
               child: Text(
-                code.toUpperCase(),
+                widget.code.toUpperCase(),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.green,
@@ -43,7 +49,7 @@ class LangModelCard extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                name,
+                widget.name,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -51,12 +57,14 @@ class LangModelCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 5),
-            IconButton(
-              onPressed: () {
-                _confirmDelete(context);
-              },
-              icon: Icon(Icons.delete, color: Colors.red.shade300),
-            ),
+            (!_isProcessing)
+                ? IconButton(
+                    onPressed: () {
+                      _confirmDelete(context);
+                    },
+                    icon: Icon(Icons.delete, color: Colors.red.shade300),
+                  )
+                : CircularProgressIndicator(),
           ],
         ),
       ),
@@ -68,16 +76,13 @@ class LangModelCard extends StatelessWidget {
       context: context,
       barrierDismissible: true, // permite cerrar tocando fuera del dialog
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12), // bordes redondeados
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         contentPadding: const EdgeInsets.all(24),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // const SizedBox(height: 15),
             Text(
-              "Eliminar modelo $name?",
+              "Eliminar modelo $widget.name?",
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
@@ -94,8 +99,7 @@ class LangModelCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              onDelete(code);
-              callback();
+              _delete();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,
@@ -109,5 +113,18 @@ class LangModelCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _safeSetState() {
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _delete() async {
+    _isProcessing = true;
+    _safeSetState();
+    await widget.onDelete(widget.code);
+    _isProcessing = false;
+    _safeSetState();
+    widget.callback();
   }
 }
