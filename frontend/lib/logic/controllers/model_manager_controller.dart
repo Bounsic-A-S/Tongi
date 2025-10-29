@@ -51,7 +51,7 @@ class ModelManager {
   /// Uses `localLanguages` keys (language codes) and queries
   /// [isModelDownloaded] in parallel. Failures are treated as "not
   /// downloaded".
-  Future<Map<String, String>> loadDownloadedLanguages() async {
+  Future<Map<String, String>> getDownloadedLanguages() async {
     final entries = localLanguages.entries
         .map((e) => MapEntry(e.key.toLowerCase(), e.value))
         .toList();
@@ -60,6 +60,28 @@ class ModelManager {
       try {
         final downloaded = await isModelDownloaded(entry.key);
         return downloaded ? entry : null;
+      } catch (_) {
+        return null;
+      }
+    }).toList();
+
+    final results = await Future.wait(futures);
+    final Map<String, String> downloaded = {};
+    for (final e in results.whereType<MapEntry<String, String>>()) {
+      downloaded[e.key] = e.value;
+    }
+    return downloaded;
+  }
+
+  Future<Map<String, String>> getAvailableLanguages() async {
+    final entries = localLanguages.entries
+        .map((e) => MapEntry(e.key.toLowerCase(), e.value))
+        .toList();
+
+    final futures = entries.map((entry) async {
+      try {
+        final downloaded = await isModelDownloaded(entry.key);
+        return !downloaded ? entry : null;
       } catch (_) {
         return null;
       }

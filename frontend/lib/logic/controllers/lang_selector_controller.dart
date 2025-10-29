@@ -58,7 +58,7 @@ class LangSelectorController extends ChangeNotifier {
     try {
       if (_offlineController.isOffline) {
         print('Is it me');
-        final downloaded = await _modelManager.loadDownloadedLanguages();
+        final downloaded = await _modelManager.getDownloadedLanguages();
         // downloaded is Map<code,label>
         _availableLanguages = Map<String, String>.from(downloaded);
       } else {
