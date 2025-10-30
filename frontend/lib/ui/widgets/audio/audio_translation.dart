@@ -35,6 +35,8 @@ class _AudioTranslationState extends State<AudioTranslation> {
     text: "",
   );
   final AudioPlayer audioPlayer = AudioPlayer();
+  bool _lastEmpty = false;
+  int _lastRequestId = 0;
 
   @override
   void initState() {
@@ -55,8 +57,25 @@ class _AudioTranslationState extends State<AudioTranslation> {
   }
 
   Future<void> _translateText(String text) async {
-    String res = await textTranslationController.translateText(text);
-    _outputController.text = res;
+    int requestId = ++_lastRequestId;
+
+    if (text.isEmpty) {
+      _outputController.clear();
+      _lastEmpty = true;
+    } else {
+      _lastEmpty = false;
+      if (_outputController.text.isNotEmpty &&
+          !_outputController.text.endsWith("...")) {
+        _outputController.text += "...";
+      }
+      String tt = await textTranslationController.translateText(
+        text,
+        id: requestId,
+      );
+      if (!_lastEmpty && requestId == textTranslationController.getLastId()) {
+        _outputController.text = tt;
+      }
+    }
     _safeSetState();
   }
 

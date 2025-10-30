@@ -70,17 +70,16 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
         _outputController.text = tt;
       }
     }
-    setState(() {});
+    _safeSetState();
   }
 
   _reset() {
-    setState(() {
-      _inputController.clear();
-      _outputController.clear();
-      _lastRequestId = 0;
-      widget.translationController.resetId();
-      _lastEmpty = true;
-    });
+    _inputController.clear();
+    _outputController.clear();
+    _lastRequestId = 0;
+    widget.translationController.resetId();
+    _lastEmpty = true;
+    _safeSetState();
   }
 
   Future<void> _playSpeech(String text) async {
@@ -101,7 +100,7 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
   }
 
   void _showError(String message) {
-    setState(() => _outputController.text = message);
+    _outputController.text = message;
     debugPrint(message);
   }
 
@@ -239,5 +238,9 @@ class _TextTranslationWidgetState extends State<TextTranslationWidget> {
   _newLanguage() {
     _outputController.clear();
     _translate(_inputController.text);
+  }
+
+  _safeSetState() {
+    if (mounted) setState(() {});
   }
 }
